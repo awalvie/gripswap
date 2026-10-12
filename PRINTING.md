@@ -48,6 +48,21 @@ If you render a part yourself, add `-D for_print=true` to get it the right way u
 openscad -D 'part="housing"' -D for_print=true -o housing.stl opengrips.scad
 ```
 
+## Fuzzy texture
+
+If you pick a texture for an insert, the download has a second file next to it: the fuzzy modifier. It is a thin band over the grip only, the roof of the slot and its front round. Your slicer roughens the walls inside it with fuzzy skin. The rest of the insert stays smooth.
+
+1. Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.
+2. Right-click the modifier part and change its type to modifier.
+3. Add the fuzzy skin settings to the modifier and turn fuzzy skin on. In PrusaSlicer, pick "All walls". In Orca Slicer or Bambu Studio, pick "Contour and hole". The grip prints as the wall of a hole, so a setting for the outer contour alone misses it.
+4. Set the thickness and point distance for the texture you picked.
+
+| Texture | Thickness | Point distance |
+| --- | --- | --- |
+| Fine | 0.2 mm | 0.3 mm |
+| Medium | 0.3 mm | 0.5 mm |
+| Coarse | 0.4 mm | 0.8 mm |
+
 ## How much filament
 
 I sliced the default parts in PrusaSlicer 2.9.6 with the settings above, PETG at 1.27 g/cm³, and no supports. Nothing has been weighed after a real print yet.

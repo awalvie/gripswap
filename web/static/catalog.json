@@ -139,6 +139,16 @@
      "name": "Edge insert",
      "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
+    },
+    {
+     "part": "fuzzy_edge",
+     "name": "Fuzzy modifier",
+     "supports": "load it with the insert as one object",
+     "settings_from": "fuzzy",
+     "unless": {
+      "fuzzy": "none"
+     },
+     "modifier": true
     }
    ],
    "params": [
@@ -213,6 +223,48 @@
      "unit": "mm",
      "help": "The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder.",
      "simple": false
+    },
+    {
+     "name": "fuzzy",
+     "label": "Fuzzy texture",
+     "type": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "None"
+      },
+      {
+       "value": "fine",
+       "label": "Fine",
+       "skin": [
+        0.2,
+        0.3
+       ],
+       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+      },
+      {
+       "value": "medium",
+       "label": "Medium",
+       "skin": [
+        0.3,
+        0.5
+       ],
+       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+      },
+      {
+       "value": "coarse",
+       "label": "Coarse",
+       "skin": [
+        0.4,
+        0.8
+       ],
+       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+      }
+     ],
+     "default": "none",
+     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "simple": false,
+     "slicer": true
     }
    ],
    "cards": [
@@ -228,6 +280,15 @@
       "ergo"
      ],
      "choice": true,
+     "choice_after": ""
+    },
+    {
+     "title": "Texture",
+     "sub": "",
+     "params": [
+      "fuzzy"
+     ],
+     "choice": false,
      "choice_after": ""
     }
    ]
@@ -246,6 +307,16 @@
      "name": "Two-sided insert",
      "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
+    },
+    {
+     "part": "fuzzy_flip",
+     "name": "Fuzzy modifier",
+     "supports": "load it with the insert as one object",
+     "settings_from": "fuzzy",
+     "unless": {
+      "fuzzy": "none"
+     },
+     "modifier": true
     }
    ],
    "params": [
@@ -476,6 +547,48 @@
      "unit": "mm",
      "help": "Rounding of the pocket opening, seen from the front.",
      "simple": false
+    },
+    {
+     "name": "fuzzy",
+     "label": "Fuzzy texture",
+     "type": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "None"
+      },
+      {
+       "value": "fine",
+       "label": "Fine",
+       "skin": [
+        0.2,
+        0.3
+       ],
+       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+      },
+      {
+       "value": "medium",
+       "label": "Medium",
+       "skin": [
+        0.3,
+        0.5
+       ],
+       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+      },
+      {
+       "value": "coarse",
+       "label": "Coarse",
+       "skin": [
+        0.4,
+        0.8
+       ],
+       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+      }
+     ],
+     "default": "none",
+     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "simple": false,
+     "slicer": true
     }
    ],
    "show_if": {
@@ -580,6 +693,15 @@
      ],
      "choice": true,
      "choice_after": "bot_kind"
+    },
+    {
+     "title": "Texture",
+     "sub": "",
+     "params": [
+      "fuzzy"
+     ],
+     "choice": false,
+     "choice_after": ""
     }
    ],
    "side_choices": {
@@ -683,6 +805,16 @@
      "name": "Pocket insert",
      "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
+    },
+    {
+     "part": "fuzzy_pocket",
+     "name": "Fuzzy modifier",
+     "supports": "load it with the insert as one object",
+     "settings_from": "fuzzy",
+     "unless": {
+      "fuzzy": "none"
+     },
+     "modifier": true
     }
    ],
    "params": [
@@ -781,6 +913,48 @@
      "unit": "mm",
      "help": "Room for the fingers under the grip, where it is lowest. A steep or deep edge can leave less room, because the insert floor must stay.",
      "simple": false
+    },
+    {
+     "name": "fuzzy",
+     "label": "Fuzzy texture",
+     "type": "choice",
+     "options": [
+      {
+       "value": "none",
+       "label": "None"
+      },
+      {
+       "value": "fine",
+       "label": "Fine",
+       "skin": [
+        0.2,
+        0.3
+       ],
+       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+      },
+      {
+       "value": "medium",
+       "label": "Medium",
+       "skin": [
+        0.3,
+        0.5
+       ],
+       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+      },
+      {
+       "value": "coarse",
+       "label": "Coarse",
+       "skin": [
+        0.4,
+        0.8
+       ],
+       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+      }
+     ],
+     "default": "none",
+     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "simple": false,
+     "slicer": true
     }
    ],
    "spans": [
@@ -808,6 +982,15 @@
       "slot_h"
      ],
      "choice": true,
+     "choice_after": ""
+    },
+    {
+     "title": "Texture",
+     "sub": "",
+     "params": [
+      "fuzzy"
+     ],
+     "choice": false,
      "choice_after": ""
     }
    ]

@@ -12,6 +12,7 @@ include <src/inserts/edge.scad>
 include <src/inserts/pocket.scad>
 include <src/inserts/roller.scad>
 include <src/inserts/flip.scad>
+include <src/fuzzy.scad>
 include <src/refs.scad>
 include <src/fit_test.scad>
 
@@ -21,7 +22,8 @@ for_print = false;
 module on_bed() {
     if (!for_print) children();
     else if (part == "housing") rotate([90, 0, 0]) children();   // front face down, the anchor plate flat on the bed
-    else if (part == "insert_edge" || part == "insert_pocket" || part == "insert_flip")
+    else if (part == "insert_edge" || part == "insert_pocket" || part == "insert_flip"
+             || part == "fuzzy_edge" || part == "fuzzy_pocket" || part == "fuzzy_flip")
         translate([0, 0, pk_d - clear]) rotate([-90, 0, 0]) children();   // on its back, front up: the grip stands upright
     else if (part == "insert_roller") translate([0, 0, -ins_bot]) children();  // floor down
     else if (part == "roller" || part == "roller_straight")
@@ -36,6 +38,9 @@ on_bed() {
     if (part == "insert_edge") insert_edge();
     if (part == "insert_pocket") insert_pocket();
     if (part == "insert_flip") insert_flip();
+    if (part == "fuzzy_edge") fuzzy_edge();
+    if (part == "fuzzy_pocket") fuzzy_pocket();
+    if (part == "fuzzy_flip") fuzzy_flip();
     if (part == "insert_roller") insert_roller();
     if (part == "roller") roller_any();
     if (part == "roller_straight") roller_straight();

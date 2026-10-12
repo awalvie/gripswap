@@ -209,7 +209,7 @@ def check_flip(mesh, params):
 def check(part, params, mesh):
     problems = []
     bodies = mesh.split(only_watertight=False)
-    if len(bodies) != 1:
+    if len(bodies) != 1 and not part.startswith("fuzzy_"):   # a modifier has one band per grip or pocket
         problems.append(f"{len(bodies)} bodies")
     if not mesh.is_watertight:
         problems.append("not watertight")

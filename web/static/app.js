@@ -102,7 +102,11 @@ function busy(on) {
 const insertDef = (id) => cat.inserts.find((i) => i.id === id);
 const defaults = (params) => Object.fromEntries(params.map((p) => [p.name, p.default]));
 const defOf = (it) => (it.type === "housing" ? cat.housing : insertDef(it.insertId));
-const partsOf = (it) => defOf(it).parts;
+// a part with "unless" is left out while those settings have those values (the fuzzy modifier while "None")
+const partsOf = (it) => defOf(it).parts.filter((p) => !Object.entries(p.unless || {}).some(([n, v]) => it.values[n] === v));
+// a part's note: its own, or the picked option's note (the fuzzy modifier says what to set in the slicer)
+const noteOf = (it, p) => p.settings_from ? defOf(it).params.find((q) => q.name === p.settings_from).options
+  .find((o) => o.value === it.values[p.settings_from]).note : p.settings;
 
 function newHousing(values) { return { type: "housing", values: Object.assign(defaults(cat.housing.params), values || {}) }; }
 function newInsert(id, values) {
@@ -155,7 +159,7 @@ function cleanParams(values, def) {
       if (typeof v !== "number" || !Number.isFinite(v)) throw new Error(`${name} must be a number`);
       if (v < p.min || v > p.max) throw new Error(`${name} must be between ${p.min} and ${p.max}`);
     } else if (!p.options.some((o) => o.value === v)) throw new Error(`${name} has no option ${v}`);
-    if (v !== p.default) out[name] = v;
+    if (v !== p.default && !p.slicer) out[name] = v;   // a slicer setting gives the same STL
   });
   const q = Object.assign(defaults(def.params), out);
   (def.spans || []).forEach((s) => {
@@ -165,12 +169,13 @@ function cleanParams(values, def) {
 }
 
 // the file name comes from the item name, so the list shows what lands in the downloads folder.
-// An item with more than one part adds the part name.
+// An item with more than one printed part adds the part name, and so does a slicer modifier.
 const slug = (s) => s.toLowerCase().replaceAll("×", "x").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 // a second item with the same name gets -2, and so on
 function fileOf(it, p) {
   const base = slug(nameOf(it)), n = kit.items.slice(0, kit.items.indexOf(it)).filter((x) => slug(nameOf(x)) === base).length;
-  return base + (n ? `-${n + 1}` : "") + (partsOf(it).length > 1 ? "-" + slug(p.name) : "") + ".stl";
+  const named = p.modifier || partsOf(it).filter((q) => !q.modifier).length > 1;
+  return base + (n ? `-${n + 1}` : "") + (named ? "-" + slug(p.name) : "") + ".stl";
 }
 
 const worker = new Worker("render.js", { type: "module" });
@@ -518,6 +523,7 @@ function toTwoSided(it) {
     if (w.top_pw !== v.pocket_w) say("top_pw", v.pocket_w, w.top_pw);
     if (w.top_pgap !== v.pocket_gap) say("top_pgap", v.pocket_gap, w.top_pgap);
   }
+  w.fuzzy = v.fuzzy;
   if (v.edge_angle) cut.push(`angle ${v.edge_angle}° to 0°`);
   // each grip of a two-sided insert takes half the height
   const h = specIn(defOf(it), "slot_h");
@@ -529,8 +535,8 @@ function toTwoSided(it) {
 function toOneSided(it) {
   const v = it.values;
   return v.top_kind === "edge"
-    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, slot_w: v.top_w })
-    : newInsert("pocket", { slot_d: v.top_d, grip_r: v.top_r, pocket_n: v.top_pn, pocket_w: v.top_pw, pocket_gap: v.top_pgap, pocket_r: v.top_pr });
+    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, slot_w: v.top_w, fuzzy: v.fuzzy })
+    : newInsert("pocket", { slot_d: v.top_d, grip_r: v.top_r, pocket_n: v.top_pn, pocket_w: v.top_pw, pocket_gap: v.top_pgap, pocket_r: v.top_pr, fuzzy: v.fuzzy });
 }
 
 function setSides(n) {
@@ -704,7 +710,8 @@ async function update() {
     const h = it.type === "housing" ? it : p;
     const ins = it.type === "insert" ? it : p;
     // the insert lines up with the floor of the housing it is shown in
-    if (ins) partsOf(ins).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
+    // the fuzzy modifier is a slicer file, the preview leaves it out
+    if (ins) partsOf(ins).filter((q) => !q.modifier).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
                                                                          h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}) }));
     if (h) {
       const params = cleanParams(ownParams(h), cat.housing);
@@ -746,7 +753,7 @@ function buildDownloads() {
     partsOf(it).forEach((p) => {
       const row = document.createElement("div"); row.className = "dfile";
       row.innerHTML = `<label><input type="checkbox"${it.skip[p.part] ? "" : " checked"}>
-        <span><strong>${fileOf(it, p)}</strong><small>${p.settings} · ${p.supports}</small></span></label>
+        <span><strong>${fileOf(it, p)}</strong><small>${noteOf(it, p)} · ${p.supports}</small></span></label>
         <button type="button" title="Download only ${fileOf(it, p)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg></button>`;
       row.querySelector("input").onchange = (e) => { it.skip[p.part] = !e.target.checked; kitButton(); };
       row.querySelector("button").onclick = (e) => downloadPart(p, it, e.currentTarget);
