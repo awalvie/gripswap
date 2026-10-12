@@ -47,11 +47,13 @@ def cases():
             for v in range(roll_d["min"], roll_d["max"] + 1, roll_d["step"])]
     for ins in catalog.INSERTS:
         for part in ins["parts"]:
-            out.append((part["part"], {}))
+            if "threemf" not in part:   # a 3MF is made in the page from parts checked here
+                out.append((part["part"], {}))
     for preset in catalog.PRESETS:
         ins = next(i for i in catalog.INSERTS if i["id"] == preset["insert"])
         for part in ins["parts"]:
-            out.append((part["part"], preset["values"]))
+            if "threemf" not in part:
+                out.append((part["part"], preset["values"]))
     # the corners of the slot shape: the extremes meet here
     spec = catalog.all_params()
     ranges = [(n, (spec[n]["min"], spec[n]["max"])) for n in ("edge_angle", "slot_d", "slot_h", "grip_r")]

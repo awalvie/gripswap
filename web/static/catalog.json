@@ -143,12 +143,26 @@
     {
      "part": "fuzzy_edge",
      "name": "Fuzzy modifier",
-     "supports": "load it with the insert as one object",
+     "supports": "PrusaSlicer: load it with the insert as one object",
      "settings_from": "fuzzy",
      "unless": {
       "fuzzy": "none"
      },
      "modifier": true
+    },
+    {
+     "part": "fuzzy_edge_3mf",
+     "name": "Bambu Orca",
+     "threemf": [
+      "insert_edge",
+      "fuzzy_edge"
+     ],
+     "skin_from": "fuzzy",
+     "settings": "insert and texture in one file",
+     "supports": "Bambu Studio and Orca Slicer",
+     "unless": {
+      "fuzzy": "none"
+     }
     }
    ],
    "params": [
@@ -262,7 +276,7 @@
       }
      ],
      "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
      "simple": true,
      "slicer": true
     }
@@ -311,12 +325,26 @@
     {
      "part": "fuzzy_flip",
      "name": "Fuzzy modifier",
-     "supports": "load it with the insert as one object",
+     "supports": "PrusaSlicer: load it with the insert as one object",
      "settings_from": "fuzzy",
      "unless": {
       "fuzzy": "none"
      },
      "modifier": true
+    },
+    {
+     "part": "fuzzy_flip_3mf",
+     "name": "Bambu Orca",
+     "threemf": [
+      "insert_flip",
+      "fuzzy_flip"
+     ],
+     "skin_from": "fuzzy",
+     "settings": "insert and texture in one file",
+     "supports": "Bambu Studio and Orca Slicer",
+     "unless": {
+      "fuzzy": "none"
+     }
     }
    ],
    "params": [
@@ -610,7 +638,7 @@
       }
      ],
      "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
      "simple": true,
      "slicer": true
     }
@@ -855,12 +883,26 @@
     {
      "part": "fuzzy_pocket",
      "name": "Fuzzy modifier",
-     "supports": "load it with the insert as one object",
+     "supports": "PrusaSlicer: load it with the insert as one object",
      "settings_from": "fuzzy",
      "unless": {
       "fuzzy": "none"
      },
      "modifier": true
+    },
+    {
+     "part": "fuzzy_pocket_3mf",
+     "name": "Bambu Orca",
+     "threemf": [
+      "insert_pocket",
+      "fuzzy_pocket"
+     ],
+     "skin_from": "fuzzy",
+     "settings": "insert and texture in one file",
+     "supports": "Bambu Studio and Orca Slicer",
+     "unless": {
+      "fuzzy": "none"
+     }
     }
    ],
    "params": [
@@ -998,7 +1040,7 @@
       }
      ],
      "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
+     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
      "simple": true,
      "slicer": true
     }

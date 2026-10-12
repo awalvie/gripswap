@@ -58,14 +58,19 @@ FUZZY = choice("fuzzy", "Fuzzy texture", [
     fuzz("fine", "Fine", 0.2, 0.3),
     fuzz("medium", "Medium", 0.3, 0.5),
     fuzz("coarse", "Coarse", 0.4, 0.8),
-], "none", help="A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.", simple=True)
+], "none", help="A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.", simple=True)
 FUZZY["slicer"] = True
 
 
-def fuzzy_part(part):
-    # in the download only when a texture is picked; its note says what to set in the slicer
-    return {"part": part, "name": "Fuzzy modifier", "supports": "load it with the insert as one object",
-            "settings_from": "fuzzy", "unless": {"fuzzy": "none"}, "modifier": True}
+def fuzzy_parts(insert, modifier):
+    # in the download only when a texture is picked. PrusaSlicer gets the modifier as an STL, and its
+    # note says what to set. Bambu Studio and Orca get a 3MF of the insert and the modifier with the
+    # texture already set ("threemf": the parts in it, "skin_from": the setting with the sizes).
+    return [{"part": modifier, "name": "Fuzzy modifier", "supports": "PrusaSlicer: load it with the insert as one object",
+             "settings_from": "fuzzy", "unless": {"fuzzy": "none"}, "modifier": True},
+            {"part": modifier + "_3mf", "name": "Bambu Orca", "threemf": [insert, modifier], "skin_from": "fuzzy",
+             "settings": "insert and texture in one file", "supports": "Bambu Studio and Orca Slicer",
+             "unless": {"fuzzy": "none"}}]
 
 HOUSING = {
     "id": "housing",
@@ -120,7 +125,7 @@ FLIP = {
     # the page shows no Flip type: an edge or pocket insert set to two sides becomes this one
     "two_sided_of": ["edge", "pocket"],
     "parts": [{"part": "insert_flip", "name": "Two-sided insert", "supports": "no supports", "settings": SOLID},
-              fuzzy_part("fuzzy_flip")],
+              *fuzzy_parts("insert_flip", "fuzzy_flip")],
     "params": flip_grip("top", "Top", 20, 3) + flip_grip("bot", "Bottom", 10, 2) + [FUZZY],
     "show_if": flip_show_if("top") | flip_show_if("bot"),
     "spans": [{"names": [f"{k}_pn", f"{k}_pw", f"{k}_pgap"], "max": FLIP_SPAN} for k in ("top", "bot")],
@@ -156,7 +161,7 @@ INSERTS = [
             {"label": "Sloper", "icon": "sloper", "blurb": "round 35° curve, open hand", "values": {"edge_angle": -35, "ergo": 0, "slot_d": 25}},
         ]},
         "parts": [{"part": "insert_edge", "name": "Edge insert",
-                   "supports": "no supports", "settings": SOLID}, fuzzy_part("fuzzy_edge")],
+                   "supports": "no supports", "settings": SOLID}, *fuzzy_parts("insert_edge", "fuzzy_edge")],
         "params": EDGE_SHAPE + [
             num("slot_w", "Edge width", 40, MAX_W, 1, 90),
             num("ergo", "Ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
@@ -176,7 +181,7 @@ INSERTS = [
             {"label": "Three", "icon": "three", "blurb": "three fingers", "values": {"pocket_n": 1, "pocket_w": 58}},
         ]},
         "parts": [{"part": "insert_pocket", "name": "Pocket insert",
-                   "supports": "no supports", "settings": SOLID}, fuzzy_part("fuzzy_pocket")],
+                   "supports": "no supports", "settings": SOLID}, *fuzzy_parts("insert_pocket", "fuzzy_pocket")],
         "params": [
             num("pocket_n", "Pockets", 1, 3, 1, 1, unit=""),
             num("pocket_w", "Pocket width", 18, MAX_W, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),

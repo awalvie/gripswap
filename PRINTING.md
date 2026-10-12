@@ -50,11 +50,15 @@ openscad -D 'part="housing"' -D for_print=true -o housing.stl opengrips.scad
 
 ## Fuzzy texture
 
-If you pick a texture for an insert, the download has a second file next to it: the fuzzy modifier. It is a thin band over the grip only, the roof of the slot and its front round. Your slicer roughens the walls inside it with fuzzy skin. The rest of the insert stays smooth.
+If you pick a texture for an insert, your slicer roughens the grip with fuzzy skin: the roof of the slot and its front round. The rest of the insert stays smooth. The download has two extra files for it.
+
+In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and a modifier over the grip, with the texture already set on the modifier. Pick your printer and filament, then slice.
+
+In PrusaSlicer, use the insert STL and the `-fuzzy-modifier.stl` file:
 
 1. Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.
 2. Right-click the modifier part and change its type to modifier.
-3. Add the fuzzy skin settings to the modifier and turn fuzzy skin on. In PrusaSlicer, pick "All walls". In Orca Slicer or Bambu Studio, pick "Contour and hole". The grip prints as the wall of a hole, so a setting for the outer contour alone misses it.
+3. Add the fuzzy skin settings to the modifier and pick "All walls". The grip prints as the wall of a hole, so "Outside walls" misses it.
 4. Set the thickness and point distance for the texture you picked.
 
 | Texture | Thickness | Point distance |

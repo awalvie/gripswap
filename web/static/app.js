@@ -104,6 +104,8 @@ const defaults = (params) => Object.fromEntries(params.map((p) => [p.name, p.def
 const defOf = (it) => (it.type === "housing" ? cat.housing : insertDef(it.insertId));
 // a part with "unless" is left out while those settings have those values (the fuzzy modifier while "None")
 const partsOf = (it) => defOf(it).parts.filter((p) => !Object.entries(p.unless || {}).some(([n, v]) => it.values[n] === v));
+// a part that prints from its own STL, not a slicer modifier or a 3MF made of other parts
+const printed = (q) => !q.modifier && !q.threemf;
 // a part's note: its own, or the picked option's note (the fuzzy modifier says what to set in the slicer)
 const noteOf = (it, p) => p.settings_from ? defOf(it).params.find((q) => q.name === p.settings_from).options
   .find((o) => o.value === it.values[p.settings_from]).note : p.settings;
@@ -170,13 +172,13 @@ function cleanParams(values, def) {
 }
 
 // the file name comes from the item name, so the list shows what lands in the downloads folder.
-// An item with more than one printed part adds the part name, and so does a slicer modifier.
+// An item with more than one printed part adds the part name, and so do a slicer modifier and a 3MF.
 const slug = (s) => s.toLowerCase().replaceAll("×", "x").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 // a second item with the same name gets -2, and so on
 function fileOf(it, p) {
   const base = slug(nameOf(it)), n = kit.items.slice(0, kit.items.indexOf(it)).filter((x) => slug(nameOf(x)) === base).length;
-  const named = p.modifier || partsOf(it).filter((q) => !q.modifier).length > 1;
-  return base + (n ? `-${n + 1}` : "") + (named ? "-" + slug(p.name) : "") + ".stl";
+  const named = !printed(p) || partsOf(it).filter(printed).length > 1;
+  return base + (n ? `-${n + 1}` : "") + (named ? "-" + slug(p.name) : "") + (p.threemf ? ".3mf" : ".stl");
 }
 
 const worker = new Worker("render.js", { type: "module" });
@@ -812,7 +814,7 @@ async function update() {
       // the fuzzy modifier is not drawn, it marks where the insert gets bumps
       const mod = partsOf(ins).find((q) => q.modifier);
       const skin = mod && defOf(ins).params.find((q) => q.name === mod.settings_from).options.find((o) => o.value === ins.values[mod.settings_from]).skin;
-      partsOf(ins).filter((q) => !q.modifier).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
+      partsOf(ins).filter(printed).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
                                                                            h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}),
                                                                          fuzz: skin && { part: mod.part, skin } }));
     }
@@ -881,13 +883,25 @@ function kitButton() {
   $("b-kit").disabled = !n;
 }
 
+// the bytes of one download: the STL as it prints, or a 3MF of the insert and its fuzzy modifier
+// with the picked texture set on the modifier ("all" is Contour and hole: the grip prints as a hole)
+async function fileData(p, it) {
+  const params = cleanParams(ownParams(it), defOf(it));
+  if (!p.threemf) return new Uint8Array(await stl(p.part, params, true));
+  const [ins, mod] = await Promise.all(p.threemf.map((q) => stl(q, params, true)));
+  const [t, pd] = defOf(it).params.find((q) => q.name === p.skin_from).options.find((o) => o.value === it.values[p.skin_from]).skin;
+  return make3mf(nameOf(it), [
+    { name: nameOf(it), stl: ins, type: "normal_part" },
+    { name: "Fuzzy texture", stl: mod, type: "modifier_part",
+      settings: { fuzzy_skin: "all", fuzzy_skin_thickness: t, fuzzy_skin_point_distance: pd } }]);
+}
+
 // the button spins and ignores more taps until the file is saved
 async function downloadPart(p, it, b) {
   b.disabled = true; b.classList.add("busy");
   const no = toast(`Preparing ${fileOf(it, p)}…`, true);
   try {
-    const params = cleanParams(ownParams(it), defOf(it));
-    saveBlob(new Blob([await stl(p.part, params, true)], { type: "model/stl" }), fileOf(it, p));
+    saveBlob(new Blob([await fileData(p, it)], { type: p.threemf ? "model/3mf" : "model/stl" }), fileOf(it, p));
     hideToast(no);
   } catch (e) {
     toast("The file failed: " + e.message);
@@ -921,7 +935,7 @@ async function downloadKit() {
   try {
     const files = picked().map(({ it, n, p }) => {
       const name = String(n + 1).padStart(2, "0") + "-" + fileOf(it, p);
-      return stl(p.part, cleanParams(ownParams(it), defOf(it)), true).then((data) => ({ name, data: new Uint8Array(data) }));
+      return fileData(p, it).then((data) => ({ name, data }));
     });
     saveBlob(await makeZip(await Promise.all(files)), "opengrips-kit.zip");
     hideToast(no);
