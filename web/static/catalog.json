@@ -263,7 +263,7 @@
      ],
      "default": "none",
      "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
-     "simple": false,
+     "simple": true,
      "slicer": true
     }
    ],
@@ -587,7 +587,7 @@
      ],
      "default": "none",
      "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
-     "simple": false,
+     "simple": true,
      "slicer": true
     }
    ],
@@ -953,7 +953,7 @@
      ],
      "default": "none",
      "help": "A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.",
-     "simple": false,
+     "simple": true,
      "slicer": true
     }
    ],

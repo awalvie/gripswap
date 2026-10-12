@@ -58,7 +58,7 @@ FUZZY = choice("fuzzy", "Fuzzy texture", [
     fuzz("fine", "Fine", 0.2, 0.3),
     fuzz("medium", "Medium", 0.3, 0.5),
     fuzz("coarse", "Coarse", 0.4, 0.8),
-], "none", help="A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.")
+], "none", help="A rough grip that your slicer makes. Adds a modifier file to the download; the printing guide says how to use it.", simple=True)
 FUZZY["slicer"] = True
 
 
