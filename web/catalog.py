@@ -43,7 +43,6 @@ POCKET_SHAPE = [num("slot_d", "Pocket depth", 6, 25, 1, 20, help="From the lip t
 # 2 * (pk_w/2 - clear - lip_in - skin) = 90
 MAX_W = 90
 
-INSERT_SUPPORTS = "supports under the slot floor"
 SOLID = "3 walls · 15% gyroid"
 
 HOUSING = {
@@ -130,7 +129,7 @@ INSERTS = [
             {"label": "Sloper", "icon": "sloper", "blurb": "round 35° curve, open hand", "values": {"edge_angle": -35, "ergo": 0, "slot_d": 25}},
         ]},
         "parts": [{"part": "insert_edge", "name": "Edge insert",
-                   "supports": INSERT_SUPPORTS, "settings": SOLID}],
+                   "supports": "no supports", "settings": SOLID}],
         "params": EDGE_SHAPE + [
             num("slot_w", "Edge width", 40, MAX_W, 1, 90),
             num("ergo", "Ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
@@ -148,7 +147,7 @@ INSERTS = [
             {"label": "Three", "icon": "three", "blurb": "three fingers", "values": {"pocket_n": 1, "pocket_w": 58}},
         ]},
         "parts": [{"part": "insert_pocket", "name": "Pocket insert",
-                   "supports": INSERT_SUPPORTS, "settings": SOLID}],
+                   "supports": "no supports", "settings": SOLID}],
         "params": [
             num("pocket_n", "Pockets", 1, 3, 1, 1, unit=""),
             num("pocket_w", "Pocket width", 18, MAX_W, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),

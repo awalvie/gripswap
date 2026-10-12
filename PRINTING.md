@@ -25,8 +25,7 @@ Each part has one right way up. It keeps the load running along the layers and t
 | Part | On the bed | Supports |
 | --- | --- | --- |
 | Housing | On its front, anchor plate flat on the bed | None |
-| Edge or pocket insert | Upside down, top face down | Only under the slot floor |
-| Two-sided insert | On its back, front up | None |
+| Edge, pocket or two-sided insert | On its back, front up | None |
 | Roller frame | Upright, floor down | None |
 | Roller | Standing on one end | None |
 | Printed axle | Lying down | None |
@@ -82,6 +81,5 @@ If it sticks, follow step 3 below, then print the fit test again.
 
 ## Before your first session
 
-- Pull out all the supports, and make sure none are left in the slot or the pocket.
 - Look for split layers at the anchor, at the lips, at the stop and at the grip. Don't use a cracked part.
 - Hang the block from the carabiner and load it slowly by hand before you pull hard.

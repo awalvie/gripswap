@@ -32,9 +32,9 @@ The anchor holds the carabiner right under the grip, so the edge should stay lev
 
 ## Printing
 
-Print everything in PETG. The housing stands on its front, the two-sided inserts go on their backs, the roller frame stands upright, and the edge and pocket inserts go upside down. The files you download already sit that way. A housing and one edge insert take about 180 g of filament.
+Print everything in PETG. The housing stands on its front, the inserts go on their backs, and the roller frame stands upright. The files you download already sit that way. A housing and one edge insert take about 180 g of filament.
 
-The [printing guide](PRINTING.md) has the settings, where the supports go, and how to check the fit.
+The [printing guide](PRINTING.md) has the settings, which way up each part goes, and how to check the fit.
 
 ## You'll also need
 

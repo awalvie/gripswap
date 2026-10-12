@@ -21,9 +21,8 @@ for_print = false;
 module on_bed() {
     if (!for_print) children();
     else if (part == "housing") rotate([90, 0, 0]) children();   // front face down, the anchor plate flat on the bed
-    else if (part == "insert_edge" || part == "insert_pocket")
-        translate([0, 0, ins_top]) rotate([180, 0, 0]) children();      // top face down
-    else if (part == "insert_flip") translate([0, 0, pk_d - clear]) rotate([-90, 0, 0]) children();   // on its back, front up
+    else if (part == "insert_edge" || part == "insert_pocket" || part == "insert_flip")
+        translate([0, 0, pk_d - clear]) rotate([-90, 0, 0]) children();   // on its back, front up: the grip stands upright
     else if (part == "insert_roller") translate([0, 0, -ins_bot]) children();  // floor down
     else if (part == "roller" || part == "roller_straight")
         translate([0, 0, roll_len/2]) rotate([0, 90, 0]) translate([0, -grip_y, -roll_z]) children();   // on one end

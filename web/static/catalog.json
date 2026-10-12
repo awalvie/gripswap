@@ -137,7 +137,7 @@
     {
      "part": "insert_edge",
      "name": "Edge insert",
-     "supports": "supports under the slot floor",
+     "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
     }
    ],
@@ -681,7 +681,7 @@
     {
      "part": "insert_pocket",
      "name": "Pocket insert",
-     "supports": "supports under the slot floor",
+     "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
     }
    ],
