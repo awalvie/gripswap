@@ -7,7 +7,7 @@
 // top grip: "edge" or "pocket"; depth, lip roundover; edge: ergo curve, width; pockets: count, width, wall, corner radius
 top_kind = "edge"; top_d = 20; top_r = 3; top_ergo = 0; top_w = 90; top_pn = 1; top_pw = 58; top_pgap = 10; top_pr = 8;
 bot_kind = "edge"; bot_d = 10; bot_r = 2; bot_ergo = 0; bot_w = 90; bot_pn = 1; bot_pw = 58; bot_pgap = 10; bot_pr = 8;
-flip_web = 6.4;                              // wall between the two slot floors
+flip_web = 3.2;                              // wall between the two slot floors; it carries no load
 flip_zc = floor_t + pk_h/2;                  // middle of the insert height
 lbl_t = 0.6;                                 // label depth in the back wall of the slot
 lbl_room = 11;                               // room a two-digit label takes beside the pockets

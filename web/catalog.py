@@ -62,8 +62,8 @@ HOUSING = {
 }
 
 # Flip insert: two grips, one on top and one turned over under it. Each is a flat or ergo edge,
-# or a row of pockets. Each slot has 16.5 mm of room down to the web, so no angle and no slot
-# height; the lip radius stops at 3.5 so an ergo lip keeps 16 mm. No roller: it does not fit in
+# or a row of pockets. Each slot has 22 mm of room down to the web, so no angle and no slot
+# height; the lip radius stops at 3.5. No roller: it does not fit in
 # half the insert.
 FLIP_SPAN = 82   # widest pocket row: its mouth round (up to 3.5) keeps one skin to the lip notches
 

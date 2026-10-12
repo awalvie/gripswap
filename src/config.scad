@@ -3,7 +3,7 @@
 // left and right, stop them: the fingers pull the insert forward, onto the lips. The lips cover the
 // lower half of the pocket only, so the roller axle passes over them.
 
-pk_w = 101.4; pk_h = 52; pk_d = 35.5; r_in = 4;  // pocket envelope: a 90 mm slot with walls, the lips and the gap; room for a 28 mm roller;
+pk_w = 101.4; pk_h = 60; pk_d = 35.5; r_in = 4;  // pocket envelope: a 90 mm slot with walls, the lips and the gap; 22 mm finger room on each grip of a two-sided insert;
                                                  // a 25 mm edge with a 5 mm ergo curve (32.5 mm back in the middle), a wall behind it
 clear = 0.3;                                 // gap between insert and pocket, per side
 lip_d = 4; lip_in = 3;                       // front lips: depth front to back, reach over the insert side
