@@ -678,12 +678,106 @@ function changed(now) {
   timer = setTimeout(update, now ? 0 : 500);
 }
 
+// ---------- fuzzy texture in the preview
+// The slicer makes the texture, so the STL is smooth. The preview marks the faces inside the
+// modifier and draws bumps of the picked size on them in the shader: an approximation, not the
+// slicer's real result.
+
+// true if p is inside the closed mesh tris (flat xyz triangles): count the hits of one ray
+function inside(px, py, pz, tris) {
+  const dx = 1, dy = 0.0137, dz = 0.0071;   // the ray, skewed so it does not run along a mesh edge
+  let hits = 0;
+  for (let i = 0; i < tris.length; i += 9) {
+    const ax = tris[i], ay = tris[i + 1], az = tris[i + 2];
+    const e1x = tris[i + 3] - ax, e1y = tris[i + 4] - ay, e1z = tris[i + 5] - az;
+    const e2x = tris[i + 6] - ax, e2y = tris[i + 7] - ay, e2z = tris[i + 8] - az;
+    const hx = dy * e2z - dz * e2y, hy = dz * e2x - dx * e2z, hz = dx * e2y - dy * e2x;
+    const a = e1x * hx + e1y * hy + e1z * hz;
+    if (Math.abs(a) < 1e-12) continue;
+    const sx = px - ax, sy = py - ay, sz = pz - az;
+    const u = (sx * hx + sy * hy + sz * hz) / a;
+    if (u < 0 || u > 1) continue;
+    const qx = sy * e1z - sz * e1y, qy = sz * e1x - sx * e1z, qz = sx * e1y - sy * e1x;
+    const v = (dx * qx + dy * qy + dz * qz) / a;
+    if (v < 0 || u + v > 1) continue;
+    if ((e2x * qx + e2y * qy + e2z * qz) / a > 0) hits++;
+  }
+  return hits % 2 === 1;
+}
+
+// per vertex of geo: 1 on the faces that lie on the modifier band, else 0
+function fuzzMask(geo, band) {
+  const pos = geo.attributes.position.array, tris = band.attributes.position.array;
+  band.computeBoundingBox();
+  const bb = band.boundingBox;
+  const mask = new Float32Array(pos.length / 3);
+  const a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), n = new THREE.Vector3(), e = new THREE.Vector3();
+  for (let i = 0; i < pos.length; i += 9) {
+    a.fromArray(pos, i); b.fromArray(pos, i + 3); c.fromArray(pos, i + 6);
+    n.subVectors(c, b).cross(e.subVectors(b, a)).normalize();
+    // a point 0.3 mm into the material, under the middle of the face
+    const p = a.add(b).add(c).divideScalar(3).addScaledVector(n, 0.3);
+    if (bb.containsPoint(p) && inside(p.x, p.y, p.z, tris)) mask.fill(1, i / 3, i / 3 + 3);
+  }
+  return mask;
+}
+const masks = new WeakMap();   // key: the insert's STL bytes; the band comes from the same settings
+
+// Bumps on the marked faces: noise in the part's own millimetres, pd across and one 0.2 mm print
+// layer along y (inserts print on their backs), t high. Zoomed in, that is the real size. Zoomed out,
+// the bumps grow in steps of two, so they stay a few pixels wide and the texture still shows. The
+// marked faces also glow a soft amber, so the area shows in the shade of the slot.
+function fuzzMaterial(mat, t, pd) {
+  mat.extensions = { derivatives: true };   // dFdx and fwidth on WebGL1
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.fuzzT = { value: t }; sh.uniforms.fuzzPd = { value: pd };
+    sh.vertexShader = sh.vertexShader
+      .replace("#include <common>", "#include <common>\nattribute float fuzz;\nvarying float vFuzz;\nvarying vec3 vObj;")
+      .replace("#include <begin_vertex>", "#include <begin_vertex>\nvFuzz = fuzz;\nvObj = position;");
+    sh.fragmentShader = sh.fragmentShader
+      .replace("#include <common>", `#include <common>
+varying float vFuzz;
+varying vec3 vObj;
+uniform float fuzzT, fuzzPd;
+float fzHash(vec3 c) { return fract(sin(dot(c, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
+float fzNoise(vec3 p) {
+  vec3 i = floor(p), f = fract(p);
+  f = f * f * (3.0 - 2.0 * f);
+  return mix(mix(mix(fzHash(i), fzHash(i + vec3(1, 0, 0)), f.x), mix(fzHash(i + vec3(0, 1, 0)), fzHash(i + vec3(1, 1, 0)), f.x), f.y),
+             mix(mix(fzHash(i + vec3(0, 0, 1)), fzHash(i + vec3(1, 0, 1)), f.x), mix(fzHash(i + vec3(0, 1, 1)), fzHash(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+}
+vec3 fzPerturb(vec3 pos, vec3 n, float h) {
+  vec3 sx = dFdx(pos), sy = dFdy(pos);
+  vec3 r1 = cross(sy, n), r2 = cross(n, sx);
+  float det = dot(sx, r1);
+  vec3 g = sign(det) * (dFdx(h) * r1 + dFdy(h) * r2);
+  return normalize(abs(det) * n - g);
+}`)
+      .replace("#include <normal_fragment_maps>", `#include <normal_fragment_maps>
+if (vFuzz > 0.5) {
+  // the step: 0 while one bump is 3 pixels or more, then 1 for every halving, blended between steps
+  float lod = max(log2(3.0 * length(fwidth(vObj)) / fuzzPd), 0.0), l0 = floor(lod), s0 = exp2(l0);
+  vec3 cell = vec3(fuzzPd, 0.2, fuzzPd);
+  float h = fuzzT * mix(s0 * fzNoise(vObj / (cell * s0)), 2.0 * s0 * fzNoise(vObj / (cell * 2.0 * s0) + 17.0), lod - l0);
+  normal = fzPerturb(-vViewPosition, normal, h);
+}`)
+      .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
+if (vFuzz > 0.5) totalEmissiveRadiance += vec3(0.16, 0.09, 0.0);`);
+  };
+}
+
 async function loadMesh(job, my) {
-  const geo = loader.parse(await stl(job.part, job.params));
+  const [bytes, bandBytes] = await Promise.all([stl(job.part, job.params), job.fuzz && stl(job.fuzz.part, job.params)]);
   if (my !== seq) return;
+  const geo = loader.parse(bytes);
   geo.computeVertexNormals();
   const mat = new THREE.MeshStandardMaterial({ color: COLORS[job.part] || 0x888888, roughness: 0.75,
                                                metalness: job.part === "axle" || job.part === "carabiner" ? 0.4 : 0.05 });
+  if (bandBytes) {
+    if (!masks.has(bytes)) masks.set(bytes, fuzzMask(geo, loader.parse(bandBytes)));
+    geo.setAttribute("fuzz", new THREE.BufferAttribute(masks.get(bytes), 1));
+    fuzzMaterial(mat, ...job.fuzz.skin);
+  }
   if (job.ghost) { mat.transparent = true; mat.opacity = 0.3; mat.depthWrite = false; }
   if (meshes[job.part]) drop(job.part);
   const m = new THREE.Group();
@@ -710,9 +804,14 @@ async function update() {
     const h = it.type === "housing" ? it : p;
     const ins = it.type === "insert" ? it : p;
     // the insert lines up with the floor of the housing it is shown in
-    // the fuzzy modifier is a slicer file, the preview leaves it out
-    if (ins) partsOf(ins).filter((q) => !q.modifier).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
-                                                                         h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}) }));
+    if (ins) {
+      // the fuzzy modifier is not drawn, it marks where the insert gets bumps
+      const mod = partsOf(ins).find((q) => q.modifier);
+      const skin = mod && defOf(ins).params.find((q) => q.name === mod.settings_from).options.find((o) => o.value === ins.values[mod.settings_from]).skin;
+      partsOf(ins).filter((q) => !q.modifier).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
+                                                                           h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}),
+                                                                         fuzz: skin && { part: mod.part, skin } }));
+    }
     if (h) {
       const params = cleanParams(ownParams(h), cat.housing);
       jobs.push({ part: "housing", params, ghost: it.type === "insert" });   // see-through around an insert
