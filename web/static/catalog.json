@@ -6,7 +6,7 @@
    {
     "part": "housing",
     "name": "Housing",
-    "supports": "supports under the anchor",
+    "supports": "supports under the anchor and the lips",
     "settings": "3 walls · 15% gyroid"
    }
   ],
@@ -53,26 +53,6 @@
     "default": 16,
     "unit": "mm",
     "help": "Carabiner hole diameter in the keel.",
-    "simple": false
-   },
-   {
-    "name": "style",
-    "label": "Look",
-    "type": "choice",
-    "options": [
-     {
-      "value": "truss",
-      "icon": "truss",
-      "label": "Truss windows (lighter)"
-     },
-     {
-      "value": "solid",
-      "icon": "solid",
-      "label": "Solid walls"
-     }
-    ],
-    "default": "truss",
-    "help": "Triangle windows in the back wall.",
     "simple": false
    },
    {
@@ -138,7 +118,6 @@
     "title": "Walls",
     "sub": "the box the inserts slide into",
     "params": [
-     "style",
      "top_t",
      "floor_t",
      "corner"
@@ -260,9 +239,9 @@
      "label": "Edge width",
      "type": "number",
      "min": 40,
-     "max": 93,
+     "max": 90,
      "step": 1,
-     "default": 92,
+     "default": 90,
      "unit": "mm",
      "help": "",
      "simple": false
@@ -373,9 +352,9 @@
      "label": "Top edge width",
      "type": "number",
      "min": 40,
-     "max": 93,
+     "max": 90,
      "step": 1,
-     "default": 92,
+     "default": 90,
      "unit": "mm",
      "help": "",
      "simple": false
@@ -397,7 +376,7 @@
      "label": "Top pocket width",
      "type": "number",
      "min": 18,
-     "max": 86,
+     "max": 82,
      "step": 1,
      "default": 58,
      "unit": "mm",
@@ -487,9 +466,9 @@
      "label": "Bottom edge width",
      "type": "number",
      "min": 40,
-     "max": 93,
+     "max": 90,
      "step": 1,
-     "default": 92,
+     "default": 90,
      "unit": "mm",
      "help": "",
      "simple": false
@@ -511,7 +490,7 @@
      "label": "Bottom pocket width",
      "type": "number",
      "min": 18,
-     "max": 86,
+     "max": 82,
      "step": 1,
      "default": 58,
      "unit": "mm",
@@ -600,7 +579,7 @@
       "top_pw",
       "top_pgap"
      ],
-     "max": 86
+     "max": 82
     },
     {
      "names": [
@@ -608,7 +587,7 @@
       "bot_pw",
       "bot_pgap"
      ],
-     "max": 86
+     "max": 82
     }
    ],
    "cards": [
@@ -768,7 +747,7 @@
      "label": "Pocket width",
      "type": "number",
      "min": 18,
-     "max": 93,
+     "max": 90,
      "step": 1,
      "default": 58,
      "unit": "mm",
@@ -855,7 +834,7 @@
       "pocket_w",
       "pocket_gap"
      ],
-     "max": 93
+     "max": 90
     }
    ],
    "cards": [
@@ -904,7 +883,7 @@
     {
      "part": "insert_roller",
      "name": "Roller frame",
-     "supports": "supports under the cheeks",
+     "supports": "no supports",
      "settings": "3 walls · 15% gyroid"
     },
     {
@@ -974,14 +953,6 @@
   {
    "part": "fit_frame",
    "name": "Frame"
-  },
-  {
-   "part": "fit_channel",
-   "name": "Latch channel"
-  },
-  {
-   "part": "fit_cheek",
-   "name": "Latch cheek"
   }
  ]
 }

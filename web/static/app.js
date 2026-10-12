@@ -115,7 +115,7 @@ function nameOf(it) {
   const v = it.values;
   if (it.type === "housing") {
     const a = anchors().find((o) => o.value === v.anchor);
-    return a.label.split(" (")[0] + " housing" + (v.style === "solid" ? ", solid" : "");
+    return a.label.split(" (")[0] + " housing";
   }
   const ang = v.edge_angle > 0 ? ` incut ${v.edge_angle}°` : v.edge_angle < 0 ? ` sloper ${-v.edge_angle}°` : "";
   if (it.insertId === "edge") return `${v.slot_d} mm${v.ergo ? " ergo" : ""} edge${ang}`;
@@ -261,8 +261,6 @@ const ICON = {
   sloper: '<path d="M3 7v11M3 9q12 0 17 9"/>',
   pyramid: '<path d="M4 5h16M4 5l8 14 8-14M9 5l3 14 3-14"/>',
   keel: '<path d="M5 5h14l-3 14H8z"/><circle cx="12" cy="11" r="2.5"/>',
-  truss: '<rect x="3" y="5" width="18" height="14" rx="1.5"/><path d="M3 19l6-14 6 14 6-14"/>',
-  solid: '<rect x="3" y="5" width="18" height="14" rx="1.5"/>',
   mono: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="2"/>',
   two: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="7" y="9" width="10" height="6" rx="2"/>',
   three: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="5" y="9" width="14" height="6" rx="2"/>',
@@ -747,7 +745,7 @@ function buildDownloads() {
     <p class="hint">Ticked files go in the zip, the arrow saves one file. PETG, ready to slice.
     <a href="https://github.com/awalvie/opengrips/blob/main/PRINTING.md" target="_blank" rel="noopener">Printing guide</a></p>` : "";
   // the fit test comes before any kit, so it shows on an empty kit too
-  dl.insertAdjacentHTML("beforeend", `<p class="hint">New printer? Print the <button class="inline" id="fit-dl">fit test</button> first, about 41 g.</p>`);
+  dl.insertAdjacentHTML("beforeend", `<p class="hint">New printer? Print the <button class="inline" id="fit-dl">fit test</button> first.</p>`);
   $("fit-dl").onclick = downloadFitTest;
   kit.items.forEach((it) => {
     const box = document.createElement("div"); box.className = "ditem";
@@ -803,9 +801,9 @@ function buildNeed() {
   if (roller) need.push("For the roller: a 12 mm steel rod or dowel works as the axle, or print it.");
   const steps = [];
   if (roller) steps.push("Roller: drop the roller between the cheeks, push the axle through both cheeks and the roller.");
-  if (inserts.length) steps.push("Slide the insert into the housing until both side buttons click.",
-                                 "To swap: pinch both buttons, pull the insert out by the grip, push the next one in.");
-  if (flip) steps.push("Two-sided insert: to use the other grip, take it out, turn it over and push it back in.");
+  if (inserts.length) steps.push("Slide the insert into the housing from the back until it clicks over the stop in the floor.",
+                                 "To swap: press the stop down at the back, push the insert out the back with your fingers in the slot, slide the next one in.");
+  if (flip) steps.push("Two-sided insert: to use the other grip, take it out, turn it over and slide it back in.");
   if (housings.length) steps.push("Clip the carabiner to the anchor under the housing. Check it before every session.");
   const list = (xs) => `<ul>${xs.map((x) => `<li>${x}</li>`).join("")}</ul>`;
   $("need").innerHTML = `<details><summary>Hardware and assembly</summary><strong>You also need</strong>${list(need)}`

@@ -7,7 +7,6 @@ $fn = 48;
 
 include <src/lib.scad>
 include <src/config.scad>
-include <src/latch.scad>
 include <src/housing.scad>
 include <src/inserts/edge.scad>
 include <src/inserts/pocket.scad>
@@ -30,8 +29,6 @@ module on_bed() {
         translate([0, 0, roll_len/2]) rotate([0, 90, 0]) translate([0, -grip_y, -roll_z]) children();   // on one end
     else if (part == "axle") translate([0, -grip_y, axle_d/2 - roll_z]) children();     // lying down
     else if (part == "fit_ring" || part == "fit_frame") rotate([90, 0, 0]) children();   // front face down: the ring's flared first layer stays in its bevel, the frame's leads into the ring
-    else if (part == "fit_channel") translate([0, 0, D]) rotate([-90, 0, 0]) children();          // on its back, like the housing
-    else if (part == "fit_cheek") translate([0, 0, pk_d - clear]) rotate([-90, 0, 0]) children();  // on its back: the arm grows from its root
     else children();
 }
 
@@ -46,8 +43,6 @@ on_bed() {
     if (part == "axle") axle();
     if (part == "fit_ring") fit_ring();
     if (part == "fit_frame") fit_frame();
-    if (part == "fit_channel") fit_channel();
-    if (part == "fit_cheek") fit_cheek();
 }
 if (part == "finger") finger();
 if (part == "carabiner") carabiner(seat_z());

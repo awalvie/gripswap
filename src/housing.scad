@@ -2,12 +2,9 @@
 
 anchor = "pyramid";        // "pyramid" or "keel". Every anchor holds the carabiner on the anchor plane.
 
-style = "truss";           // "truss": triangle windows in the back wall; "solid"
-win_t = 5;                 // web between the windows
-
 r_out = 2.5;               // round on every body edge
 corner = 6;                // corner radius in the front view
-bevel = 1.5;               // bevel around the pocket opening, also a lead-in for the insert
+bevel = 1.5;               // bevel around both pocket openings; at the back, a lead-in for the insert
 
 // Pyramid anchor (Lanta style): four flat bars from the bottom corners meet in one
 // point under the anchor plane. Bars rise at 25 degrees.
@@ -79,23 +76,56 @@ module housing_shell() {
     }
 }
 
-module pocket_cut() {
-    xz(-1, pk_d + 1) translate([0, floor_t + pk_h/2]) rrect(pk_w, pk_h, r_in);
-    hull() {
-        xz(-1, 1 + eps) translate([0, floor_t + pk_h/2]) rrect(pk_w + 2*bevel, pk_h + 2*bevel, r_in + bevel);
-        xz(bevel, eps) translate([0, floor_t + pk_h/2]) rrect(pk_w, pk_h, r_in);
-    }
+// the pocket profile from y0 back to y0 + t, grown by o on every side
+module pocket_prof(y0, t, o = 0) xz(y0, t) translate([0, floor_t + pk_h/2]) rrect(pk_w + 2*o, pk_h + 2*o, r_in + o);
+
+// a bevel on the pocket opening at y0, that widens toward dir (-1: the front, 1: the back)
+module bevel_cut(y0, dir) hull() {
+    pocket_prof(dir > 0 ? y0 - eps : y0 - 1, 1 + eps, bevel);
+    pocket_prof(y0 - dir * bevel - (dir > 0 ? 0 : eps), eps);
 }
 
-// triangle windows through the back wall, and the name on top
-module housing_style_cut() {
-    zs0 = floor_t + 3; zs1 = H - top_t - 3;
-    L = zs1 - zs0;
-    bw = pk_w - 8;
-    xz(pk_d - 1, back_t + 2) translate([-bw/2, zs0]) truss_windows(bw, L, win_t);
+// the pocket, through from the front to the back, around the lips
+module pocket_cut() difference() {
+    union() {
+        pocket_prof(-1, D + 2);
+        bevel_cut(0, -1);
+        bevel_cut(D, 1);
+    }
+    lips();
+}
+
+// Front lips: one on each side wall, from above the round pocket corner to lip_top, lip_in over
+// the insert side. Their inner edges, which the fingers can touch, are rounded.
+module lips() for (m = [0, 1]) mirror([m, 0, 0])
+    translate([0, 0, floor_t + r_in]) linear_extrude(lip_top - floor_t - r_in)
+        translate([pk_w/2 - lip_in, -1]) offset(r = 1, $fn = 16) offset(delta = -1)
+            square([lip_in + side_t/2, lip_d + 1]);
+
+// Back stop: a tongue across the back of the floor, fixed at its left end, with a bump on its free
+// right end. The insert rides over the ramp at the back of the bump, pressing the tongue down, and the
+// square front of the bump stops it behind the insert. To take the insert out, press the free end down
+// and push the insert out the back. The tongue runs across, so it bends along the print layers.
+stop_len = 25; stop_wy = 5; stop_t = 2;      // tongue: length (across), width (front to back), thickness
+stop_drop = 1.5;                             // room under the tongue to bend down
+stop_gap = 1;                                // slot around the tongue
+stop_h = 1;                                  // bump height above the floor
+stop_bump = 6;                               // bump length, at the free end
+
+module stop_cut() translate([-stop_len/2, pk_d - 2 - stop_gap, floor_t - stop_t - stop_drop])
+    cube([stop_len + stop_gap, D - pk_d + 3 + stop_gap, stop_t + stop_drop + 1]);
+
+module stop_tongue() {
+    translate([-stop_len/2 - eps, pk_d - 2, floor_t - stop_t]) cube([stop_len + eps, D - pk_d + 2, stop_t]);
+    // the bump: a square face at the back of the insert, a 45 degree ramp toward the back
+    translate([stop_len/2 - stop_bump, 0, floor_t - eps]) rotate([90, 0, 90]) linear_extrude(stop_bump)
+        polygon([[pk_d, 0], [pk_d, stop_h], [pk_d + 0.5, stop_h], [pk_d + 0.5 + stop_h + eps, 0]]);
+}
+
+// the name on top
+module name_cut()
     translate([0, D/2, H - 0.6]) linear_extrude(1)
         text("opengrips", size = 8, spacing = 1.15, font = "Liberation Sans:style=Bold", halign = "center", valign = "center");
-}
 
 module housing() {
     difference() {
@@ -104,7 +134,8 @@ module housing() {
             anchor_any();
         }
         pocket_cut();
-        latch_windows();
-        if (style == "truss") housing_style_cut();
+        stop_cut();
+        name_cut();
     }
+    stop_tongue();
 }

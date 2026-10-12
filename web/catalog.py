@@ -39,9 +39,9 @@ EDGE_SHAPE = [
 # Pockets share the edge shape, but their depth is a pocket depth.
 POCKET_SHAPE = [num("slot_d", "Pocket depth", 6, 35, 1, 20, help="From the lip to the back of the pocket.", simple=True)] + EDGE_SHAPE[1:]
 
-# Widest slot or pocket row: one skin (2.4 mm) of wall stays between its ends and the latch arms.
-# 2 * (pk_w/2 - clear - lt_t - lt_gap - skin) = 93.8
-MAX_W = 93
+# Widest slot or pocket row: one skin (2.4 mm) of wall stays between its ends and the lip notches.
+# 2 * (pk_w/2 - clear - lip_in - skin) = 90
+MAX_W = 90
 
 INSERT_SUPPORTS = "supports under the slot floor"
 SOLID = "3 walls · 15% gyroid"
@@ -50,7 +50,7 @@ HOUSING = {
     "id": "housing",
     "name": "Housing",
     "parts": [{"part": "housing", "name": "Housing",
-               "supports": "supports under the anchor", "settings": SOLID}],
+               "supports": "supports under the anchor and the lips", "settings": SOLID}],
     "params": [
         choice("anchor", "Anchor", [
             {"value": "pyramid", "icon": "pyramid", "label": "Pyramid (four bars to a point)"},
@@ -58,24 +58,20 @@ HOUSING = {
         ], "pyramid", help="Every anchor holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
         num("bar_angle", "Bar angle", 20, 40, 1, 25, unit="°", help="How steep the pyramid bars rise."),
         num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel."),
-        choice("style", "Look", [
-            {"value": "truss", "icon": "truss", "label": "Truss windows (lighter)"},
-            {"value": "solid", "icon": "solid", "label": "Solid walls"},
-        ], "truss", help="Triangle windows in the back wall."),
         num("top_t", "Top wall", 6, 12, 0.5, 8, help="The insert presses up on it. Thicker is stiffer and heavier."),
         num("floor_t", "Floor", 8, 12, 0.5, 8, help="Ties the anchor to the walls."),
         num("corner", "Corner radius", 3, 12, 0.5, 6, help="Rounding of the housing corners, seen from the front."),
     ],
     "show_if": {"bar_angle": ["anchor", "pyramid"], "keel_hole": ["anchor", "keel"]},
     "cards": [card("Hanging", ["anchor", "bar_angle", "keel_hole"], "how the housing holds the carabiner"),
-              card("Walls", ["style", "top_t", "floor_t", "corner"], "the box the inserts slide into")],
+              card("Walls", ["top_t", "floor_t", "corner"], "the box the inserts slide into")],
 }
 
 # Flip insert: two grips, one on top and one turned over under it. Each is a flat or ergo edge,
 # or a row of pockets. Each slot has 16.5 mm of room down to the web, so no angle and no slot
 # height; the lip radius stops at 3.5 so an ergo lip keeps 16 mm. No roller: it does not fit in
 # half the insert.
-FLIP_SPAN = 86   # widest pocket row: its mouth round stays clear of the latch relief on the bottom half
+FLIP_SPAN = 82   # widest pocket row: its mouth round (up to 3.5) keeps one skin to the lip notches
 
 
 def flip_grip(key, which, depth, radius):
@@ -87,7 +83,7 @@ def flip_grip(key, which, depth, radius):
         num(f"{key}_d", f"{which} depth", 6, 30, 1, depth, help="From the lip to the back of the slot or pocket.", simple=True),
         num(f"{key}_r", f"{which} lip radius", 0.5, 3.5, 0.5, radius, help="Roundover on the lip. Small is sharp, big is friendly."),
         num(f"{key}_ergo", f"{which} ergo curve", 0, 8, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers."),
-        num(f"{key}_w", f"{which} edge width", 40, MAX_W, 1, 92),
+        num(f"{key}_w", f"{which} edge width", 40, MAX_W, 1, 90),
         num(f"{key}_pn", f"{which} pockets", 1, 3, 1, 1, unit=""),
         num(f"{key}_pw", f"{which} pocket width", 18, FLIP_SPAN, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),
         num(f"{key}_pgap", f"{which} wall between", 6, 20, 1, 10),
@@ -142,7 +138,7 @@ INSERTS = [
         "parts": [{"part": "insert_edge", "name": "Edge insert",
                    "supports": INSERT_SUPPORTS, "settings": SOLID}],
         "params": EDGE_SHAPE + [
-            num("slot_w", "Edge width", 40, MAX_W, 1, 92),
+            num("slot_w", "Edge width", 40, MAX_W, 1, 90),
             num("ergo", "Ergo curve", 0, 8, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
         ],
         "cards": [card("Edge", ["slot_d", "grip_r", "edge_angle", "slot_h", "slot_w", "ergo"], choice=True)],
@@ -178,7 +174,7 @@ INSERTS = [
             {"label": "Straight", "blurb": "plain cylinder", "values": {"roll_type": "straight"}},
         ]},
         "parts": [
-            {"part": "insert_roller", "name": "Roller frame", "supports": "supports under the cheeks", "settings": SOLID},
+            {"part": "insert_roller", "name": "Roller frame", "supports": "no supports", "settings": SOLID},
             {"part": "roller", "name": "Roller", "supports": "no supports", "settings": "3 walls · 20% infill"},
             {"part": "axle", "name": "Axle", "supports": "no supports, or use a 12 mm steel rod", "settings": "4 walls · 100% infill"},
         ],
@@ -216,9 +212,8 @@ PRESETS = [
     {"name": "Straight roller", "insert": "roller", "values": {"roll_type": "straight", "roll_d": 28}},
 ]
 
-# Print before the kit: the pocket gap and the latch, on your printer. Downloaded as one zip.
-FIT_TEST = [{"part": "fit_ring", "name": "Ring"}, {"part": "fit_frame", "name": "Frame"},
-            {"part": "fit_channel", "name": "Latch channel"}, {"part": "fit_cheek", "name": "Latch cheek"}]
+# Print before the kit: the pocket gap and the lips, on your printer. Downloaded as one zip.
+FIT_TEST = [{"part": "fit_ring", "name": "Ring"}, {"part": "fit_frame", "name": "Frame"}]
 
 
 def catalog():

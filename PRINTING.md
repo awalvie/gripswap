@@ -22,10 +22,10 @@ Each part has one right way up. It keeps the load running along the layers and t
 
 | Part | On the bed | Supports |
 | --- | --- | --- |
-| Housing | On its back, pocket opening up | Automatic, under the anchor |
+| Housing | On its back, pocket opening up | Automatic, under the anchor and the front lips |
 | Edge or pocket insert | Upside down, top face down | Only under the slot floor |
 | Two-sided insert | On its back, front up | None |
-| Roller frame | Upright, floor down | Under the two cheeks, where the latch arms are cut away |
+| Roller frame | Upright, floor down | None |
 | Roller | Standing on one end | None |
 | Printed axle | Lying down | None |
 
@@ -63,25 +63,24 @@ I sliced the default parts in PrusaSlicer 2.9.6 with the settings above, PETG at
 | Roller, straight | 30 g |
 | Printed axle | 17 g |
 
-Automatic supports add about 18 g to the pyramid housing and about 6 g to the roller frame. A housing and one edge insert come to about 180 g, so a 1 kg spool gets you a housing and about ten inserts.
+Automatic supports add about 18 g to the pyramid housing. A housing and one edge insert come to about 180 g, so a 1 kg spool gets you a housing and about ten inserts.
 
 ## The fit test
 
-On a new printer, print the fit test before the kit. In the configurator, click "fit test" under Download. You get one zip with four small parts, already the right way up. Use the housing settings above.
+On a new printer, print the fit test before the kit. In the configurator, click "fit test" under Download. You get one zip with two small parts, already the right way up. Use the housing settings above.
 
-- The ring is a thin slice of the housing pocket, and the frame is a thin slice of an insert. Push the frame into the ring. It must slide in without force.
-- The latch channel is a short piece of housing wall with the real window, and the latch cheek is one side of an insert with the real latch arm. Slide the cheek into the channel until the button clicks into the window. Then press the button in and pull the cheek out by its tab.
+- The ring is a thin slice of the front of the housing, with the lips, and the frame is a thin slice of the front of an insert. Push the frame into the back of the ring until it stops on the lips. It must slide in without force.
 
-If a pair sticks, follow step 3 below, then print the fit test again.
+If it sticks, follow step 3 below, then print the fit test again.
 
 ## Checking the fit
 
-1. Slide the insert into the housing. Both side buttons should click into their windows.
-2. Pinch both buttons and pull the insert out by the grip. It should come out without a fight.
+1. Slide the insert into the housing from the back. It should stop on the lips at the front, and click over the stop at the back.
+2. Press the stop down and push the insert out the back. It should come out without a fight.
 3. If it sticks, look at the face that was on the bed. A flared first layer, the "elephant's foot", is the usual cause. Trim or sand that edge, or turn on elephant-foot compensation in your slicer.
 
 ## Before your first session
 
-- Pull out all the supports, and make sure none are left in the slot or the latch windows.
-- Look for split layers at the anchor, around the latch arms and at the grip. Don't use a cracked part.
+- Pull out all the supports, and make sure none are left in the slot or the pocket.
+- Look for split layers at the anchor, at the lips, at the stop and at the grip. Don't use a cracked part.
 - Hang the block from the carabiner and load it slowly by hand before you pull hard.

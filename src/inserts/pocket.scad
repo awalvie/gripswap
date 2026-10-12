@@ -16,7 +16,5 @@ module insert_pocket() {
             translate([-span/2 + pocket_w/2 + i * (pocket_w + pocket_gap), 0, 0])
                 slot_cut(pocket_w, pocket_r);
         size_mark(str(slot_d, " mm", angle_label()), mouth_z);
-        latch_relief();
     }
-    latch_arm();
 }

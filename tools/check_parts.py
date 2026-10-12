@@ -10,7 +10,7 @@ Cases: every anchor, every preset, the corners of the edge, pocket and flip rang
 and the fit test.
 Checks: one watertight body. Edges and pockets also keep their depth, a floor under the slot, a
 rail over the slot at the face, a wall under the size mark, and a wall between the slot end and
-the latch arm. Each grip of a flip insert gets the edge or pocket checks and keeps room for the fingers.
+the insert side. Each grip of a flip insert gets the edge or pocket checks and keeps room for the fingers.
 Exits 1 if any check fails.
 """
 import argparse
@@ -40,12 +40,11 @@ def cases():
     anchor = next(p for p in catalog.HOUSING["params"] if p["name"] == "anchor")
     for o in anchor["options"]:
         out.append(("housing", {"anchor": o["value"]}))
-    # each housing setting at both ends, with the anchor it belongs to, and solid walls
+    # each housing setting at both ends, with the anchor it belongs to
     for p in catalog.HOUSING["params"]:
         if p["type"] == "number":
             a_for = catalog.HOUSING["show_if"].get(p["name"], ["anchor", anchor["default"]])[1]
             out += [("housing", {"anchor": a_for, p["name"]: v}) for v in (p["min"], p["max"])]
-    out.append(("housing", {"style": "solid"}))
     # the roller and its frame at the smallest and largest diameter
     roll_d = next(p for i in catalog.INSERTS if i["id"] == "roller" for p in i["params"] if p["name"] == "roll_d")
     out += [(part, {"roll_d": v}) for part in ("insert_roller", "roller") for v in (roll_d["min"], roll_d["max"])]
@@ -167,7 +166,7 @@ def check_slot(mesh, part, params):
         d = down(mesh, xf, 0.5)
         if len(d) >= 2 and d[-2] - d[-1] < MIN_WALL:
             return problems + [f"front wall {d[-2] - d[-1]:.1f} mm under the size mark at x={xf:.0f}"]
-    # ends: the wall from the slot end out to the latch relief, half way up the opening
+    # ends: the wall from the slot end out to the insert side, half way up the opening
     mid = depth / 2 + 0.013   # off round numbers: a ray along a mesh edge misses both faces there
     ds = down(mesh, x, mid)
     ceiling = min((z for z in ds if z > ds[-2] + 0.01), default=None)

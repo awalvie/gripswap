@@ -10,7 +10,7 @@
   </p>
 </div>
 
-opengrips is a lift block for finger training. One housing hangs off a carabiner, and the grips slide into it and click in place: edges, pockets and rollers.
+opengrips is a lift block for finger training. One housing hangs off a carabiner, and the grips slide into it from the back and click in place: edges, pockets and rollers.
 
 You can build your own at [awalvie.github.io/opengrips](https://awalvie.github.io/opengrips/). Pick your grips, change the depth and the shape, and download the files. It all runs in your browser, and the page link keeps your kit, so you can bookmark it or share it.
 
@@ -44,8 +44,8 @@ The [printing guide](PRINTING.md) has the settings, where the supports go, and h
 ## Putting it together
 
 1. For the roller, drop it between the cheeks and push the axle through.
-2. Slide the insert into the housing until both side buttons click.
-3. To swap it, pinch both buttons and pull the insert out by the grip. To use the other grip of a two-sided insert, turn it over and push it back in.
+2. Slide the insert into the housing from the back until it clicks over the stop in the floor. When you pull, two lips at the front hold it.
+3. To swap it, press the stop at the back of the floor down and push the insert out the back, with your fingers in the slot. To use the other grip of a two-sided insert, turn it over and slide it back in.
 4. Clip the carabiner to the anchor under the housing.
 
 ## Working on it
