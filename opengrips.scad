@@ -20,7 +20,7 @@ include <src/fit_test.scad>
 for_print = false;
 module on_bed() {
     if (!for_print) children();
-    else if (part == "housing") translate([0, 0, D]) rotate([-90, 0, 0]) children();   // back face down, pocket opening up
+    else if (part == "housing") rotate([90, 0, 0]) children();   // front face down, the anchor plate flat on the bed
     else if (part == "insert_edge" || part == "insert_pocket")
         translate([0, 0, ins_top]) rotate([180, 0, 0]) children();      // top face down
     else if (part == "insert_flip") translate([0, 0, pk_d - clear]) rotate([-90, 0, 0]) children();   // on its back, front up

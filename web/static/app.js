@@ -11,7 +11,7 @@ let mode = "simple";
 try { mode = localStorage.getItem("opengrips-mode") || "simple"; } catch (e) { /* storage blocked */ }
 const kit = { items: [], sel: 0 };   // items is replaced on Undo, so nothing keeps a reference to it
 const cur = () => kit.items[kit.sel];
-let partnerKey = "auto";   // "none", "auto" (first match in the kit), "kit:<n>" or "std:<anchor>"
+let partnerKey = "auto";   // "none", "auto" (first match in the kit), "kit:<n>" or "std:<part>"
 
 // ---------- scene
 // without WebGL or three.js the page still works: the kit, the editor and the downloads need no 3D
@@ -103,7 +103,6 @@ const insertDef = (id) => cat.inserts.find((i) => i.id === id);
 const defaults = (params) => Object.fromEntries(params.map((p) => [p.name, p.default]));
 const defOf = (it) => (it.type === "housing" ? cat.housing : insertDef(it.insertId));
 const partsOf = (it) => defOf(it).parts;
-const anchors = () => cat.housing.params.find((p) => p.name === "anchor").options;
 
 function newHousing(values) { return { type: "housing", values: Object.assign(defaults(cat.housing.params), values || {}) }; }
 function newInsert(id, values) {
@@ -113,10 +112,7 @@ function newInsert(id, values) {
 // names come from the values, so they follow every slider
 function nameOf(it) {
   const v = it.values;
-  if (it.type === "housing") {
-    const a = anchors().find((o) => o.value === v.anchor);
-    return a.label.split(" (")[0] + " housing";
-  }
+  if (it.type === "housing") return "Housing";
   const ang = v.edge_angle > 0 ? ` incut ${v.edge_angle}°` : v.edge_angle < 0 ? ` sloper ${-v.edge_angle}°` : "";
   if (it.insertId === "edge") return `${v.slot_d} mm${v.ergo ? " ergo" : ""} edge${ang}`;
   const pockets = (n, w) => `${n > 1 ? n + " × " : ""}${{ 22: "mono", 40: "two-finger", 58: "three-finger" }[w] || `${w} mm`} pocket`;
@@ -223,8 +219,7 @@ function partnerOptions(it) {
   // group: "kit" (your kit) or "std" (standard parts); the dropdown shows them under those headings
   const opts = [{ key: "none", label: "Nothing, just this" }];
   kit.items.forEach((x, n) => { if (x.type !== it.type) opts.push({ key: `kit:${n}`, group: "kit", label: nameOf(x), item: x }); });
-  if (it.type === "insert") anchors().forEach((a) => opts.push({ key: `std:${a.value}`, group: "std", label: `${a.label.split(" (")[0]} housing`,
-                                                               item: newHousing({ anchor: a.value }) }));
+  if (it.type === "insert") opts.push({ key: "std:housing", group: "std", label: "Housing", item: newHousing() });
   else opts.push({ key: "std:edge", group: "std", label: "20 mm edge", item: newInsert("edge") });
   return opts;
 }
@@ -253,14 +248,12 @@ function shown(p, group) {
 }
 
 // small line pictures for choices, by the catalog's "icon" name: an edge seen from the side,
-// a pocket seen from the front, a housing anchor or wall
+// a pocket seen from the front
 const ICON = {
   flat: '<path d="M3 7v11M3 12h14a3 3 0 0 1 3 3v3"/>',
   ergo: '<path d="M3 7v11M3 12h4q5 3 10 0a3 3 0 0 1 3 3v3"/>',
   incut: '<path d="M3 7v11M3 14l14-3a3 3 0 0 1 3 3v4"/>',
   sloper: '<path d="M3 7v11M3 9q12 0 17 9"/>',
-  pyramid: '<path d="M4 5h16M4 5l8 14 8-14M9 5l3 14 3-14"/>',
-  keel: '<path d="M5 5h14l-3 14H8z"/><circle cx="12" cy="11" r="2.5"/>',
   mono: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="2"/>',
   two: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="7" y="9" width="10" height="6" rx="2"/>',
   three: '<rect x="2" y="6" width="20" height="12" rx="2"/><rect x="5" y="9" width="14" height="6" rx="2"/>',

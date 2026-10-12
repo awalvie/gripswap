@@ -6,43 +6,11 @@
    {
     "part": "housing",
     "name": "Housing",
-    "supports": "supports under the anchor and the lips",
-    "settings": "3 walls · 15% gyroid"
+    "supports": "no supports",
+    "settings": "3 walls · 15% gyroid · plate 100%"
    }
   ],
   "params": [
-   {
-    "name": "anchor",
-    "label": "Anchor",
-    "type": "choice",
-    "options": [
-     {
-      "value": "pyramid",
-      "icon": "pyramid",
-      "label": "Pyramid (four bars to a point)"
-     },
-     {
-      "value": "keel",
-      "icon": "keel",
-      "label": "Keel (plate with a hole)"
-     }
-    ],
-    "default": "pyramid",
-    "help": "Every anchor holds the carabiner right under the grip, so the edge should stay level. Not measured yet.",
-    "simple": true
-   },
-   {
-    "name": "bar_angle",
-    "label": "Bar angle",
-    "type": "number",
-    "min": 20,
-    "max": 40,
-    "step": 1,
-    "default": 25,
-    "unit": "°",
-    "help": "How steep the pyramid bars rise.",
-    "simple": false
-   },
    {
     "name": "keel_hole",
     "label": "Hole size",
@@ -52,8 +20,8 @@
     "step": 0.5,
     "default": 16,
     "unit": "mm",
-    "help": "Carabiner hole diameter in the keel.",
-    "simple": false
+    "help": "Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.",
+    "simple": true
    },
    {
     "name": "top_t",
@@ -92,23 +60,11 @@
     "simple": false
    }
   ],
-  "show_if": {
-   "bar_angle": [
-    "anchor",
-    "pyramid"
-   ],
-   "keel_hole": [
-    "anchor",
-    "keel"
-   ]
-  },
   "cards": [
    {
     "title": "Hanging",
     "sub": "how the housing holds the carabiner",
     "params": [
-     "anchor",
-     "bar_angle",
      "keel_hole"
     ],
     "choice": false,

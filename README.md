@@ -24,15 +24,15 @@ This is a prototype, and I haven't load-tested it yet. Print and use it at your 
 - Two-sided inserts: any edge or pocket insert can get a second grip on its underside. Each grip is a flat or ergo edge or a row of pockets, 6 to 30 mm deep. Turn the insert over to switch.
 - Pockets: mono, two-finger, three-finger, or up to three side by side.
 - Rollers: unlevel or straight.
-- Two anchors under the housing: a pyramid of four bars, or a keel plate with a hole.
+- An anchor plate under the front of the housing, with a hole for the carabiner.
 
-Every anchor holds the carabiner right under the grip, so the edge should stay level when you pull. I haven't measured that yet.
+The anchor holds the carabiner right under the grip, so the edge should stay level when you pull. I haven't measured that yet.
 
 ![A two-finger pocket in the keel housing](docs/img/configurator-pocket.png)
 
 ## Printing
 
-Print everything in PETG. The housing and two-sided inserts go on their backs, the roller frame stands upright, and the edge and pocket inserts go upside down. The files you download already sit that way. A housing and one edge insert take about 180 g of filament.
+Print everything in PETG. The housing stands on its front, the two-sided inserts go on their backs, the roller frame stands upright, and the edge and pocket inserts go upside down. The files you download already sit that way. A housing and one edge insert take about 180 g of filament.
 
 The [printing guide](PRINTING.md) has the settings, where the supports go, and how to check the fit.
 

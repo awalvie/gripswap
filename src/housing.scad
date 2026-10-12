@@ -1,41 +1,20 @@
 // Housing: a box around the pocket, with an anchor under it.
 
-anchor = "pyramid";        // "pyramid" or "keel". Every anchor holds the carabiner on the anchor plane.
-
-r_out = 2.5;               // round on every body edge
+r_out = 2.5;               // round on every body edge but the front ones, which sit on the print bed
 corner = 6;                // corner radius in the front view
-bevel = 1.5;               // bevel around both pocket openings; at the back, a lead-in for the insert
+bevel = 1.5;               // bevel around the back pocket opening, a lead-in for the insert
+bevel_f = 0.5;             // bevel around the front opening: room for a flared first layer
 
-// Pyramid anchor (Lanta style): four flat bars from the bottom corners meet in one
-// point under the anchor plane. Bars rise at 25 degrees.
-leg_x = W/2 - 6; leg_z = 3;                  // bar roots, inside the floor
-leg_yf = 5; leg_yb = D - 4.5;                // front and back bar centrelines at the root
-bar_tf = 7; bar_wf = 10;                     // front bars: thickness (front view) x depth
-bar_tb = 6; bar_wb = 7;                      // back bars
-bar_angle = 25;
-bar_r = 1.5;                                 // edge round on bars and apex node
-node_len = 8;                                // apex node: hull of the last node_len mm of every bar
-tri_apex = leg_z - leg_x * tan(bar_angle);   // the point
-tri_rod_z = tri_apex + 12.35;                // carabiner seat: highest with the bend hooked over the node and no overlap (found by a fit search at 25 degrees)
-
-function pyramid_legs() = [for (sx = [-1, 1], l = [[leg_yf, bar_tf, bar_wf], [leg_yb, bar_tb, bar_wb]])
-    [[sx*leg_x, l[0], leg_z], l[1], l[2]]];
-
-module anchor_pyramid() {
-    p = [0, grip_y, tri_apex];
-    for (l = pyramid_legs()) bar(l[0], p, l[1], l[2], bar_r);
-    // the node is 2*eps fatter than the bars, so their faces never meet exactly
-    hull() for (l = pyramid_legs())
-        bar(p + (l[0] - p) * node_len / norm(l[0] - p), p, l[1] + 2*eps, l[2] + 2*eps, bar_r);
-}
-
-// Keel: a full-width triangle plate under the housing, with a hole through it. It carries the
-// load straight out to the side walls, like the pyramid. The carabiner rests on the bottom of
-// the hole, right under the anchor plane.
-keel_t = 10;                                 // plate thickness (front to back)
-keel_hole = 16;                              // hole diameter
+// Keel: a full-width triangle plate under the front of the housing, with a hole through it. It
+// carries the load straight out to the side walls. It runs from the front face back to twice the
+// anchor plane, so it is centred under the grip and lies flat on the print bed.
+keel_t = 2 * grip_y;                         // plate thickness (front to back)
+keel_hole = 16;                              // hole diameter at the anchor plane
 keel_wall = 7;                               // material around the hole
 keel_hz = -(keel_hole/2 + 6);                // hole centre height
+seat_r = 10;                                 // the hole widens toward both faces on this radius, tighter than
+                                             // the inside of the carabiner bend (11), so the carabiner sits on
+                                             // the crown under the anchor plane
 
 keel_xe = W/2 - 3; keel_rb = keel_hole/2 + keel_wall;
 module keel_profile() hull() {
@@ -43,7 +22,7 @@ module keel_profile() hull() {
     translate([0, keel_hz]) circle(r = keel_rb, $fn = 64);
 }
 
-// triangle windows, one each side, for less plastic and the look of the pyramid
+// triangle windows, one each side, for less plastic
 module keel_windows() {
     zs = keel_hz - keel_rb;
     for (m = [0, 1]) mirror([m, 0])
@@ -51,46 +30,47 @@ module keel_windows() {
             polygon([[keel_rb + 4, -3], [keel_xe - 18, -3], [keel_rb + 4, zs * (1 - (keel_rb + 4) / keel_xe) + 7]]);
 }
 
+// the hole: narrowest at the anchor plane, wider toward both faces
+module keel_seat() translate([0, 0, keel_hz]) rotate([-90, 0, 0]) rotate_extrude($fn = 64)
+    polygon(concat([[0, -1]], [for (i = [0 : 16]) let(y = -1 + i * (keel_t + 2) / 16)
+        [keel_hole/2 + seat_r - sqrt(pow(seat_r, 2) - pow(y - grip_y, 2)), y]], [[0, keel_t + 1]]));
+
 module anchor_keel() difference() {
     hull() {
-        xz(grip_y - keel_t/2 + 1, keel_t - 2) keel_profile();
-        xz(grip_y - keel_t/2, keel_t) offset(-1) keel_profile();
+        xz(0, keel_t - 1) keel_profile();
+        xz(0, keel_t) offset(-1) keel_profile();
     }
-    xz(grip_y - keel_t/2 - 1, keel_t + 2) keel_windows();
-    translate([0, grip_y, keel_hz]) rotate([90, 0, 0]) cylinder(d = keel_hole, h = keel_t + 2, center = true, $fn = 64);
+    xz(-1, keel_t + 2) keel_windows();
+    keel_seat();
 }
 
-module anchor_any() {
-    if (anchor == "pyramid") anchor_pyramid();
-    if (anchor == "keel") anchor_keel();
-}
+// height of the carabiner rod centreline where it sits on the crown of the hole
+function seat_z() = keel_hz - keel_hole/2 + 5;
 
-// height of the carabiner rod centreline at the top of its bend
-function seat_z() = anchor == "keel" ? keel_hz - keel_hole/2 + 5.5 + (16 - sqrt(16*16 - keel_t*keel_t/4))   // bend drops at the fin faces
-                  : tri_rod_z;
-
-module housing_shell() {
+// the body, rounded on every edge but the front ones, so the whole front face sits on the print bed
+module housing_shell() intersection() {
     minkowski() {
-        xz(r_out, D - 2*r_out) translate([0, H/2]) rrect(W - 2*r_out, H - 2*r_out, corner - r_out);
+        xz(-r_out, D) translate([0, H/2]) rrect(W - 2*r_out, H - 2*r_out, corner - r_out);
         sphere(r = r_out, $fn = 24);
     }
+    xz(0, D + 1) translate([0, H/2]) square([W + 1, H + 1], center = true);
 }
 
 // the pocket profile from y0 back to y0 + t, grown by o on every side
 module pocket_prof(y0, t, o = 0) xz(y0, t) translate([0, floor_t + pk_h/2]) rrect(pk_w + 2*o, pk_h + 2*o, r_in + o);
 
-// a bevel on the pocket opening at y0, that widens toward dir (-1: the front, 1: the back)
-module bevel_cut(y0, dir) hull() {
-    pocket_prof(dir > 0 ? y0 - eps : y0 - 1, 1 + eps, bevel);
-    pocket_prof(y0 - dir * bevel - (dir > 0 ? 0 : eps), eps);
+// a bevel of size b on the pocket opening at y0, that widens toward dir (-1: the front, 1: the back)
+module bevel_cut(y0, dir, b) hull() {
+    pocket_prof(dir > 0 ? y0 - eps : y0 - 1, 1 + eps, b);
+    pocket_prof(y0 - dir * b - (dir > 0 ? 0 : eps), eps);
 }
 
 // the pocket, through from the front to the back, around the lips
 module pocket_cut() difference() {
     union() {
         pocket_prof(-1, D + 2);
-        bevel_cut(0, -1);
-        bevel_cut(D, 1);
+        bevel_cut(0, -1, bevel_f);
+        bevel_cut(D, 1, bevel);
     }
     lips();
 }
@@ -106,17 +86,24 @@ module lips() for (m = [0, 1]) mirror([m, 0, 0])
 // right end. The insert rides over the ramp at the back of the bump, pressing the tongue down, and the
 // square front of the bump stops it behind the insert. To take the insert out, press the free end down
 // and push the insert out the back. The tongue runs across, so it bends along the print layers.
-stop_len = 25; stop_wy = 5; stop_t = 2;      // tongue: length (across), width (front to back), thickness
+stop_len = 25; stop_t = 2;                   // tongue: length (across), thickness
 stop_drop = 1.5;                             // room under the tongue to bend down
 stop_gap = 1;                                // slot around the tongue
 stop_h = 1;                                  // bump height above the floor
 stop_bump = 6;                               // bump length, at the free end
 
-module stop_cut() translate([-stop_len/2, pk_d - 2 - stop_gap, floor_t - stop_t - stop_drop])
-    cube([stop_len + stop_gap, D - pk_d + 3 + stop_gap, stop_t + stop_drop + 1]);
+// The housing prints on its front, so the tongue grows upward from its front edge. That edge and the
+// slot in front of it run at 45 degrees. Only the first layers of that edge hang over the 1 mm slot,
+// held at the fixed end.
+stop_y = pk_d - 2;                           // front of the tongue, at its top face
+
+module stop_cut() translate([-stop_len/2, 0, 0]) rotate([90, 0, 90]) linear_extrude(stop_len + stop_gap)
+    polygon([[stop_y - stop_gap - 1, floor_t + 1], [stop_y - stop_gap + stop_t + stop_drop, floor_t - stop_t - stop_drop],
+             [D + 1, floor_t - stop_t - stop_drop], [D + 1, floor_t + 1]]);
 
 module stop_tongue() {
-    translate([-stop_len/2 - eps, pk_d - 2, floor_t - stop_t]) cube([stop_len + eps, D - pk_d + 2, stop_t]);
+    translate([-stop_len/2 - eps, 0, 0]) rotate([90, 0, 90]) linear_extrude(stop_len + eps)
+        polygon([[stop_y, floor_t], [stop_y + stop_t, floor_t - stop_t], [D, floor_t - stop_t], [D, floor_t]]);
     // the bump: a square face at the back of the insert, a 45 degree ramp toward the back
     translate([stop_len/2 - stop_bump, 0, floor_t - eps]) rotate([90, 0, 90]) linear_extrude(stop_bump)
         polygon([[pk_d, 0], [pk_d, stop_h], [pk_d + 0.5, stop_h], [pk_d + 0.5 + stop_h + eps, 0]]);
@@ -131,7 +118,7 @@ module housing() {
     difference() {
         union() {
             housing_shell();
-            anchor_any();
+            anchor_keel();
         }
         pocket_cut();
         stop_cut();

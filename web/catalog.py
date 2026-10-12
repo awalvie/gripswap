@@ -50,20 +50,14 @@ HOUSING = {
     "id": "housing",
     "name": "Housing",
     "parts": [{"part": "housing", "name": "Housing",
-               "supports": "supports under the anchor and the lips", "settings": SOLID}],
+               "supports": "no supports", "settings": SOLID + " · plate 100%"}],
     "params": [
-        choice("anchor", "Anchor", [
-            {"value": "pyramid", "icon": "pyramid", "label": "Pyramid (four bars to a point)"},
-            {"value": "keel", "icon": "keel", "label": "Keel (plate with a hole)"},
-        ], "pyramid", help="Every anchor holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
-        num("bar_angle", "Bar angle", 20, 40, 1, 25, unit="°", help="How steep the pyramid bars rise."),
-        num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel."),
+        num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
         num("top_t", "Top wall", 6, 12, 0.5, 8, help="The insert presses up on it. Thicker is stiffer and heavier."),
         num("floor_t", "Floor", 8, 12, 0.5, 8, help="Ties the anchor to the walls."),
         num("corner", "Corner radius", 3, 12, 0.5, 6, help="Rounding of the housing corners, seen from the front."),
     ],
-    "show_if": {"bar_angle": ["anchor", "pyramid"], "keel_hole": ["anchor", "keel"]},
-    "cards": [card("Hanging", ["anchor", "bar_angle", "keel_hole"], "how the housing holds the carabiner"),
+    "cards": [card("Hanging", ["keel_hole"], "how the housing holds the carabiner"),
               card("Walls", ["top_t", "floor_t", "corner"], "the box the inserts slide into")],
 }
 

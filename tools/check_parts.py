@@ -6,7 +6,7 @@ Engines: native renders with the openscad on your PATH. wasm renders with the We
 the configurator uses (tools/render_wasm.mjs, needs node), so it checks the files people download.
 The default is both.
 
-Cases: every anchor, every preset, the corners of the edge, pocket and flip ranges in web/catalog.py,
+Cases: the housing, every preset, the corners of the edge, pocket and flip ranges in web/catalog.py,
 and the fit test.
 Checks: one watertight body. Edges and pockets also keep their depth, a floor under the slot, a
 rail over the slot at the face, a wall under the size mark, and a wall between the slot end and
@@ -37,14 +37,10 @@ MIN_ROOM = 16    # least finger room in a flip insert slot: the lowest slot_h an
 def cases():
     """(part, params) pairs to render."""
     out = []
-    anchor = next(p for p in catalog.HOUSING["params"] if p["name"] == "anchor")
-    for o in anchor["options"]:
-        out.append(("housing", {"anchor": o["value"]}))
-    # each housing setting at both ends, with the anchor it belongs to
+    out.append(("housing", {}))
+    # each housing setting at both ends
     for p in catalog.HOUSING["params"]:
-        if p["type"] == "number":
-            a_for = catalog.HOUSING["show_if"].get(p["name"], ["anchor", anchor["default"]])[1]
-            out += [("housing", {"anchor": a_for, p["name"]: v}) for v in (p["min"], p["max"])]
+        out += [("housing", {p["name"]: v}) for v in (p["min"], p["max"])]
     # the roller and its frame at the smallest and largest diameter
     roll_d = next(p for i in catalog.INSERTS if i["id"] == "roller" for p in i["params"] if p["name"] == "roll_d")
     out += [(part, {"roll_d": v}) for part in ("insert_roller", "roller") for v in (roll_d["min"], roll_d["max"])]

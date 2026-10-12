@@ -13,11 +13,3 @@ function row_span(n, w, gap) = n * w + (n - 1) * gap;
 
 // round rod from a to b
 module seg(a, b, d) { hull() { translate(a) sphere(d = d); translate(b) sphere(d = d); } }
-
-// straight rectangular bar from a to b: t = thickness across, w = width (depth), every edge rounded by r
-module bar(a, b, t, w, r = 1.5) {
-    v = b - a; L = norm(v);
-    translate(a) rotate([0, acos(v[2] / L), atan2(v[1], v[0])])
-        hull() for (x = [-1, 1], y = [-1, 1], z = [0, L])
-            translate([x*(t/2 - r), y*(w/2 - r), z]) sphere(r = r, $fn = 16);
-}
