@@ -3,7 +3,8 @@
 
 ins_floor = 7;                               // insert floor
 cheek_t = 8;                                 // side cheeks that carry the axle
-cheek_nose = 16;                             // cheek nose around the axle: thick wall in front of it, sticks out 8 mm
+cheek_nose = 16.25;                          // cheek nose around the axle: thick wall in front of it, sticks out 8.25 mm;
+                                             // a quarter off any 2 + roll_d/2, so its top never just touches the insert top
 // Unlevel roller: profile measured from a reference photo (both halves averaged, so it is
 // mirrored about its middle), scaled to a 28 mm body. Deep necks about 12% in from each
 // end (18 mm), lips just under the body width (26 mm). Profile as [fraction of length, diameter].

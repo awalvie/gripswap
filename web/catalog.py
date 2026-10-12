@@ -29,7 +29,7 @@ def card(title, params, sub="", choice=False, choice_after=""):
 
 
 EDGE_SHAPE = [
-    num("slot_d", "Edge depth", 6, 35, 1, 20, help="From the lip to the back of the slot.", simple=True),
+    num("slot_d", "Edge depth", 6, 25, 1, 20, help="From the lip to the back of the slot.", simple=True),
     num("grip_r", "Lip radius", 0.5, 12, 0.5, 3, help="Roundover on the lip. Small is sharp, big is friendly. Slopers have no lip."),
     num("edge_angle", "Edge angle", -45, 20, 1, 0, unit="°",
         help="Positive: incut, the grip tilts in for traction (Tension uses 10°). Negative: sloper, one round curve (20° to 45°)."),
@@ -37,7 +37,7 @@ EDGE_SHAPE = [
 ]
 
 # Pockets share the edge shape, but their depth is a pocket depth.
-POCKET_SHAPE = [num("slot_d", "Pocket depth", 6, 35, 1, 20, help="From the lip to the back of the pocket.", simple=True)] + EDGE_SHAPE[1:]
+POCKET_SHAPE = [num("slot_d", "Pocket depth", 6, 25, 1, 20, help="From the lip to the back of the pocket.", simple=True)] + EDGE_SHAPE[1:]
 
 # Widest slot or pocket row: one skin (2.4 mm) of wall stays between its ends and the lip notches.
 # 2 * (pk_w/2 - clear - lip_in - skin) = 90
@@ -53,7 +53,7 @@ HOUSING = {
                "supports": "no supports", "settings": SOLID + " · plate 100%"}],
     "params": [
         num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
-        num("top_t", "Top wall", 6, 12, 0.5, 8, help="The insert presses up on it. Thicker is stiffer and heavier."),
+        num("top_t", "Top wall", 8, 12, 0.5, 10, help="The insert presses up on it. Thicker is stiffer and heavier."),
         num("floor_t", "Floor", 8, 12, 0.5, 8, help="Ties the anchor to the walls."),
         num("corner", "Corner radius", 3, 12, 0.5, 6, help="Rounding of the housing corners, seen from the front."),
     ],
@@ -74,9 +74,9 @@ def flip_grip(key, which, depth, radius):
             {"value": "edge", "label": "Edge"},
             {"value": "pocket", "label": "Pockets"},
         ], "edge", simple=True),
-        num(f"{key}_d", f"{which} depth", 6, 30, 1, depth, help="From the lip to the back of the slot or pocket.", simple=True),
+        num(f"{key}_d", f"{which} depth", 6, 25, 1, depth, help="From the lip to the back of the slot or pocket.", simple=True),
         num(f"{key}_r", f"{which} lip radius", 0.5, 3.5, 0.5, radius, help="Roundover on the lip. Small is sharp, big is friendly."),
-        num(f"{key}_ergo", f"{which} ergo curve", 0, 8, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers."),
+        num(f"{key}_ergo", f"{which} ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers."),
         num(f"{key}_w", f"{which} edge width", 40, MAX_W, 1, 90),
         num(f"{key}_pn", f"{which} pockets", 1, 3, 1, 1, unit=""),
         num(f"{key}_pw", f"{which} pocket width", 18, FLIP_SPAN, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),
@@ -133,7 +133,7 @@ INSERTS = [
                    "supports": INSERT_SUPPORTS, "settings": SOLID}],
         "params": EDGE_SHAPE + [
             num("slot_w", "Edge width", 40, MAX_W, 1, 90),
-            num("ergo", "Ergo curve", 0, 8, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
+            num("ergo", "Ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
         ],
         "cards": [card("Edge", ["slot_d", "grip_r", "edge_angle", "slot_h", "slot_w", "ergo"], choice=True)],
     },
@@ -192,10 +192,10 @@ PRESETS = [
     {"name": "20 mm edge", "insert": "edge", "values": {"slot_d": 20, "grip_r": 3}},
     {"name": "25 mm edge", "insert": "edge", "values": {"slot_d": 25, "grip_r": 4}},
     {"name": "20 mm ergo", "insert": "edge", "values": {"slot_d": 20, "grip_r": 4, "ergo": 5}},
-    {"name": "25 mm ergo", "insert": "edge", "values": {"slot_d": 25, "grip_r": 5, "ergo": 6}},
+    {"name": "25 mm ergo", "insert": "edge", "values": {"slot_d": 25, "grip_r": 5, "ergo": 5}},
     {"name": "15 mm incut 10°", "insert": "edge", "values": {"slot_d": 15, "grip_r": 2, "edge_angle": 10}},
     {"name": "20 mm incut 10°", "insert": "edge", "values": {"slot_d": 20, "grip_r": 3, "edge_angle": 10}},
-    {"name": "20° sloper", "insert": "edge", "values": {"slot_d": 30, "edge_angle": -20}},
+    {"name": "20° sloper", "insert": "edge", "values": {"slot_d": 25, "edge_angle": -20}},
     {"name": "35° sloper", "insert": "edge", "values": {"slot_d": 25, "edge_angle": -35}},
     {"name": "45° sloper", "insert": "edge", "values": {"slot_d": 20, "edge_angle": -45, "slot_h": 18}},
     {"name": "25 mm three-finger pocket", "insert": "pocket", "values": {"slot_d": 25, "pocket_n": 1, "pocket_w": 58}},
