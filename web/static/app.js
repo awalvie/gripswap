@@ -121,7 +121,8 @@ function nameOf(it) {
   if (it.insertId === "edge") return `${v.slot_d} mm${v.ergo ? " ergo" : ""} edge${ang}`;
   const pockets = (n, w) => `${n > 1 ? n + " × " : ""}${{ 22: "mono", 40: "two-finger", 58: "three-finger" }[w] || `${w} mm`} pocket`;
   if (it.insertId === "flip") {
-    const grip = (k) => `${v[k + "_d"]} mm ${v[k + "_kind"] === "edge" ? (v[k + "_ergo"] ? "ergo edge" : "edge") : pockets(v[k + "_pn"], v[k + "_pw"])}`;
+    const grip = (k) => `${v[k + "_d"]} mm ${v[k + "_kind"] === "edge" ? (v[k + "_ergo"] ? "ergo edge" : "edge") + (v[k + "_angle"] ? ` incut ${v[k + "_angle"]}°` : "")
+                                                                       : pockets(v[k + "_pn"], v[k + "_pw"])}`;
     return `Two-sided, ${grip("top")} / ${grip("bot")}`;
   }
   if (it.insertId === "pocket") {
@@ -516,7 +517,10 @@ function toTwoSided(it) {
   };
   w.top_kind = it.insertId;
   put("top_d", v.slot_d); put("top_r", v.grip_r);
-  if (it.insertId === "edge") { put("top_ergo", v.ergo); put("top_w", v.slot_w); }
+  if (it.insertId === "edge") {
+    put("top_ergo", v.ergo); put("top_angle", v.edge_angle, true); put("top_w", v.slot_w);
+    if (w.top_angle !== v.edge_angle) cut.push(`angle ${v.edge_angle}° to ${w.top_angle}°`);   // a sloper has no two-sided form
+  }
   else {
     put("top_pn", v.pocket_n); put("top_pr", v.pocket_r); put("top_pw", v.pocket_w, true); put("top_pgap", v.pocket_gap, true);
     fitSpan(two.spans[0], w, two);
@@ -524,7 +528,7 @@ function toTwoSided(it) {
     if (w.top_pgap !== v.pocket_gap) say("top_pgap", v.pocket_gap, w.top_pgap);
   }
   w.fuzzy = v.fuzzy;
-  if (v.edge_angle) cut.push(`angle ${v.edge_angle}° to 0°`);
+  if (it.insertId === "pocket" && v.edge_angle) cut.push(`angle ${v.edge_angle}° to 0°`);
   // each grip of a two-sided insert takes half the height
   const h = specIn(defOf(it), "slot_h");
   if (h && v.slot_h !== h.default) cut.push(`slot height ${v.slot_h} mm to half the insert`);
@@ -535,7 +539,7 @@ function toTwoSided(it) {
 function toOneSided(it) {
   const v = it.values;
   return v.top_kind === "edge"
-    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, slot_w: v.top_w, fuzzy: v.fuzzy })
+    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, edge_angle: v.top_angle, slot_w: v.top_w, fuzzy: v.fuzzy })
     : newInsert("pocket", { slot_d: v.top_d, grip_r: v.top_r, pocket_n: v.top_pn, pocket_w: v.top_pw, pocket_gap: v.top_pgap, pocket_r: v.top_pr, fuzzy: v.fuzzy });
 }
 

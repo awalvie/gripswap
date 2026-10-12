@@ -375,6 +375,18 @@
      "simple": false
     },
     {
+     "name": "top_angle",
+     "label": "Top incut",
+     "type": "number",
+     "min": 0,
+     "max": 10,
+     "step": 1,
+     "default": 0,
+     "unit": "°",
+     "help": "The grip tilts in for traction. It starts lower at the lip, so 10° takes about 3.5 mm of finger room there on a 20 mm edge.",
+     "simple": false
+    },
+    {
      "name": "top_w",
      "label": "Top edge width",
      "type": "number",
@@ -489,6 +501,18 @@
      "simple": false
     },
     {
+     "name": "bot_angle",
+     "label": "Bottom incut",
+     "type": "number",
+     "min": 0,
+     "max": 10,
+     "step": 1,
+     "default": 0,
+     "unit": "°",
+     "help": "The grip tilts in for traction. It starts lower at the lip, so 10° takes about 3.5 mm of finger room there on a 20 mm edge.",
+     "simple": false
+    },
+    {
      "name": "bot_w",
      "label": "Bottom edge width",
      "type": "number",
@@ -596,6 +620,10 @@
      "top_kind",
      "edge"
     ],
+    "top_angle": [
+     "top_kind",
+     "edge"
+    ],
     "top_w": [
      "top_kind",
      "edge"
@@ -617,6 +645,10 @@
      "pocket"
     ],
     "bot_ergo": [
+     "bot_kind",
+     "edge"
+    ],
+    "bot_angle": [
      "bot_kind",
      "edge"
     ],
@@ -668,6 +700,7 @@
       "top_d",
       "top_r",
       "top_ergo",
+      "top_angle",
       "top_w",
       "top_pn",
       "top_pw",
@@ -685,6 +718,7 @@
       "bot_d",
       "bot_r",
       "bot_ergo",
+      "bot_angle",
       "bot_w",
       "bot_pn",
       "bot_pw",
@@ -707,7 +741,7 @@
    "side_choices": {
     "edge": {
      "label": "Shape",
-     "help": "Two-sided grips are flat or ergo: any angle takes finger room away.",
+     "help": "An incut takes finger room at the lip, so it stops at 10°. No slopers.",
      "options": [
       {
        "label": "Flat",
@@ -715,6 +749,7 @@
        "blurb": "classic edge",
        "values": {
         "ergo": 0,
+        "angle": 0,
         "r": 3
        }
       },
@@ -724,7 +759,18 @@
        "blurb": "curved for longer middle fingers",
        "values": {
         "ergo": 5,
+        "angle": 0,
         "r": 3.5
+       }
+      },
+      {
+       "label": "Incut",
+       "icon": "incut",
+       "blurb": "tilts in 10°, better traction",
+       "values": {
+        "ergo": 0,
+        "angle": 10,
+        "r": 2.5
        }
       }
      ]

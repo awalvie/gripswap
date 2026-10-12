@@ -63,8 +63,8 @@ def cases():
     out += [(p["part"], {}) for p in catalog.FIT_TEST]
     # flip: every corner of the top edge, with the bottom edge at the opposite corner
     flip = {p["name"]: p for p in catalog.FLIP["params"]}
-    for values in itertools.product(*((flip[f"top_{n}"]["min"], flip[f"top_{n}"]["max"]) for n in ("d", "r", "ergo"))):
-        top = dict(zip(("top_d", "top_r", "top_ergo"), values))
+    for values in itertools.product(*((flip[f"top_{n}"]["min"], flip[f"top_{n}"]["max"]) for n in ("d", "r", "ergo", "angle"))):
+        top = dict(zip(("top_d", "top_r", "top_ergo", "top_angle"), values))
         bot = {k.replace("top", "bot"): flip[k]["min"] + flip[k]["max"] - v for k, v in top.items()}
         out.append(("insert_flip", top | bot))
     # flip pockets: mono, two and three fingers on top at every corner of depth and lip radius, the
@@ -191,7 +191,7 @@ def check_flip(mesh, params):
         kind, g = v[f"{key}_kind"], lambda n: v[f"{key}_{n}"]
         x = 0
         if kind == "edge":
-            found = check_slot(half, "insert_edge", {"slot_d": g("d"), "slot_w": g("w")})
+            found = check_slot(half, "insert_edge", {"slot_d": g("d"), "slot_w": g("w"), "edge_angle": g("angle")})
         else:
             found = check_slot(half, "insert_pocket", {"slot_d": g("d"), "pocket_n": g("pn"), "pocket_w": g("pw"),
                                                       "pocket_gap": g("pgap"), "pocket_r": g("pr")})

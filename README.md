@@ -21,7 +21,7 @@ This is a prototype, and I haven't load-tested it yet. Print and use it at your 
 ## What you can make
 
 - Edges from 6 to 25 mm deep: flat, ergo, incut up to 20°, or slopers down to 45°.
-- Two-sided inserts: any edge or pocket insert can get a second grip on its underside. Each grip is a flat or ergo edge or a row of pockets, 6 to 25 mm deep. Turn the insert over to switch.
+- Two-sided inserts: any edge or pocket insert can get a second grip on its underside. Each grip is a flat, ergo or incut edge (up to 10°) or a row of pockets, 6 to 25 mm deep. Turn the insert over to switch.
 - Pockets: mono, two-finger, three-finger, or up to three side by side.
 - Rollers: unlevel or straight.
 - A fuzzy grip texture, fine, medium or coarse, made by your slicer's fuzzy skin.

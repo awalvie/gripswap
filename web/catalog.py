@@ -82,10 +82,10 @@ HOUSING = {
               card("Walls", ["top_t", "floor_t", "corner"], "the box the inserts slide into")],
 }
 
-# Flip insert: two grips, one on top and one turned over under it. Each is a flat or ergo edge,
-# or a row of pockets. Each slot has 22 mm of room down to the web, so no angle and no slot
-# height; the lip radius stops at 3.5. No roller: it does not fit in
-# half the insert.
+# Flip insert: two grips, one on top and one turned over under it. Each is a flat, ergo or incut
+# edge, or a row of pockets. Each slot has 22 mm of room down to the web, so no slot height. An
+# incut takes room at the lip, so it stops at 10 and there are no slopers. The lip radius stops
+# at 3.5. No roller: it does not fit in half the insert.
 FLIP_SPAN = 82   # widest pocket row: its mouth round (up to 3.5) keeps one skin to the lip notches
 
 
@@ -98,6 +98,8 @@ def flip_grip(key, which, depth, radius):
         num(f"{key}_d", f"{which} depth", 6, 25, 1, depth, help="From the lip to the back of the slot or pocket.", simple=True),
         num(f"{key}_r", f"{which} lip radius", 0.5, 3.5, 0.5, radius, help="Roundover on the lip. Small is sharp, big is friendly."),
         num(f"{key}_ergo", f"{which} ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers."),
+        num(f"{key}_angle", f"{which} incut", 0, 10, 1, 0, unit="°",
+            help="The grip tilts in for traction. It starts lower at the lip, so 10° takes about 3.5 mm of finger room there on a 20 mm edge."),
         num(f"{key}_w", f"{which} edge width", 40, MAX_W, 1, 90),
         num(f"{key}_pn", f"{which} pockets", 1, 3, 1, 1, unit=""),
         num(f"{key}_pw", f"{which} pocket width", 18, FLIP_SPAN, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),
@@ -107,7 +109,7 @@ def flip_grip(key, which, depth, radius):
 
 
 def flip_show_if(key):
-    return {f"{key}_{n}": [f"{key}_kind", "edge"] for n in ("ergo", "w")} | \
+    return {f"{key}_{n}": [f"{key}_kind", "edge"] for n in ("ergo", "angle", "w")} | \
            {f"{key}_{n}": [f"{key}_kind", "pocket"] for n in ("pn", "pw", "pgap", "pr")}
 
 
@@ -128,9 +130,10 @@ FLIP = {
               card("Texture", ["fuzzy"])],
     # each grip's one-tap choice, by its kind; the values are the grip's own, without its top_ or bot_
     "side_choices": {
-        "edge": {"label": "Shape", "help": "Two-sided grips are flat or ergo: any angle takes finger room away.", "options": [
-            {"label": "Flat", "icon": "flat", "blurb": "classic edge", "values": {"ergo": 0, "r": 3}},
-            {"label": "Ergo", "icon": "ergo", "blurb": "curved for longer middle fingers", "values": {"ergo": 5, "r": 3.5}},
+        "edge": {"label": "Shape", "help": "An incut takes finger room at the lip, so it stops at 10°. No slopers.", "options": [
+            {"label": "Flat", "icon": "flat", "blurb": "classic edge", "values": {"ergo": 0, "angle": 0, "r": 3}},
+            {"label": "Ergo", "icon": "ergo", "blurb": "curved for longer middle fingers", "values": {"ergo": 5, "angle": 0, "r": 3.5}},
+            {"label": "Incut", "icon": "incut", "blurb": "tilts in 10°, better traction", "values": {"ergo": 0, "angle": 10, "r": 2.5}},
         ]},
         "pocket": {"label": "Fingers", "options": [
             {"label": "Mono", "icon": "mono", "blurb": "one finger", "values": {"pn": 1, "pw": 22}},

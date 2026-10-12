@@ -25,6 +25,6 @@ module fuzzy_pocket() let(span = row_span(pocket_n, pocket_w, pocket_gap))
         fuzzy_band(false) slot_cut(pocket_w, pocket_r);
 // both grips: the top one, and the turned one under the web
 module fuzzy_flip() {
-    flip_vars(top_kind, top_d, top_r, top_ergo) fuzzy_band(top_kind == "edge") flip_slot(top_kind, top_w, top_pn, top_pw, top_pgap, top_pr);
-    turned() flip_vars(bot_kind, bot_d, bot_r, bot_ergo) fuzzy_band(bot_kind == "edge") flip_slot(bot_kind, bot_w, bot_pn, bot_pw, bot_pgap, bot_pr);
+    flip_vars(top_kind, top_d, top_r, top_ergo, top_angle) fuzzy_band(top_kind == "edge") flip_slot(top_kind, top_w, top_pn, top_pw, top_pgap, top_pr);
+    turned() flip_vars(bot_kind, bot_d, bot_r, bot_ergo, bot_angle) fuzzy_band(bot_kind == "edge") flip_slot(bot_kind, bot_w, bot_pn, bot_pw, bot_pgap, bot_pr);
 }

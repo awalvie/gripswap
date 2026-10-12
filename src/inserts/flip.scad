@@ -1,12 +1,13 @@
 // Flip insert: two grips in one insert, each an edge or a row of pockets. The top grip is in use;
 // the bottom one hangs upside down under it. Turn the insert over, front still to the front, to
 // swap them. The housing lips hold it the same way either way up.
-// Each grip has its floor on the web in the middle. An edge is the edge-insert sweep, flat or
-// ergo; pockets are the pocket insert's pockets. No angle: any angle takes finger room away.
+// Each grip has its floor on the web in the middle. An edge is the edge-insert sweep, flat, ergo
+// or incut; pockets are the pocket insert's pockets. An incut starts lower at the lip, so it takes
+// finger room away: it stops at 10 degrees, and there are no slopers.
 
-// top grip: "edge" or "pocket"; depth, lip roundover; edge: ergo curve, width; pockets: count, width, wall, corner radius
-top_kind = "edge"; top_d = 20; top_r = 3; top_ergo = 0; top_w = 90; top_pn = 1; top_pw = 58; top_pgap = 10; top_pr = 8;
-bot_kind = "edge"; bot_d = 10; bot_r = 2; bot_ergo = 0; bot_w = 90; bot_pn = 1; bot_pw = 58; bot_pgap = 10; bot_pr = 8;
+// top grip: "edge" or "pocket"; depth, lip roundover; edge: ergo curve, width, incut; pockets: count, width, wall, corner radius
+top_kind = "edge"; top_d = 20; top_r = 3; top_ergo = 0; top_w = 90; top_angle = 0; top_pn = 1; top_pw = 58; top_pgap = 10; top_pr = 8;
+bot_kind = "edge"; bot_d = 10; bot_r = 2; bot_ergo = 0; bot_w = 90; bot_angle = 0; bot_pn = 1; bot_pw = 58; bot_pgap = 10; bot_pr = 8;
 flip_web = 3.2;                              // wall between the two slot floors; it carries no load
 flip_zc = floor_t + pk_h/2;                  // middle of the insert height
 lbl_t = 0.6;                                 // label depth in the back wall of the slot
@@ -14,8 +15,8 @@ lbl_room = 11;                               // room a two-digit label takes bes
 
 // the edge settings of one grip, for everything inside it. The slot takes all the room down to the web.
 // Pockets have the ceiling of an edge with the same lip; their mouth round runs up the face like a lip.
-module flip_vars(kind, d, r, e)
-    let($e_d = d, $e_r = r, $e_angle = 0, $e_ergo = kind == "edge" ? e : 0, $e_h = pk_h, $e_floor_min = flip_zc + flip_web/2)
+module flip_vars(kind, d, r, e, a)
+    let($e_d = d, $e_r = r, $e_angle = kind == "edge" ? a : 0, $e_ergo = kind == "edge" ? e : 0, $e_h = pk_h, $e_floor_min = flip_zc + flip_web/2)
     let($p_floor = e_floor(), $p_ceil = e_ceil(), $p_mouth = r) children();
 
 // the slot of one grip in the top half: an edge, or a row of pockets
@@ -26,14 +27,14 @@ module flip_slot(kind, w, pn, pw, pgap, pr) {
 }
 
 // one grip in the top half, with its label
-module flip_grip(kind, d, r, e, w, pn, pw, pgap, pr) flip_vars(kind, d, r, e) {
+module flip_grip(kind, d, r, e, a, w, pn, pw, pgap, pr) flip_vars(kind, d, r, e, a) {
     flip_slot(kind, w, pn, pw, pgap, pr);
     if (kind == "edge")
         // label on the flat band of the back wall, under the round corner at its top. Cut by the slot
         // moved lbl_t back, so it keeps its depth on the curved back wall of an ergo edge.
         intersection() {
             translate([0, lbl_t, 0]) e_sweep(w);
-            translate([0, pk_d, (e_floor() + e_ceil() - e_br(e_dmin())) / 2]) rotate([90, 0, 0])
+            translate([0, pk_d, (e_floor() + e_back_top() - e_br(e_dmin())) / 2]) rotate([90, 0, 0])
                 linear_extrude(pk_d) text(str(d, " mm"), size = 7, font = "Liberation Sans:style=Bold", halign = "center", valign = "center");
         }
     else let(span = row_span(pn, pw, pgap), x0 = span/2 + r + 2, x1 = pk_w/2 - lip_in - clear - 2)
@@ -50,7 +51,7 @@ module turned() translate([0, 0, flip_zc]) rotate([0, 180, 0]) translate([0, 0, 
 module insert_flip() {
     difference() {
         insert_blank(both = true);
-        flip_grip(top_kind, top_d, top_r, top_ergo, top_w, top_pn, top_pw, top_pgap, top_pr);
-        turned() flip_grip(bot_kind, bot_d, bot_r, bot_ergo, bot_w, bot_pn, bot_pw, bot_pgap, bot_pr);
+        flip_grip(top_kind, top_d, top_r, top_ergo, top_angle, top_w, top_pn, top_pw, top_pgap, top_pr);
+        turned() flip_grip(bot_kind, bot_d, bot_r, bot_ergo, bot_angle, bot_w, bot_pn, bot_pw, bot_pgap, bot_pr);
     }
 }
