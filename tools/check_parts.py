@@ -41,9 +41,10 @@ def cases():
     # each housing setting at both ends
     for p in catalog.HOUSING["params"]:
         out += [("housing", {p["name"]: v}) for v in (p["min"], p["max"])]
-    # the roller and its frame at the smallest and largest diameter
+    # the roller and its frame at every diameter: the cheek nose meets the insert top differently at each
     roll_d = next(p for i in catalog.INSERTS if i["id"] == "roller" for p in i["params"] if p["name"] == "roll_d")
-    out += [(part, {"roll_d": v}) for part in ("insert_roller", "roller") for v in (roll_d["min"], roll_d["max"])]
+    out += [(part, {"roll_d": v}) for part in ("insert_roller", "roller")
+            for v in range(roll_d["min"], roll_d["max"] + 1, roll_d["step"])]
     for ins in catalog.INSERTS:
         for part in ins["parts"]:
             out.append((part["part"], {}))
