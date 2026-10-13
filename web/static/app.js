@@ -102,21 +102,32 @@ function busy(on) {
 const insertDef = (id) => cat.inserts.find((i) => i.id === id);
 const defaults = (params) => Object.fromEntries(params.map((p) => [p.name, p.default]));
 const defOf = (it) => (it.type === "housing" ? cat.housing : insertDef(it.insertId));
-// a part with "unless" is left out while those settings have those values (the fuzzy modifier while "None")
-const partsOf = (it) => defOf(it).parts.filter((p) => !Object.entries(p.unless || {}).some(([n, v]) => it.values[n] === v));
+// a part with "when" is in only while those settings have one of those values (the fuzzy modifier and
+// the 3MF with a slicer pattern)
+const partsOf = (it) => defOf(it).parts.filter((p) => Object.entries(p.when || {}).every(([n, vs]) => vs.includes(it.values[n])));
+// the picked option of a choice setting
+const optOf = (it, n) => defOf(it).params.find((q) => q.name === n)?.options.find((o) => o.value === it.values[n]);
+// a slicer pattern: its fuzzy skin noise type, and thickness and point distance; else null
+function slicerTexture(it) {
+  const o = optOf(it, "texture");
+  return o?.slicer ? { noise: o.noise, skin: optOf(it, "texture_size").skin } : null;
+}
 // a part that prints from its own STL, not a slicer modifier or a 3MF made of other parts
 const printed = (q) => !q.modifier && !q.threemf;
-// a part's note: its own, or the picked option's note (the fuzzy modifier says what to set in the slicer)
-const noteOf = (it, p) => p.settings_from ? defOf(it).params.find((q) => q.name === p.settings_from).options
-  .find((o) => o.value === it.values[p.settings_from]).note : p.settings;
+// a part's note: its own, or for the fuzzy modifier what to set in the slicer
+const noteOf = (it, p) => p.modifier ? `fuzzy skin ${slicerTexture(it).skin[0]} mm thick, points ${slicerTexture(it).skin[1]} mm apart` : p.settings;
 
 function newHousing(values) { return { type: "housing", values: Object.assign(defaults(cat.housing.params), values || {}) }; }
 function newInsert(id, values) {
   return { type: "insert", insertId: id, values: Object.assign(defaults(insertDef(id).params), values || {}) };
 }
 
-// names come from the values, so they follow every slider
+// names come from the values, so they follow every slider. A texture goes at the end.
 function nameOf(it) {
+  const o = it.type === "insert" && optOf(it, "texture");
+  return baseName(it) + (o && o.value !== "none" ? ` ${o.label.toLowerCase()} ${it.values.texture_size}` : "");
+}
+function baseName(it) {
   const v = it.values;
   if (it.type === "housing") return "Housing";
   const ang = v.edge_angle > 0 ? ` incut ${v.edge_angle}°` : v.edge_angle < 0 ? ` sloper ${-v.edge_angle}°` : "";
@@ -162,8 +173,9 @@ function cleanParams(values, def) {
       if (typeof v !== "number" || !Number.isFinite(v)) throw new Error(`${name} must be a number`);
       if (v < p.min || v > p.max) throw new Error(`${name} must be between ${p.min} and ${p.max}`);
     } else if (!p.options.some((o) => o.value === v)) throw new Error(`${name} has no option ${v}`);
-    if (v !== p.default && !p.slicer) out[name] = v;   // a slicer setting gives the same STL
+    if (v !== p.default && !p.options?.find((o) => o.value === v)?.slicer) out[name] = v;   // a slicer pattern gives the same STL
   });
+  def.params.forEach((p) => { if (p.scad_with && !(p.scad_with in out)) delete out[p.name]; });
   const q = Object.assign(defaults(def.params), out);
   (def.spans || []).forEach((s) => {
     if (q[s.names[1]] > spanMax(s, q)) throw new Error("The pockets are wider than the insert. Use fewer or narrower pockets.");
@@ -252,7 +264,7 @@ function renderPartner() {
 // ---------- editor
 function shown(p, group) {
   const rule = (group.show_if || {})[p.name];
-  return !rule || cur().values[rule[0]] === rule[1];
+  return !rule || [rule[1]].flat().includes(cur().values[rule[0]]);
 }
 
 // small line pictures for choices, by the catalog's "icon" name: an edge seen from the side,
@@ -529,7 +541,7 @@ function toTwoSided(it) {
     if (w.top_pw !== v.pocket_w) say("top_pw", v.pocket_w, w.top_pw);
     if (w.top_pgap !== v.pocket_gap) say("top_pgap", v.pocket_gap, w.top_pgap);
   }
-  w.fuzzy = v.fuzzy;
+  w.texture = v.texture; w.texture_size = v.texture_size;
   if (it.insertId === "pocket" && v.edge_angle) cut.push(`angle ${v.edge_angle}° to 0°`);
   // each grip of a two-sided insert takes half the height
   const h = specIn(defOf(it), "slot_h");
@@ -541,8 +553,9 @@ function toTwoSided(it) {
 function toOneSided(it) {
   const v = it.values;
   return v.top_kind === "edge"
-    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, edge_angle: v.top_angle, slot_w: v.top_w, fuzzy: v.fuzzy })
-    : newInsert("pocket", { slot_d: v.top_d, grip_r: v.top_r, pocket_n: v.top_pn, pocket_w: v.top_pw, pocket_gap: v.top_pgap, pocket_r: v.top_pr, fuzzy: v.fuzzy });
+    ? newInsert("edge", { slot_d: v.top_d, grip_r: v.top_r, ergo: v.top_ergo, edge_angle: v.top_angle, slot_w: v.top_w, texture: v.texture, texture_size: v.texture_size })
+    : newInsert("pocket", { slot_d: v.top_d, grip_r: v.top_r, pocket_n: v.top_pn, pocket_w: v.top_pw, pocket_gap: v.top_pgap, pocket_r: v.top_pr,
+                            texture: ["lines", "knurl", "dots"].includes(v.texture) ? "none" : v.texture, texture_size: v.texture_size });   // pockets have no modeled patterns
 }
 
 function setSides(n) {
@@ -812,11 +825,10 @@ async function update() {
     // the insert lines up with the floor of the housing it is shown in
     if (ins) {
       // the fuzzy modifier is not drawn, it marks where the insert gets bumps
-      const mod = partsOf(ins).find((q) => q.modifier);
-      const skin = mod && defOf(ins).params.find((q) => q.name === mod.settings_from).options.find((o) => o.value === ins.values[mod.settings_from]).skin;
+      const tm = partsOf(ins).find((q) => q.threemf), skin = tm && slicerTexture(ins).skin;
       partsOf(ins).filter(printed).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
                                                                            h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}),
-                                                                         fuzz: skin && { part: mod.part, skin } }));
+                                                                         fuzz: skin && { part: tm.threemf[1], skin } }));
     }
     if (h) {
       const params = cleanParams(ownParams(h), cat.housing);
@@ -889,11 +901,11 @@ async function fileData(p, it) {
   const params = cleanParams(ownParams(it), defOf(it));
   if (!p.threemf) return new Uint8Array(await stl(p.part, params, true));
   const [ins, mod] = await Promise.all(p.threemf.map((q) => stl(q, params, true)));
-  const [t, pd] = defOf(it).params.find((q) => q.name === p.skin_from).options.find((o) => o.value === it.values[p.skin_from]).skin;
+  const { noise, skin: [t, pd] } = slicerTexture(it);
   return make3mf(nameOf(it), [
     { name: nameOf(it), stl: ins, type: "normal_part" },
     { name: "Fuzzy texture", stl: mod, type: "modifier_part",
-      settings: { fuzzy_skin: "all", fuzzy_skin_thickness: t, fuzzy_skin_point_distance: pd } }]);
+      settings: { fuzzy_skin: "all", fuzzy_skin_thickness: t, fuzzy_skin_point_distance: pd, fuzzy_skin_noise_type: noise } }]);
 }
 
 // the button spins and ignores more taps until the file is saved
@@ -989,6 +1001,8 @@ function loadKit() {
         const w = { mono: 22, two: 40, three: 58 }[x.v?.[s + "_kind"]];
         if (w) { x.v[s + "_kind"] = "pocket"; x.v[s + "_pw"] = w; }
       });
+      // older links have one fuzzy setting: its value is the strength
+      if (x.v?.fuzzy && x.v.fuzzy !== "none") { x.v.texture = "fuzzy"; x.v.texture_size = x.v.fuzzy; }
       // a setting the page no longer has (from an older link) is dropped, the rest of the kit stays
       Object.entries(x.h || x.v || {}).forEach(([n, v]) => { if (own.includes(n)) it.values[n] = v; });
       cleanParams(it.values, defOf(it));

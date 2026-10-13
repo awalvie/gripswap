@@ -144,9 +144,10 @@
      "part": "fuzzy_edge",
      "name": "Fuzzy modifier",
      "supports": "PrusaSlicer: load it with the insert as one object",
-     "settings_from": "fuzzy",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy"
+      ]
      },
      "modifier": true
     },
@@ -157,11 +158,14 @@
       "insert_edge",
       "fuzzy_edge"
      ],
-     "skin_from": "fuzzy",
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy",
+       "cells",
+       "marble"
+      ]
      }
     }
    ],
@@ -239,22 +243,61 @@
      "simple": false
     },
     {
-     "name": "fuzzy",
-     "label": "Fuzzy texture",
+     "name": "texture",
+     "label": "Pattern",
      "type": "choice",
      "options": [
       {
        "value": "none",
-       "label": "None"
+       "label": "Smooth"
       },
+      {
+       "value": "lines",
+       "label": "Lines"
+      },
+      {
+       "value": "knurl",
+       "label": "Knurl"
+      },
+      {
+       "value": "dots",
+       "label": "Dots"
+      },
+      {
+       "value": "fuzzy",
+       "label": "Fuzzy",
+       "slicer": true,
+       "noise": "classic"
+      },
+      {
+       "value": "cells",
+       "label": "Cells",
+       "slicer": true,
+       "noise": "voronoi"
+      },
+      {
+       "value": "marble",
+       "label": "Marble",
+       "slicer": true,
+       "noise": "ridgedmulti"
+      }
+     ],
+     "default": "none",
+     "help": "Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
+     "simple": true
+    },
+    {
+     "name": "texture_size",
+     "label": "Strength",
+     "type": "choice",
+     "options": [
       {
        "value": "fine",
        "label": "Fine",
        "skin": [
         0.2,
         0.3
-       ],
-       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+       ]
       },
       {
        "value": "medium",
@@ -262,8 +305,7 @@
        "skin": [
         0.3,
         0.5
-       ],
-       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+       ]
       },
       {
        "value": "coarse",
@@ -271,16 +313,28 @@
        "skin": [
         0.4,
         0.8
-       ],
-       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+       ]
       }
      ],
-     "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
+     "default": "medium",
+     "help": "",
      "simple": true,
-     "slicer": true
+     "scad_with": "texture"
     }
    ],
+   "show_if": {
+    "texture_size": [
+     "texture",
+     [
+      "lines",
+      "knurl",
+      "dots",
+      "fuzzy",
+      "cells",
+      "marble"
+     ]
+    ]
+   },
    "cards": [
     {
      "title": "Edge",
@@ -300,7 +354,8 @@
      "title": "Texture",
      "sub": "",
      "params": [
-      "fuzzy"
+      "texture",
+      "texture_size"
      ],
      "choice": false,
      "choice_after": ""
@@ -326,9 +381,10 @@
      "part": "fuzzy_flip",
      "name": "Fuzzy modifier",
      "supports": "PrusaSlicer: load it with the insert as one object",
-     "settings_from": "fuzzy",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy"
+      ]
      },
      "modifier": true
     },
@@ -339,11 +395,14 @@
       "insert_flip",
       "fuzzy_flip"
      ],
-     "skin_from": "fuzzy",
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy",
+       "cells",
+       "marble"
+      ]
      }
     }
    ],
@@ -601,22 +660,61 @@
      "simple": false
     },
     {
-     "name": "fuzzy",
-     "label": "Fuzzy texture",
+     "name": "texture",
+     "label": "Pattern",
      "type": "choice",
      "options": [
       {
        "value": "none",
-       "label": "None"
+       "label": "Smooth"
       },
+      {
+       "value": "lines",
+       "label": "Lines"
+      },
+      {
+       "value": "knurl",
+       "label": "Knurl"
+      },
+      {
+       "value": "dots",
+       "label": "Dots"
+      },
+      {
+       "value": "fuzzy",
+       "label": "Fuzzy",
+       "slicer": true,
+       "noise": "classic"
+      },
+      {
+       "value": "cells",
+       "label": "Cells",
+       "slicer": true,
+       "noise": "voronoi"
+      },
+      {
+       "value": "marble",
+       "label": "Marble",
+       "slicer": true,
+       "noise": "ridgedmulti"
+      }
+     ],
+     "default": "none",
+     "help": "Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
+     "simple": true
+    },
+    {
+     "name": "texture_size",
+     "label": "Strength",
+     "type": "choice",
+     "options": [
       {
        "value": "fine",
        "label": "Fine",
        "skin": [
         0.2,
         0.3
-       ],
-       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+       ]
       },
       {
        "value": "medium",
@@ -624,8 +722,7 @@
        "skin": [
         0.3,
         0.5
-       ],
-       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+       ]
       },
       {
        "value": "coarse",
@@ -633,14 +730,13 @@
        "skin": [
         0.4,
         0.8
-       ],
-       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+       ]
       }
      ],
-     "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
+     "default": "medium",
+     "help": "",
      "simple": true,
-     "slicer": true
+     "scad_with": "texture"
     }
    ],
    "show_if": {
@@ -699,6 +795,17 @@
     "bot_pr": [
      "bot_kind",
      "pocket"
+    ],
+    "texture_size": [
+     "texture",
+     [
+      "lines",
+      "knurl",
+      "dots",
+      "fuzzy",
+      "cells",
+      "marble"
+     ]
     ]
    },
    "spans": [
@@ -760,7 +867,8 @@
      "title": "Texture",
      "sub": "",
      "params": [
-      "fuzzy"
+      "texture",
+      "texture_size"
      ],
      "choice": false,
      "choice_after": ""
@@ -884,9 +992,10 @@
      "part": "fuzzy_pocket",
      "name": "Fuzzy modifier",
      "supports": "PrusaSlicer: load it with the insert as one object",
-     "settings_from": "fuzzy",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy"
+      ]
      },
      "modifier": true
     },
@@ -897,11 +1006,14 @@
       "insert_pocket",
       "fuzzy_pocket"
      ],
-     "skin_from": "fuzzy",
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
-     "unless": {
-      "fuzzy": "none"
+     "when": {
+      "texture": [
+       "fuzzy",
+       "cells",
+       "marble"
+      ]
      }
     }
    ],
@@ -1003,22 +1115,49 @@
      "simple": false
     },
     {
-     "name": "fuzzy",
-     "label": "Fuzzy texture",
+     "name": "texture",
+     "label": "Pattern",
      "type": "choice",
      "options": [
       {
        "value": "none",
-       "label": "None"
+       "label": "Smooth"
       },
+      {
+       "value": "fuzzy",
+       "label": "Fuzzy",
+       "slicer": true,
+       "noise": "classic"
+      },
+      {
+       "value": "cells",
+       "label": "Cells",
+       "slicer": true,
+       "noise": "voronoi"
+      },
+      {
+       "value": "marble",
+       "label": "Marble",
+       "slicer": true,
+       "noise": "ridgedmulti"
+      }
+     ],
+     "default": "none",
+     "help": "Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
+     "simple": true
+    },
+    {
+     "name": "texture_size",
+     "label": "Strength",
+     "type": "choice",
+     "options": [
       {
        "value": "fine",
        "label": "Fine",
        "skin": [
         0.2,
         0.3
-       ],
-       "note": "fuzzy skin 0.2 mm thick, points 0.3 mm apart"
+       ]
       },
       {
        "value": "medium",
@@ -1026,8 +1165,7 @@
        "skin": [
         0.3,
         0.5
-       ],
-       "note": "fuzzy skin 0.3 mm thick, points 0.5 mm apart"
+       ]
       },
       {
        "value": "coarse",
@@ -1035,16 +1173,28 @@
        "skin": [
         0.4,
         0.8
-       ],
-       "note": "fuzzy skin 0.4 mm thick, points 0.8 mm apart"
+       ]
       }
      ],
-     "default": "none",
-     "help": "A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.",
+     "default": "medium",
+     "help": "",
      "simple": true,
-     "slicer": true
+     "scad_with": "texture"
     }
    ],
+   "show_if": {
+    "texture_size": [
+     "texture",
+     [
+      "lines",
+      "knurl",
+      "dots",
+      "fuzzy",
+      "cells",
+      "marble"
+     ]
+    ]
+   },
    "spans": [
     {
      "names": [
@@ -1076,7 +1226,8 @@
      "title": "Texture",
      "sub": "",
      "params": [
-      "fuzzy"
+      "texture",
+      "texture_size"
      ],
      "choice": false,
      "choice_after": ""

@@ -48,20 +48,30 @@ If you render a part yourself, add `-D for_print=true` to get it the right way u
 openscad -D 'part="housing"' -D for_print=true -o housing.stl opengrips.scad
 ```
 
-## Fuzzy texture
+## Grip texture
 
-If you pick a texture for an insert, your slicer roughens the grip with fuzzy skin: the roof of the slot and its front round. The rest of the insert stays smooth. The download has two extra files for it.
+Pick a pattern and a strength for the grip, the roof of the slot. The rest of the insert stays smooth.
 
-In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and a modifier over the grip, with the texture already set on the modifier. Pick your printer and filament, then slice.
+Lines, Knurl and Dots are part of the edge itself, so you slice the insert like any other part. Pockets and slopers don't get them.
 
-In PrusaSlicer, use the insert STL and the `-fuzzy-modifier.stl` file:
+| Pattern | Fine | Medium | Coarse |
+| --- | --- | --- | --- |
+| Lines: ridges along the lip | 0.3 mm high, 0.8 mm apart | 0.4 mm, 1 mm | 0.6 mm, 1.5 mm |
+| Knurl: small pyramids | 0.3 mm high, 0.8 mm apart | 0.4 mm, 1 mm | 0.6 mm, 1.5 mm |
+| Dots: small cones | 0.3 mm high, 1 mm apart | 0.4 mm, 1.5 mm | 0.6 mm, 2 mm |
+
+Fuzzy, Cells and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
+
+In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. Pick your printer and filament, then slice.
+
+PrusaSlicer has Fuzzy only. Use the insert STL and the `-fuzzy-modifier.stl` file:
 
 1. Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.
 2. Right-click the modifier part and change its type to modifier.
 3. Add the fuzzy skin settings to the modifier and pick "All walls". The grip prints as the wall of a hole, so "Outside walls" misses it.
-4. Set the thickness and point distance for the texture you picked.
+4. Set the thickness and point distance for the strength you picked.
 
-| Texture | Thickness | Point distance |
+| Strength | Thickness | Point distance |
 | --- | --- | --- |
 | Fine | 0.2 mm | 0.3 mm |
 | Medium | 0.3 mm | 0.5 mm |

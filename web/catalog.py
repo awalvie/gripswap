@@ -45,32 +45,45 @@ MAX_W = 90
 
 SOLID = "3 walls · 15% gyroid"
 
-# Fuzzy grip: the slicer's fuzzy skin, in a modifier band over the grip. The texture lives in the
-# slicer settings, so each option says what to set, and OpenSCAD never gets it ("slicer").
-# "skin": fuzzy skin thickness and point distance in mm; the preview draws bumps of that size.
-def fuzz(value, label, t, pd):
-    return {"value": value, "label": label, "skin": [t, pd],
-            "note": f"fuzzy skin {t} mm thick, points {pd} mm apart"}
+# Grip texture: a pattern and a strength. Lines, Knurl and Dots are modeled on the ceiling of an
+# edge (src/inserts/edge.scad sets their sizes); Fuzzy, Cells and Marble are the slicer's fuzzy skin
+# in a modifier band over the grip ("slicer": OpenSCAD never gets them, "noise": the fuzzy skin noise
+# type in Bambu Studio and Orca).
+MODELED = [{"value": "lines", "label": "Lines"}, {"value": "knurl", "label": "Knurl"}, {"value": "dots", "label": "Dots"}]
+SLICED = [{"value": "fuzzy", "label": "Fuzzy", "slicer": True, "noise": "classic"},
+          {"value": "cells", "label": "Cells", "slicer": True, "noise": "voronoi"},
+          {"value": "marble", "label": "Marble", "slicer": True, "noise": "ridgedmulti"}]
 
 
-FUZZY = choice("fuzzy", "Fuzzy texture", [
-    {"value": "none", "label": "None"},
-    fuzz("fine", "Fine", 0.2, 0.3),
-    fuzz("medium", "Medium", 0.3, 0.5),
-    fuzz("coarse", "Coarse", 0.4, 0.8),
-], "none", help="A rough grip that your slicer makes. Adds a 3MF for Bambu Studio and Orca, and a modifier file for PrusaSlicer, to the download; the printing guide says how to use them.", simple=True)
-FUZZY["slicer"] = True
+def texture(modeled=True):
+    return choice("texture", "Pattern", [{"value": "none", "label": "Smooth"}] + (MODELED if modeled else []) + SLICED, "none",
+                  help=("Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. " if modeled else "") +
+                  "Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the "
+                  "download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
+                  simple=True)
+
+
+# "skin": fuzzy skin thickness and point distance in mm, for the slicer patterns. "scad_with": sent to
+# OpenSCAD only together with the pattern, so a slicer pattern gives the same STL at every strength.
+TEXTURE_SIZE = choice("texture_size", "Strength", [
+    {"value": "fine", "label": "Fine", "skin": [0.2, 0.3]},
+    {"value": "medium", "label": "Medium", "skin": [0.3, 0.5]},
+    {"value": "coarse", "label": "Coarse", "skin": [0.4, 0.8]},
+], "medium", simple=True)
+TEXTURE_SIZE["scad_with"] = "texture"
+TEXTURE_SHOW = {"texture_size": ["texture", [o["value"] for o in MODELED + SLICED]]}
 
 
 def fuzzy_parts(insert, modifier):
-    # in the download only when a texture is picked. PrusaSlicer gets the modifier as an STL, and its
-    # note says what to set. Bambu Studio and Orca get a 3MF of the insert and the modifier with the
-    # texture already set ("threemf": the parts in it, "skin_from": the setting with the sizes).
+    # in the download only with a slicer pattern ("when"). PrusaSlicer gets the modifier as an STL for
+    # Fuzzy, and its note says what to set. Bambu Studio and Orca get a 3MF of the insert and the
+    # modifier with the texture already set ("threemf": the parts in it).
     return [{"part": modifier, "name": "Fuzzy modifier", "supports": "PrusaSlicer: load it with the insert as one object",
-             "settings_from": "fuzzy", "unless": {"fuzzy": "none"}, "modifier": True},
-            {"part": modifier + "_3mf", "name": "Bambu Orca", "threemf": [insert, modifier], "skin_from": "fuzzy",
+             "when": {"texture": ["fuzzy"]}, "modifier": True},
+            {"part": modifier + "_3mf", "name": "Bambu Orca", "threemf": [insert, modifier],
              "settings": "insert and texture in one file", "supports": "Bambu Studio and Orca Slicer",
-             "unless": {"fuzzy": "none"}}]
+             "when": {"texture": [o["value"] for o in SLICED]}}]
+
 
 HOUSING = {
     "id": "housing",
@@ -126,13 +139,13 @@ FLIP = {
     "two_sided_of": ["edge", "pocket"],
     "parts": [{"part": "insert_flip", "name": "Two-sided insert", "supports": "no supports", "settings": SOLID},
               *fuzzy_parts("insert_flip", "fuzzy_flip")],
-    "params": flip_grip("top", "Top", 20, 3) + flip_grip("bot", "Bottom", 10, 2) + [FUZZY],
-    "show_if": flip_show_if("top") | flip_show_if("bot"),
+    "params": flip_grip("top", "Top", 20, 3) + flip_grip("bot", "Bottom", 10, 2) + [texture(), TEXTURE_SIZE],
+    "show_if": flip_show_if("top") | flip_show_if("bot") | TEXTURE_SHOW,
     "spans": [{"names": [f"{k}_pn", f"{k}_pw", f"{k}_pgap"], "max": FLIP_SPAN} for k in ("top", "bot")],
     "cards": [card("Top grip", flip_grip("top", "", 0, 0), "faces up", choice=True),
               card("Bottom grip", flip_grip("bot", "", 0, 0), "on the underside: turn the insert over to use it", choice=True,
                    choice_after="bot_kind"),
-              card("Texture", ["fuzzy"])],
+              card("Texture", ["texture", "texture_size"])],
     # each grip's one-tap choice, by its kind; the values are the grip's own, without its top_ or bot_
     "side_choices": {
         "edge": {"label": "Shape", "help": "An incut takes finger room at the lip, so it stops at 10°. No slopers.", "options": [
@@ -165,10 +178,11 @@ INSERTS = [
         "params": EDGE_SHAPE + [
             num("slot_w", "Edge width", 40, MAX_W, 1, 90),
             num("ergo", "Ergo curve", 0, 5, 0.5, 0, help="The lip curves this far back in the middle for the longer middle fingers. The middle gets deeper, the ends shallower and rounder."),
-            FUZZY,
+            texture(), TEXTURE_SIZE,
         ],
+        "show_if": TEXTURE_SHOW,
         "cards": [card("Edge", ["slot_d", "grip_r", "edge_angle", "slot_h", "slot_w", "ergo"], choice=True),
-                  card("Texture", ["fuzzy"])],
+                  card("Texture", ["texture", "texture_size"])],
     },
     FLIP,
     {
@@ -187,11 +201,12 @@ INSERTS = [
             num("pocket_w", "Pocket width", 18, MAX_W, 1, 58, help="Mono about 22, two fingers about 40, three fingers about 58."),
             num("pocket_gap", "Wall between", 6, 20, 1, 10),
             num("pocket_r", "Opening corner radius", 2, 11, 0.5, 8, help="Rounding of the pocket opening, seen from the front."),
-        ] + POCKET_SHAPE + [FUZZY],
+        ] + POCKET_SHAPE + [texture(modeled=False), TEXTURE_SIZE],
+        "show_if": TEXTURE_SHOW,
         # a pocket row must fit: count * width + (count - 1) * wall <= max
         "spans": [{"names": ["pocket_n", "pocket_w", "pocket_gap"], "max": MAX_W}],
         "cards": [card("Pockets", ["slot_d", "pocket_n", "pocket_w", "pocket_gap", "pocket_r", "grip_r", "edge_angle", "slot_h"], choice=True),
-                  card("Texture", ["fuzzy"])],
+                  card("Texture", ["texture", "texture_size"])],
     },
     {
         "id": "roller",
