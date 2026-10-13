@@ -96,7 +96,7 @@ A housing and one edge insert come to about 180 g, so a 1 kg spool gets you a ho
 
 ## The fit test
 
-On a new printer, print the fit test before the kit. In the configurator, click "fit test" under Download. You get one zip with two small parts, already the right way up. Use the housing settings above.
+On a new printer, print the fit test before the kit. In the configurator, click "Fit test" under Test prints, in the Download section. You get one zip with two small parts, already the right way up. Use the housing settings above.
 
 - The ring is a thin slice of the front of the housing, with the lips, and the frame is a thin slice of the front of an insert. Push the frame into the back of the ring until it stops on the lips. It must slide in without force.
 

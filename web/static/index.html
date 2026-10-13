@@ -159,6 +159,20 @@ section h2 b { color: var(--fg); text-transform: none; letter-spacing: 0; font-s
 .inline { display: inline; min-height: 0; padding: 0; border: 0; background: none; font: inherit; text-decoration: underline; cursor: pointer; }
 .warn { margin: 4px 0 8px; padding: 8px 10px; border-left: 3px solid var(--err); background: var(--panel); font-size: 13px; }
 .ditem { margin: 6px 0; }
+/* test prints: two soft tinted cards, each one button; they stack on a phone */
+.tests { margin: 4px 0 14px; }
+.tests h3 { font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 6px; }
+.tgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.tcard { position: relative; display: flex; align-items: center; gap: 10px; text-align: left; border: 0; border-radius: 10px;
+         padding: 12px; background: var(--lift); color: var(--fg); box-shadow: 0 1px 3px var(--lift-shadow); }
+.tcard span { flex: 1; min-width: 0; }
+.tcard strong { display: block; color: var(--lift-fg); }
+.tcard small { display: block; font-size: 12.5px; }
+.tcard svg { flex: none; width: 34px; height: 34px; padding: 7px; border-radius: 50%; background: var(--accent);
+             stroke: var(--accent-fg); stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.tcard.busy svg { visibility: hidden; }
+.tcard.busy::after { content: ""; position: absolute; right: 18px; top: 0; bottom: 0; margin: auto 0; width: 22px; height: 22px; border-radius: 50%;
+                     border: 3px solid var(--line); border-top-color: var(--accent); animation: spin .8s linear infinite; }
 .dfile { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 1px solid var(--line);
          border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
 .dfile label { flex: 1; min-width: 0; display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }

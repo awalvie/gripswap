@@ -937,16 +937,24 @@ async function update() {
 }
 
 // ---------- downloads
+const DL_ICON = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg>`;
+// a test print button spins until its zip is saved
+async function busyWhile(b, f) {
+  if (b.classList.contains("busy")) return;   // a second tap must not stop the spinner of the first
+  b.classList.add("busy");
+  try { await f(); } finally { b.classList.remove("busy"); }
+}
 function buildDownloads() {
   const dl = $("downloads");
   dl.innerHTML = kit.items.length ? `<p class="warn">Not load-tested yet. Check every part before each session, and keep your feet clear of the weight.</p>
     <p class="hint">Ticked files go in the zip, the arrow saves one file. PETG, ready to slice.
     <a href="https://github.com/awalvie/opengrips/blob/main/PRINTING.md" target="_blank" rel="noopener">Printing guide</a></p>` : "";
-  // the fit test comes before any kit, so it shows on an empty kit too
-  dl.insertAdjacentHTML("beforeend", `<p class="hint">New printer? Print the <button class="inline" id="fit-dl">fit test</button> first.
-    To choose a grip pattern, print the <button class="inline" id="tex-dl">texture test</button>.</p>`);
-  $("fit-dl").onclick = downloadFitTest;
-  $("tex-dl").onclick = downloadTextureTest;
+  // the test prints come before any kit, so they show on an empty kit too
+  dl.insertAdjacentHTML("beforeend", `<div class="tests"><h3>Test prints · print these first</h3><div class="tgrid">
+    <button type="button" class="tcard" id="fit-dl"><span><strong>Fit test</strong><small>Does an insert slide in?</small></span>${DL_ICON}</button>
+    <button type="button" class="tcard" id="tex-dl"><span><strong>Texture test</strong><small>Feel every grip pattern</small></span>${DL_ICON}</button></div></div>`);
+  $("fit-dl").onclick = (e) => busyWhile(e.currentTarget, downloadFitTest);
+  $("tex-dl").onclick = (e) => busyWhile(e.currentTarget, downloadTextureTest);
   kit.items.forEach((it) => {
     const box = document.createElement("div"); box.className = "ditem";
     it.skip = it.skip || {};   // parts left out of the zip, by part name; a plain object so that Copy keeps it
@@ -954,7 +962,7 @@ function buildDownloads() {
       const row = document.createElement("div"); row.className = "dfile";
       row.innerHTML = `<label><input type="checkbox"${it.skip[p.part] ? "" : " checked"}>
         <span><strong>${fileOf(it, p)}</strong><small>${noteOf(it, p)} · ${p.supports}</small></span></label>
-        <button type="button" title="Download only ${fileOf(it, p)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m-5-5 5 5 5-5M5 20h14"/></svg></button>`;
+        <button type="button" title="Download only ${fileOf(it, p)}">${DL_ICON}</button>`;
       row.querySelector("input").onchange = (e) => { it.skip[p.part] = !e.target.checked; kitButton(); };
       row.querySelector("button").onclick = (e) => downloadPart(p, it, e.currentTarget);
       box.append(row);
