@@ -62,7 +62,7 @@ Lines, Knurl and Dots are part of the edge itself, so you slice the insert like 
 
 Fuzzy, Cells and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
 
-In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. Pick your printer and filament, then slice.
+In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice.
 
 PrusaSlicer has Fuzzy only. Use the insert STL and the `-fuzzy-modifier.stl` file:
 
