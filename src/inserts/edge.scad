@@ -8,6 +8,8 @@ edge_angle = 0;                              // ceiling angle: + incut (rises to
 ergo = 0;                                    // ergonomic curve: the lip sits this far back in the middle, 0 at the ends
 edge_sb = 0;                                 // lip set back from the front (0 = flush)
 skin = 2.4;                                  // wall kept under the slot floor and at the slot ends
+texture = "none";                            // pattern modeled on the grip: "none", "lines", "knurl" or "dots"
+texture_size = "medium";                     // "fine", "medium" or "coarse"
 
 lip_t = grip_r / tan((90 - edge_angle) / 2);  // how far the lip roundover runs up the face
 // ceiling height at the lip: an incut ceiling rises toward the back, and a big roundover runs up
@@ -31,6 +33,7 @@ pk_floor = max(ins_bot + skin, min(slot_ceil, slot_ceil + slot_d * tan(edge_angl
 // The sweep reads its settings from $ variables. They default to the settings above; a part with
 // more than one edge sets them again around each one.
 $e_d = slot_d; $e_r = grip_r; $e_angle = edge_angle; $e_ergo = ergo; $e_h = slot_h;
+$e_tex = tex_spec(texture, texture_size);   // [kind, height, pitch], kind "none" for a smooth grip
 $e_floor_min = ins_bot + skin;      // lowest the slot floor goes
 $p_floor = pk_floor; $p_ceil = slot_ceil; $p_mouth = mouth_r;   // pocket floor, ceiling at the lip, mouth round
 back_r = 3;                                  // inside corner at the back of the slot
@@ -59,9 +62,38 @@ function unit(v) = v / norm(v);
 function back_fillet(B, a, r, n = 6) = let(u = [-cos(a), -sin(a)], phi = 90 - a)
     arc(B + unit(u + [0, -1]) * r / sin(phi / 2), r, 0, 90 + a, n);
 
+// Grip pattern: the straight part of the ceiling, between the lip round and the back corner, is a
+// row of points moved down into the slot by tex_h. Each slice has the same number of points, so
+// the sweep stays one solid; the height is taken at each point's real place, in mm, so the
+// pattern keeps its size where an ergo edge is longer. Heights and pitches: Lines and Knurl
+// teeth stand at about 39 degrees from upright when the insert prints on its back.
+function tex_spec(kind, size) = let(i = size == "fine" ? 0 : size == "coarse" ? 2 : 1)
+    kind == "lines" || kind == "knurl" ? [kind, [0.3, 0.4, 0.6][i], [0.8, 1, 1.5][i]]
+  : kind == "dots" ? [kind, [0.3, 0.4, 0.6][i], [1, 1.5, 2][i]]
+  : ["none", 0, 1];
+tex_edge = 0.5;                              // smooth band before the lip round and the back corner
+function tri(s) = 1 - abs(2 * (s - floor(s)) - 1);   // 0 at whole numbers, 1 half way
+// height at x across the width and t along the ceiling from the lip, on a ceiling L long. It fades
+// in over one pitch at each end: a sudden end would leave a ledge that faces down in print.
+function tex_h(x, t, L) = let(p = $e_tex[2], fade = max(0, min(1, (t - tex_edge) / p, (L - tex_edge - t) / p)))
+    fade * tex_shape(x, t);
+function tex_shape(x, t) = let(k = $e_tex[0], h = $e_tex[1], p = $e_tex[2])
+    k == "lines" ? h * tri(t / p)
+  : k == "knurl" ? h * min(tri((x + t) / (p * sqrt(2))), tri((x - t) / (p * sqrt(2))))   // pyramids
+  : k == "dots" ? let(rp = p * sqrt(3) / 2, j = round(t / rp), xo = (j % 2) * p / 2,
+                      d = norm([x - xo - round((x - xo) / p) * p, t - j * rp]), r = p * 0.35)   // r is at least 1.17 h
+        h * max(0, 1 - d / r)   // cones: their sides stay under 45 degrees in print
+  : 0;
+// sample spacing: a quarter pitch, a sixth for the round dots
+function tex_step() = $e_tex[2] / ($e_tex[0] == "dots" ? 6 : 4);
+// ceiling points from P (the back corner) to Q (the lip round), at x
+function tex_ceiling(P, Q, x) = let(L = norm(P - Q), d = (P - Q) / L, down = [d[1], -d[0]],
+                                    k = ceil(($e_d + $e_ergo) / tex_step()))
+    [for (i = [1 : k - 1]) let(t = L * (1 - i / k)) Q + d * t + down * tex_h(x, t, L)];
+
 // side profile of the slot for one slice: f is the ergo weight (1 in the middle), s how far back the lip is.
 // Counterclockwise in (y, z), lip at y = s, open to the front.
-function e_prof(f, n = 16) = let(s = $e_ergo * f, dep = e_depth(f), D = dep + s, br = e_br(dep),
+function e_prof(f, n = 16, x = 0) = let(s = $e_ergo * f, dep = e_depth(f), D = dep + s, br = e_br(dep),
                                  e_ceil = e_ceil(), e_floor = e_floor(), edge_angle = $e_angle)
     sloper() ? let(
         A = dep / (1 - cos(sl_th)), Bv = dep * tan(-edge_angle) / sin(sl_th),
@@ -76,16 +108,20 @@ function e_prof(f, n = 16) = let(s = $e_ergo * f, dep = e_depth(f), D = dep + s,
         tb = br / tan((90 - edge_angle) / 2),
         r = min(e_rad(f), (dep - tb - 0.5) * tan(th / 2)),   // the lip and the back corner must fit the depth
         u = [cos(edge_angle), sin(edge_angle)],
-        c = [s, e_ceil] + unit([0, 1] + u) * r / sin(th / 2))
-        concat([[-1, e_floor], [D, e_floor]], back_fillet([D, e_ceil + dep * tan(edge_angle)], edge_angle, br),
-               arc(c, r, edge_angle - 90, -180, n),
-               [[s, e_top], [-1, e_top]]);
+        c = [s, e_ceil] + unit([0, 1] + u) * r / sin(th / 2),
+        fil = back_fillet([D, e_ceil + dep * tan(edge_angle)], edge_angle, br),
+        lip = arc(c, r, edge_angle - 90, -180, n))
+        concat([[-1, e_floor], [D, e_floor]], fil,
+               $e_tex[0] == "none" ? [] : tex_ceiling(fil[len(fil) - 1], lip[0], x),
+               lip, [[s, e_top], [-1, e_top]]);
 
 // the profiles swept across the width as one solid, smooth along the ergo curve
 module e_sweep(w) {
-    n = $e_ergo > 0 ? 32 : 1;
+    // a pattern that changes across the width needs a slice every sample step; a steep sloper has no
+    // straight ceiling, so it stays smooth
+    n = !sloper() && ($e_tex[0] == "knurl" || $e_tex[0] == "dots") ? ceil((w + 2) / tex_step()) : $e_ergo > 0 ? 32 : 1;
     xs = [for (i = [0 : n]) -w/2 - 1 + (w + 2) * i / n];
-    profs = [for (x = xs) e_prof(ergo_f(x, w))];
+    profs = [for (x = xs) e_prof(ergo_f(x, w), 16, x)];
     m = len(profs[0]);
     pts = [for (i = [0 : n]) for (p = profs[i]) [xs[i], p[0], p[1]]];
     sides = [for (i = [0 : n - 1]) for (j = [0 : m - 1]) let(a = i*m + j, b = i*m + (j + 1) % m)

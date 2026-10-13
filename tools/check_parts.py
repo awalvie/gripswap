@@ -89,6 +89,13 @@ def cases():
     out.append(("insert_flip", {"floor_t": spec["floor_t"]["max"]}))   # the insert sits higher in a thicker housing floor
     pocket = next(i for i in catalog.INSERTS if i["id"] == "pocket")
     out.append(("insert_pocket", {"pocket_w": pocket["spans"][0]["max"]}))
+    # grip patterns modeled on the slot ceiling: every pattern at every size, and on an ergo, an incut
+    # and a two-sided edge
+    out += [("insert_edge", {"texture": k, "texture_size": s}) for k in ("lines", "knurl", "dots")
+            for s in ("fine", "medium", "coarse")]
+    out += [("insert_edge", {"texture": "knurl", "ergo": 5, "slot_d": 25}),
+            ("insert_edge", {"texture": "lines", "edge_angle": 20}),
+            ("insert_flip", {"texture": "dots", "top_angle": 10})]
     return out
 
 
