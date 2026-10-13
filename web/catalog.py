@@ -60,9 +60,10 @@ def texture(modeled=True):
                   help=("Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. " if modeled else "") +
                   "Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the "
                   "download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
-                  simple=True)
+                  simple=True) | {"focus": "grip"}
 
 
+# "focus": picking it turns the 3D view to the grip.
 # "skin": fuzzy skin thickness and point distance in mm, for the slicer patterns. "scad_with": sent to
 # OpenSCAD only together with the pattern, so a slicer pattern gives the same STL at every strength.
 TEXTURE_SIZE = choice("texture_size", "Strength", [
@@ -71,6 +72,7 @@ TEXTURE_SIZE = choice("texture_size", "Strength", [
     {"value": "coarse", "label": "Coarse", "skin": [0.4, 0.8]},
 ], "medium", simple=True)
 TEXTURE_SIZE["scad_with"] = "texture"
+TEXTURE_SIZE["focus"] = "grip"
 TEXTURE_SHOW = {"texture_size": ["texture", [o["value"] for o in MODELED + SLICED]]}
 
 

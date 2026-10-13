@@ -354,7 +354,7 @@ function control(p, group) {
     const w = optionButtons(p.label, p.options.map((o) => {
       const m = o.label.match(/^(.*?)\s*\((.*)\)$/) || [null, o.label, ""];
       return { label: m[1], blurb: m[2], icon: o.icon, active: vals[p.name] === o.value,
-               pick: () => { vals[p.name] = o.value; buildEditor(); edited(); } };   // a grip kind changes the rows under it
+               pick: () => { vals[p.name] = o.value; gripFocus ||= p.focus === "grip"; buildEditor(); edited(); } };   // a grip kind changes the rows under it
     }), p.help, p.name);
     w.querySelector(".lrow").append(resetButton(p, () => { vals[p.name] = p.default; buildEditor(); edited(); }));
     w.dataset.name = p.name; w.hidden = !shown(p, group);
@@ -387,7 +387,7 @@ function control(p, group) {
       p.options.map((o) => `<option value="${o.value}">${o.label}</option>`).join("") + "</select>";
     const sel = wrap.querySelector("select");
     sel.value = vals[p.name];
-    const pick = (v) => { vals[p.name] = sel.value = v; reset.hidden = v === p.default; refreshVisibility(); edited(); };
+    const pick = (v) => { vals[p.name] = sel.value = v; gripFocus ||= p.focus === "grip"; reset.hidden = v === p.default; refreshVisibility(); edited(); };
     const reset = resetButton(p, () => pick(p.default));
     wrap.querySelector(".lrow").append(reset);
     sel.addEventListener("change", () => pick(sel.value));
@@ -691,6 +691,37 @@ function renderNames() {
 
 // ---------- preview
 let timer = null;
+let gripFocus = false;   // a texture setting changed: once the new parts are in, the view turns to the grip
+
+// Turn the view to the grip of the insert: from the front and a little below, close enough to see a
+// texture. The grip is the roof of the first opening in the front face, found from the top down,
+// half way back. The camera glides there.
+function lookAtGrip() {
+  const m = ["insert_edge", "insert_pocket", "insert_flip"].map((k) => meshes[k]).find(Boolean);
+  if (!m) return;
+  const mesh = m.children[0], bb = mesh.geometry.boundingBox || (mesh.geometry.computeBoundingBox(), mesh.geometry.boundingBox);
+  model.updateMatrixWorld();
+  const ray = new THREE.Raycaster(), dir = new THREE.Vector3(0, 1, 0).transformDirection(model.matrixWorld);
+  // the middle first; off the middle only where a wall stands there (two or three pockets)
+  let grip = null;
+  for (const x of [0, 8, -8, 16, -16, 24, -24]) {
+    for (let z = bb.max.z - 0.5; z > bb.min.z && !grip; z -= 0.5) {
+      ray.set(model.localToWorld(new THREE.Vector3(x, bb.min.y - 5, z)), dir);
+      const hit = ray.intersectObject(mesh)[0], y = hit ? model.worldToLocal(hit.point.clone()).y : Infinity;
+      if (y > bb.min.y + 4) grip = new THREE.Vector3(x, Math.min(y, bb.max.y) / 2, z);
+    }
+    if (grip) break;
+  }
+  if (!grip) return;
+  const to = model.localToWorld(grip.clone()), from = model.localToWorld(grip.clone().add(new THREE.Vector3(-0.3, -1, -0.55).setLength(70)));
+  const p0 = camera.position.clone(), t0 = controls.target.clone(), start = performance.now();
+  const step = (now) => {
+    const k = Math.min(1, (now - start) / 450), e = k * k * (3 - 2 * k);
+    camera.position.lerpVectors(p0, from, e); controls.target.lerpVectors(t0, to, e); requestRender();
+    if (k < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 function changed(now) {
   busy(true);
   clearTimeout(timer);
@@ -867,8 +898,9 @@ async function update() {
     if (my !== seq) return;
     status(""); busy(false); say("Preview updated.");
     if (!framed) { frame(); framed = true; }
+    if (gripFocus) { gripFocus = false; lookAtGrip(); }
   } catch (e) {
-    failed = true;
+    failed = true; gripFocus = false;
     if (my === seq) { status(e.message, true); busy(false); }
   }
 }

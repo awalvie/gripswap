@@ -284,7 +284,8 @@
      ],
      "default": "none",
      "help": "Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
-     "simple": true
+     "simple": true,
+     "focus": "grip"
     },
     {
      "name": "texture_size",
@@ -319,7 +320,8 @@
      "default": "medium",
      "help": "",
      "simple": true,
-     "scad_with": "texture"
+     "scad_with": "texture",
+     "focus": "grip"
     }
    ],
    "show_if": {
@@ -701,7 +703,8 @@
      ],
      "default": "none",
      "help": "Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
-     "simple": true
+     "simple": true,
+     "focus": "grip"
     },
     {
      "name": "texture_size",
@@ -736,7 +739,8 @@
      "default": "medium",
      "help": "",
      "simple": true,
-     "scad_with": "texture"
+     "scad_with": "texture",
+     "focus": "grip"
     }
    ],
    "show_if": {
@@ -1144,7 +1148,8 @@
      ],
      "default": "none",
      "help": "Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
-     "simple": true
+     "simple": true,
+     "focus": "grip"
     },
     {
      "name": "texture_size",
@@ -1179,7 +1184,8 @@
      "default": "medium",
      "help": "",
      "simple": true,
-     "scad_with": "texture"
+     "scad_with": "texture",
+     "focus": "grip"
     }
    ],
    "show_if": {
