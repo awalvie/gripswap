@@ -109,7 +109,9 @@ To choose a grip pattern, print the texture test. In the configurator, click "Te
 - `texture-test.stl` has Lines, Knurl and Dots. Any slicer prints it.
 - `texture-test-bambu-orca.3mf` has Fuzzy, Cells and Marble, with the fuzzy skin already set on each tab. Open it in Bambu Studio or Orca Slicer.
 
-Each tab stands upright, like the grip of an insert on its back, so the pattern prints the same way. The front row is a smooth tab, to compare. Then each row is one pattern, Fine, Medium and Coarse from the left. The label in front of each tab says which: F, M or C.
+Each plate takes about 45 minutes and 13 g of PETG. That is Bambu Studio's estimate for an X1 Carbon with its 0.20 mm Standard settings.
+
+Each tab stands upright on a thin strip, like the grip of an insert on its back, so the pattern prints the same way. The front row is a smooth tab, to compare. Then each row is one pattern, Fine, Medium and Coarse from the left. The label in front of each tab says which: F, M or C.
 
 Press a finger pad on the front of each tab and drag it down, the way your fingers load the grip. Pick the one that holds best without hurting, then pick that pattern and strength for your inserts.
 
