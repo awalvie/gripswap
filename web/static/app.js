@@ -464,7 +464,7 @@ let syncs = [];   // re-mark the Shape, Fingers or Roller buttons after a slider
 // was (its row, and its place in the row), and put it back on the new control there.
 function focusSpot() {
   const a = document.activeElement;
-  if (!a || !$("editor").contains(a)) return null;
+  if (!a || !$("edit-section").contains(a)) return null;   // the editor and the All settings switch over it
   const row = a.closest(".param");
   return { id: a.id, row: row && (row.dataset.name || row.dataset.key),
            n: row ? [...row.querySelectorAll("button, input, select")].indexOf(a) : -1 };
@@ -508,6 +508,7 @@ function buildEditor() {
   const box = $("editor"); box.innerHTML = "";
   const it = cur();
   syncs = [];
+  $("mode-spot").innerHTML = "";
   if (!it) { box.innerHTML = `<p class="hint">Your kit is empty. Add an insert or a housing above.</p>`; return; }
   // Simple or every setting: a switch, it applies at once (W3C APG switch pattern)
   const sw = document.createElement("button");
@@ -515,7 +516,7 @@ function buildEditor() {
   sw.setAttribute("aria-checked", mode === "advanced");
   sw.innerHTML = `<span class="track" aria-hidden="true"><span class="knob"></span></span>All settings`;
   sw.onclick = () => { setMode(mode === "simple" ? "advanced" : "simple"); };
-  box.append(sw);
+  $("mode-spot").append(sw);   // in the heading row, beside the name
   if (it.type === "housing") buildCards(box, cat.housing);
   else buildInsertEditor(box, it);
   // every setting back to its default; an insert keeps its kind

@@ -92,8 +92,11 @@ section h2 b { color: var(--fg); text-transform: none; letter-spacing: 0; font-s
 .ecard .more-h { margin: 8px -16px 0; padding: 12px 16px 0; border-top: 6px solid var(--bg); font-size: 12px; font-weight: 600;
                  letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .ecard .more-h + .param { border-top: 0; padding-top: 0; }
-#editor .switch { display: flex; align-items: center; gap: 8px; margin: 0 0 10px auto; padding: 0 2px; border: 0; background: none;
-                  font-size: 14px; font-weight: 600; }
+/* the name wraps under itself, so the switch stays beside it */
+.edit-head { display: flex; align-items: center; gap: 12px; margin: 0 0 10px; }
+.edit-head h2 { flex: 1; min-width: 0; margin: 0; }
+.edit-head .switch { display: flex; align-items: center; gap: 8px; flex: none; padding: 0 2px; border: 0; background: none;
+                     font-size: 14px; font-weight: 600; }
 .switch .track { width: 36px; height: 22px; border-radius: 11px; background: var(--edge); position: relative; flex: none; }
 .switch .knob { position: absolute; left: 3px; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--panel); }
 .switch[aria-checked="true"] .track { background: var(--accent); }
@@ -238,7 +241,7 @@ body:has(#viewer.no3d) #panel section { scroll-margin-top: 8px; }
       </div>
     </section>
     <section id="edit-section">
-      <h2>Change: <b id="edit-title"></b></h2>
+      <div class="edit-head"><h2>Change: <b id="edit-title"></b></h2><span id="mode-spot"></span></div>
       <div id="editor"></div>
     </section>
     <section id="dl-section">
