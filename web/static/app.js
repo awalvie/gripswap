@@ -413,7 +413,7 @@ function control(p, group) {
     more.onclick = () => set(Number(input.value) + p.step);
   } else {
     wrap.innerHTML = `<div class="lrow"><label for="${id}">${p.label}</label>${tipHtml(p.label, p.help)}</div>${helpHtml(p.help)}<select id="${id}">` +
-      p.options.map((o) => `<option value="${o.value}">${o.label}</option>`).join("") + "</select>";
+      p.options.filter((o) => !(o.modeled && noEdge(cur()))).map((o) => `<option value="${o.value}">${o.label}</option>`).join("") + "</select>";
     const sel = wrap.querySelector("select");
     sel.value = vals[p.name];
     const pick = (v) => { vals[p.name] = sel.value = v; gripFocus ||= p.focus === "grip"; reset.hidden = v === p.default; refreshVisibility(); edited(); };
@@ -507,6 +507,9 @@ function buildCards(box, def, choiceFor, skip = () => false) {
   });
 }
 
+// a modeled pattern needs an edge: a two-sided insert with pockets on both sides gets none
+const noEdge = (it) => it.insertId === "flip" && it.values.top_kind !== "edge" && it.values.bot_kind !== "edge";
+
 function buildEditor() {
   const spot = focusSpot();
   const box = $("editor"); box.innerHTML = "";
@@ -514,6 +517,7 @@ function buildEditor() {
   syncs = [];
   $("mode-spot").innerHTML = "";
   if (!it) { box.innerHTML = `<p class="hint">Your kit is empty. Add an insert or a housing above.</p>`; return; }
+  if (noEdge(it) && optOf(it, "texture")?.modeled) { it.values.texture = "none"; saveKit(); }   // the last edge became a pocket
   // Simple or every setting: a switch, it applies at once (W3C APG switch pattern)
   const sw = document.createElement("button");
   sw.id = "mode-switch"; sw.className = "switch"; sw.setAttribute("role", "switch");
@@ -1128,6 +1132,7 @@ function loadKit() {
       // a setting the page no longer has (from an older link) is dropped, the rest of the kit stays
       Object.entries(x.h || x.v || {}).forEach(([n, v]) => { if (own.includes(n)) it.values[n] = v; });
       cleanParams(it.values, defOf(it));
+      if (noEdge(it) && optOf(it, "texture")?.modeled) it.values.texture = "none";   // a modeled pattern needs an edge
       return it;
     });
     kit.items.push(...items); kit.sel = Math.min(Math.max(0, k.s | 0), items.length - 1);

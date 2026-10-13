@@ -49,7 +49,9 @@ SOLID = "3 walls · 15% gyroid"
 # edge (src/inserts/edge.scad sets their sizes); Fuzzy, Cells and Marble are the slicer's fuzzy skin
 # in a modifier band over the grip ("slicer": OpenSCAD never gets them, "noise": the fuzzy skin noise
 # type in Bambu Studio and Orca).
-MODELED = [{"value": "lines", "label": "Lines"}, {"value": "knurl", "label": "Knurl"}, {"value": "dots", "label": "Dots"}]
+# "modeled": the page hides it on a two-sided insert with no edge.
+MODELED = [{"value": "lines", "label": "Lines", "modeled": True}, {"value": "knurl", "label": "Knurl", "modeled": True},
+           {"value": "dots", "label": "Dots", "modeled": True}]
 SLICED = [{"value": "fuzzy", "label": "Fuzzy", "slicer": True, "noise": "classic"},
           {"value": "cells", "label": "Cells", "slicer": True, "noise": "voronoi"},
           {"value": "marble", "label": "Marble", "slicer": True, "noise": "ridgedmulti"}]

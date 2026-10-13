@@ -253,15 +253,18 @@
       },
       {
        "value": "lines",
-       "label": "Lines"
+       "label": "Lines",
+       "modeled": true
       },
       {
        "value": "knurl",
-       "label": "Knurl"
+       "label": "Knurl",
+       "modeled": true
       },
       {
        "value": "dots",
-       "label": "Dots"
+       "label": "Dots",
+       "modeled": true
       },
       {
        "value": "fuzzy",
@@ -672,15 +675,18 @@
       },
       {
        "value": "lines",
-       "label": "Lines"
+       "label": "Lines",
+       "modeled": true
       },
       {
        "value": "knurl",
-       "label": "Knurl"
+       "label": "Knurl",
+       "modeled": true
       },
       {
        "value": "dots",
-       "label": "Dots"
+       "label": "Dots",
+       "modeled": true
       },
       {
        "value": "fuzzy",
