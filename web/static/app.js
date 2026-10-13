@@ -746,10 +746,12 @@ const masks = new WeakMap();   // key: the insert's STL bytes; the band comes fr
 // layer along y (inserts print on their backs), t high. Zoomed in, that is the real size. Zoomed out,
 // the bumps grow in steps of two, so they stay a few pixels wide and the texture still shows. The
 // marked faces also glow a soft amber, so the area shows in the shade of the slot.
-function fuzzMaterial(mat, t, pd) {
+// kind: 0 classic, 1 cells (Voronoi), 2 marble (ridged); cells and marble use the slicers' 1 mm noise scale
+const NOISE_KIND = { classic: 0, voronoi: 1, ridgedmulti: 2 };
+function fuzzMaterial(mat, t, pd, kind = 0) {
   mat.extensions = { derivatives: true };   // dFdx and fwidth on WebGL1
   mat.onBeforeCompile = (sh) => {
-    sh.uniforms.fuzzT = { value: t }; sh.uniforms.fuzzPd = { value: pd };
+    sh.uniforms.fuzzT = { value: t }; sh.uniforms.fuzzPd = { value: pd }; sh.uniforms.fuzzKind = { value: kind };
     sh.vertexShader = sh.vertexShader
       .replace("#include <common>", "#include <common>\nattribute float fuzz;\nvarying float vFuzz;\nvarying vec3 vObj;")
       .replace("#include <begin_vertex>", "#include <begin_vertex>\nvFuzz = fuzz;\nvObj = position;");
@@ -757,7 +759,7 @@ function fuzzMaterial(mat, t, pd) {
       .replace("#include <common>", `#include <common>
 varying float vFuzz;
 varying vec3 vObj;
-uniform float fuzzT, fuzzPd;
+uniform float fuzzT, fuzzPd, fuzzKind;
 float fzHash(vec3 c) { return fract(sin(dot(c, vec3(12.9898, 78.233, 37.719))) * 43758.5453); }
 float fzNoise(vec3 p) {
   vec3 i = floor(p), f = fract(p);
@@ -765,6 +767,22 @@ float fzNoise(vec3 p) {
   return mix(mix(mix(fzHash(i), fzHash(i + vec3(1, 0, 0)), f.x), mix(fzHash(i + vec3(0, 1, 0)), fzHash(i + vec3(1, 1, 0)), f.x), f.y),
              mix(mix(fzHash(i + vec3(0, 0, 1)), fzHash(i + vec3(1, 0, 1)), f.x), mix(fzHash(i + vec3(0, 1, 1)), fzHash(i + vec3(1, 1, 1)), f.x), f.y), f.z);
 }
+float fzCells(vec3 p) {
+  vec3 i = floor(p); float best = 9.0, id = 0.0;
+  for (int a = -1; a <= 1; a++) for (int b = -1; b <= 1; b++) for (int c = -1; c <= 1; c++) {
+    vec3 g = i + vec3(a, b, c), q = g + vec3(fzHash(g), fzHash(g + 3.1), fzHash(g + 7.7));
+    float d = length(p - q);
+    if (d < best) { best = d; id = fzHash(g + 11.3); }
+  }
+  return id;
+}
+float fzMarble(vec3 p) {
+  float n = 0.0, a = 0.5;
+  for (int o = 0; o < 4; o++) { n += a * fzNoise(p); p *= 2.0; a *= 0.5; }
+  float r = 1.0 - abs(2.0 * n / 0.9375 - 1.0);
+  return r * r;
+}
+float fzPattern(vec3 p) { return fuzzKind < 0.5 ? fzNoise(p) : fuzzKind < 1.5 ? fzCells(p) : fzMarble(p); }
 vec3 fzPerturb(vec3 pos, vec3 n, float h) {
   vec3 sx = dFdx(pos), sy = dFdy(pos);
   vec3 r1 = cross(sy, n), r2 = cross(n, sx);
@@ -776,8 +794,8 @@ vec3 fzPerturb(vec3 pos, vec3 n, float h) {
 if (vFuzz > 0.5) {
   // the step: 0 while one bump is 3 pixels or more, then 1 for every halving, blended between steps
   float lod = max(log2(3.0 * length(fwidth(vObj)) / fuzzPd), 0.0), l0 = floor(lod), s0 = exp2(l0);
-  vec3 cell = vec3(fuzzPd, 0.2, fuzzPd);
-  float h = fuzzT * mix(s0 * fzNoise(vObj / (cell * s0)), 2.0 * s0 * fzNoise(vObj / (cell * 2.0 * s0) + 17.0), lod - l0);
+  vec3 cell = fuzzKind < 0.5 ? vec3(fuzzPd, 0.2, fuzzPd) : vec3(1.0);
+  float h = fuzzT * mix(s0 * fzPattern(vObj / (cell * s0)), 2.0 * s0 * fzPattern(vObj / (cell * 2.0 * s0) + 17.0), lod - l0);
   normal = fzPerturb(-vViewPosition, normal, h);
 }`)
       .replace("#include <emissivemap_fragment>", `#include <emissivemap_fragment>
@@ -795,7 +813,7 @@ async function loadMesh(job, my) {
   if (bandBytes) {
     if (!masks.has(bytes)) masks.set(bytes, fuzzMask(geo, loader.parse(bandBytes)));
     geo.setAttribute("fuzz", new THREE.BufferAttribute(masks.get(bytes), 1));
-    fuzzMaterial(mat, ...job.fuzz.skin);
+    fuzzMaterial(mat, ...job.fuzz.skin, job.fuzz.kind);
   }
   if (job.ghost) { mat.transparent = true; mat.opacity = 0.3; mat.depthWrite = false; }
   if (meshes[job.part]) drop(job.part);
@@ -825,10 +843,10 @@ async function update() {
     // the insert lines up with the floor of the housing it is shown in
     if (ins) {
       // the fuzzy modifier is not drawn, it marks where the insert gets bumps
-      const tm = partsOf(ins).find((q) => q.threemf), skin = tm && slicerTexture(ins).skin;
+      const tm = partsOf(ins).find((q) => q.threemf), st = tm && slicerTexture(ins);
       partsOf(ins).filter(printed).forEach((q) => jobs.push({ part: q.part, params: Object.assign(cleanParams(ownParams(ins), defOf(ins)),
                                                                            h ? cleanParams({ floor_t: h.values.floor_t }, cat.housing) : {}),
-                                                                         fuzz: skin && { part: tm.threemf[1], skin } }));
+                                                                         fuzz: st && { part: tm.threemf[1], skin: st.skin, kind: NOISE_KIND[st.noise] } }));
     }
     if (h) {
       const params = cleanParams(ownParams(h), cat.housing);
