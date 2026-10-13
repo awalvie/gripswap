@@ -122,7 +122,36 @@ function newInsert(id, values) {
   return { type: "insert", insertId: id, values: Object.assign(defaults(insertDef(id).params), values || {}) };
 }
 
-// names come from the values, so they follow every slider. A texture goes at the end.
+// The page shows a short title and a detail line: the kind and size, then the shape and texture.
+// File names keep the full name, so each download says exactly what it is.
+const pocketWord = (n, w) => `${n > 1 ? n + " × " : ""}${{ 22: "mono", 40: "two-finger", 58: "three-finger" }[w] || `${w} mm`}`;
+function titleOf(it) {
+  const v = it.values;
+  if (it.type === "housing") return "Housing";
+  if (it.insertId === "edge") return `${v.slot_d} mm edge`;
+  if (it.insertId === "pocket") { const s = `${pocketWord(v.pocket_n, v.pocket_w)} pocket, ${v.slot_d} mm`; return s[0].toUpperCase() + s.slice(1); }
+  if (it.insertId === "flip") {
+    const word = (k) => v[k + "_kind"] === "edge" ? "edge" : pocketWord(v[k + "_pn"], v[k + "_pw"]);
+    const [a, b] = [word("top"), word("bot")];
+    return a === b ? `Two-sided ${v.top_d} / ${v.bot_d} mm ${a === "edge" ? "edges" : a}` : `Two-sided ${v.top_d} mm ${a} / ${v.bot_d} mm ${b}`;
+  }
+  return baseName(it);
+}
+function detailOf(it) {
+  const v = it.values;
+  if (it.type === "housing" || it.insertId === "roller") return "";
+  const ang = (a) => a > 0 ? `incut ${a}°` : a < 0 ? `sloper ${-a}°` : "";
+  let shape = [];
+  if (it.insertId === "flip") {
+    const grip = (k) => v[k + "_kind"] === "edge" ? [v[k + "_ergo"] ? "ergo" : "", ang(v[k + "_angle"])].filter(Boolean).join(" ") : "";
+    const [t, b] = [grip("top"), grip("bot")];
+    shape = t === b ? [t && `${t} both`] : [t && `top ${t}`, b && `bottom ${b}`];
+  } else shape = [it.insertId === "edge" && v.ergo ? "ergo" : "", ang(v.edge_angle)];
+  const o = optOf(it, "texture");
+  return [...shape, o && o.value !== "none" ? `${o.label.toLowerCase()} ${v.texture_size}` : ""].filter(Boolean).join(" · ");
+}
+
+// the full name, for files: everything in the title and the details
 function nameOf(it) {
   const o = it.type === "insert" && optOf(it, "texture");
   return baseName(it) + (o && o.value !== "none" ? ` ${o.label.toLowerCase()} ${it.values.texture_size}` : "");
@@ -238,7 +267,7 @@ function saveBlob(blob, name) {
 function partnerOptions(it) {
   // group: "kit" (your kit) or "std" (standard parts); the dropdown shows them under those headings
   const opts = [{ key: "none", label: "Nothing, just this" }];
-  kit.items.forEach((x, n) => { if (x.type !== it.type) opts.push({ key: `kit:${n}`, group: "kit", label: nameOf(x), item: x }); });
+  kit.items.forEach((x, n) => { if (x.type !== it.type) opts.push({ key: `kit:${n}`, group: "kit", label: titleOf(x), item: x }); });
   if (it.type === "insert") opts.push({ key: "std:housing", group: "std", label: "Housing", item: newHousing() });
   else opts.push({ key: "std:edge", group: "std", label: "20 mm edge", item: newInsert("edge") });
   return opts;
@@ -658,7 +687,8 @@ function renderKit() {
     card.className = "card" + (n === kit.sel ? " on" : "");
     const main = document.createElement("button");
     main.className = "card-main"; main.setAttribute("aria-pressed", n === kit.sel);
-    main.innerHTML = `<small>${it.type === "housing" ? "Housing" : "Insert"}</small><strong>${nameOf(it)}</strong>`;
+    main.innerHTML = `<small>${it.type === "housing" ? "Housing" : "Insert"}</small><strong>${titleOf(it)}</strong>` +
+      (detailOf(it) ? `<small>${detailOf(it)}</small>` : "");
     main.title = "Show and change this item";
     main.onclick = () => select(n);
     const copy = document.createElement("button");
@@ -683,9 +713,9 @@ function renderKit() {
 function renderNames() {
   renderKit(); renderPartner();
   const it = cur();
-  $("edit-title").textContent = it ? nameOf(it) : "nothing selected";
+  $("edit-title").textContent = it ? titleOf(it) : "nothing selected";
   const p = it && partner(it);
-  $("showing").textContent = !it ? "" : p ? `${nameOf(it)} ${it.type === "insert" ? "in" : "with"} ${nameOf(p)}` : nameOf(it);
+  $("showing").textContent = !it ? "" : p ? `${titleOf(it)} ${it.type === "insert" ? "in" : "with"} ${titleOf(p)}` : titleOf(it);
   buildDownloads();
 }
 
