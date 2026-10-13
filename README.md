@@ -51,10 +51,10 @@ The [printing guide](PRINTING.md) has the settings, which way up each part goes,
 
 ## Working on it
 
-The model is plain OpenSCAD, in `opengrips.scad` and `src/`. You can set any parameter from the command line:
+The model is plain OpenSCAD, in `gripswap.scad` and `src/`. You can set any parameter from the command line:
 
 ```sh
-openscad -D 'part="insert_edge"' -D slot_d=15 -o edge.stl opengrips.scad
+openscad -D 'part="insert_edge"' -D slot_d=15 -o edge.stl gripswap.scad
 ```
 
 To run the configurator locally, start `python3 web/server.py` and open http://localhost:8000. `web/catalog.py` lists what it offers.

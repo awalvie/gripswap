@@ -1,4 +1,4 @@
-// Render worker: OpenSCAD (WebAssembly) turns one part of opengrips.scad into a binary STL per job.
+// Render worker: OpenSCAD (WebAssembly) turns one part of gripswap.scad into a binary STL per job.
 // An OpenSCAD instance renders only once, so every job gets a fresh one. The compiled module,
 // the sources and the font are fetched once and shared by all instances.
 import OpenSCAD from "./vendor/openscad/openscad.js";
@@ -12,7 +12,7 @@ async function get(url) {
   return new Uint8Array(await res.arrayBuffer());
 }
 
-// follow include <> and use <> from opengrips.scad, so a new source file needs no list here
+// follow include <> and use <> from gripswap.scad, so a new source file needs no list here
 async function source(path) {
   if (("/w/" + path) in files) return;
   files["/w/" + path] = "";
@@ -26,7 +26,7 @@ async function load() {
   // without the font, text() renders nothing and the engraved marks silently vanish
   const [mod, font, conf] = await Promise.all([
     get("vendor/openscad/openscad.wasm").then((b) => WebAssembly.compile(b)),
-    get("vendor/fonts/LiberationSans-Bold.ttf"), get("vendor/fonts/fonts.conf"), source("opengrips.scad")]);
+    get("vendor/fonts/LiberationSans-Bold.ttf"), get("vendor/fonts/fonts.conf"), source("gripswap.scad")]);
   wasm = mod;
   files["/fonts/LiberationSans-Bold.ttf"] = font;
   files["/fonts/fonts.conf"] = conf;
@@ -52,7 +52,7 @@ async function render(part, params) {
     for (const d of path.split("/").slice(1, -1)) { dir += "/" + d; try { FS.mkdir(dir); } catch (e) { /* exists */ } }
     FS.writeFile(path, data);
   }
-  const args = ["/w/opengrips.scad", "--backend=Manifold", "--export-format", "binstl", "-o", "/out.stl", "-D", `part="${part}"`];
+  const args = ["/w/gripswap.scad", "--backend=Manifold", "--export-format", "binstl", "-o", "/out.stl", "-D", `part="${part}"`];
   for (const [k, v] of Object.entries(params)) args.push("-D", typeof v === "string" ? `${k}="${v}"` : `${k}=${v}`);
   let rc, stl = null;
   try { rc = inst.callMain(args); } catch (e) { rc = typeof e.status === "number" ? e.status : e; }

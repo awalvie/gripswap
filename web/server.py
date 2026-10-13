@@ -5,7 +5,7 @@ Run from the repo root:
     python3 web/server.py --host 0.0.0.0  # reachable from other devices on the network
 
 The page renders the parts itself with OpenSCAD in WebAssembly. This serves web/static, plus
-opengrips.scad and src/ at the same paths the Pages deploy copies them to.
+gripswap.scad and src/ at the same paths the Pages deploy copies them to.
 """
 import argparse
 import pathlib
@@ -27,7 +27,7 @@ class Handler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
         # the render worker reads the OpenSCAD sources next to the page, where the Pages deploy puts them
         p = posixpath.normpath(unquote(urlparse(path).path))
-        self.directory = str(ROOT if p == "/opengrips.scad" or p.startswith("/src/") else STATIC)
+        self.directory = str(ROOT if p == "/gripswap.scad" or p.startswith("/src/") else STATIC)
         return super().translate_path(path)
 
     def end_headers(self):

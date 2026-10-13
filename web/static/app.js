@@ -240,7 +240,7 @@ worker.onerror = (e) => {
 
 const stls = new Map();   // key: part and clean parameters; value: a promise of the STL bytes
 const KEEP = 60;          // STLs kept, about 0.3 MB each: enough to go back and forth between items
-// print: turn the part the way it prints and put it on the bed (for_print in opengrips.scad).
+// print: turn the part the way it prints and put it on the bed (for_print in gripswap.scad).
 // params come from cleanParams.
 async function stl(part, clean, print = false) {
   if (broken) throw broken;

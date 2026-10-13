@@ -15,7 +15,7 @@ const inst = await OpenSCAD({ wasmBinary: fs.readFileSync(path.join(VENDOR, "ope
                               noInitialRun: true, print: (s) => log.push(s), printErr: (s) => log.push(s) });
 const FS = inst.FS;
 
-// the sources at the paths the page uses: opengrips.scad and src/
+// the sources at the paths the page uses: gripswap.scad and src/
 function copy(dir, to) {
   FS.mkdir(to);
   for (const n of fs.readdirSync(dir)) {
@@ -25,14 +25,14 @@ function copy(dir, to) {
   }
 }
 FS.mkdir("/w");
-FS.writeFile("/w/opengrips.scad", fs.readFileSync(path.join(ROOT, "opengrips.scad")));
+FS.writeFile("/w/gripswap.scad", fs.readFileSync(path.join(ROOT, "gripswap.scad")));
 copy(path.join(ROOT, "src"), "/w/src");
 // without the font, text() renders nothing
 FS.mkdir("/fonts");
 FS.writeFile("/fonts/LiberationSans-Bold.ttf", fs.readFileSync(path.join(VENDOR, "fonts/LiberationSans-Bold.ttf")));
 FS.writeFile("/fonts/fonts.conf", fs.readFileSync(path.join(VENDOR, "fonts/fonts.conf")));
 
-const args = ["/w/opengrips.scad", "--backend=Manifold", "--export-format", "binstl", "-o", "/out.stl"];
+const args = ["/w/gripswap.scad", "--backend=Manifold", "--export-format", "binstl", "-o", "/out.stl"];
 for (const d of defs) args.push("-D", d);
 let rc, stl = null;
 try { rc = inst.callMain(args); } catch (e) { rc = typeof e.status === "number" ? e.status : 1; }

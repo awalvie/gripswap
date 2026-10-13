@@ -105,7 +105,7 @@ def render(part, params, tmp, engine):
     stl = pathlib.Path(tmp) / f"{engine}-{abs(hash((part, tuple(sorted(params.items())))))}.stl"
     defs = [f'part="{part}"'] + [f'{k}="{v}"' if isinstance(v, str) else f"{k}={v}" for k, v in params.items()]
     if engine == "native":
-        args = ["openscad", "--export-format", "binstl", *(x for d in defs for x in ("-D", d)), "-o", str(stl), str(ROOT / "opengrips.scad")]
+        args = ["openscad", "--export-format", "binstl", *(x for d in defs for x in ("-D", d)), "-o", str(stl), str(ROOT / "gripswap.scad")]
     else:
         args = ["node", str(ROOT / "tools/render_wasm.mjs"), str(stl), *defs]
     r = subprocess.run(args, capture_output=True, text=True)

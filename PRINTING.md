@@ -45,7 +45,7 @@ Each part has one right way up. It keeps the load running along the layers and t
 If you render a part yourself, add `-D for_print=true` to get it the right way up:
 
 ```sh
-openscad -D 'part="housing"' -D for_print=true -o housing.stl opengrips.scad
+openscad -D 'part="housing"' -D for_print=true -o housing.stl gripswap.scad
 ```
 
 ## Grip texture
