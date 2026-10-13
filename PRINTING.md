@@ -1,4 +1,4 @@
-# Printing opengrips
+# Printing gripswap
 
 These settings are where I'd start. They aren't load-tested yet, so read the note in the [README](README.md) first.
 

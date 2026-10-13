@@ -1,18 +1,18 @@
 <div align="center">
-  <img src="web/static/icon.svg" width="96" alt="opengrips icon">
-  <h1>opengrips</h1>
+  <img src="web/static/icon.svg" width="96" alt="gripswap icon">
+  <h1>gripswap</h1>
   <p>A lift block for finger training that you can print yourself, with grips you swap by hand. Think of a portable hangboard.</p>
   <p>
-    <a href="https://awalvie.github.io/opengrips/">Configurator</a> ·
+    <a href="https://awalvie.github.io/gripswap/">Configurator</a> ·
     <a href="PRINTING.md">Printing guide</a> ·
     <a href="TODO.md">To do</a> ·
-    <a href="https://github.com/awalvie/opengrips/issues">Issues</a>
+    <a href="https://github.com/awalvie/gripswap/issues">Issues</a>
   </p>
 </div>
 
-opengrips is a lift block for finger training. One housing hangs off a carabiner, and the grips slide into it from the back and click in place: edges, pockets and rollers.
+gripswap is a lift block for finger training. One housing hangs off a carabiner, and the grips slide into it from the back and click in place: edges, pockets and rollers.
 
-You can build your own at [awalvie.github.io/opengrips](https://awalvie.github.io/opengrips/). Pick your grips, change the depth and the shape, and download the files. It all runs in your browser, and the page link keeps your kit, so you can bookmark it or share it.
+You can build your own at [awalvie.github.io/gripswap](https://awalvie.github.io/gripswap/). Pick your grips, change the depth and the shape, and download the files. It all runs in your browser, and the page link keeps your kit, so you can bookmark it or share it.
 
 ![The configurator with a 20 mm edge in the housing](docs/img/configurator-edge.png)
 
@@ -61,7 +61,7 @@ To run the configurator locally, start `python3 web/server.py` and open http://l
 
 `python3 tools/check_parts.py` renders every preset and the extremes of each setting, and checks that the parts still hold together. It needs OpenSCAD, Node.js, and Python with trimesh and manifold3d, or run `nix develop` to get them all. Add `-e native` to skip the Node.js renderer.
 
-If you find a problem or print one, [open an issue](https://github.com/awalvie/opengrips/issues).
+If you find a problem or print one, [open an issue](https://github.com/awalvie/gripswap/issues).
 
 ## License
 

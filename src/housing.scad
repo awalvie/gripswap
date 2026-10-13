@@ -112,7 +112,7 @@ module stop_tongue() {
 // the name on top
 module name_cut()
     translate([0, D/2, H - 0.6]) linear_extrude(1)
-        text("opengrips", size = 8, spacing = 1.15, font = "Liberation Sans:style=Bold", halign = "center", valign = "center");
+        text("gripswap", size = 8, spacing = 1.15, font = "Liberation Sans:style=Bold", halign = "center", valign = "center");
 
 module housing() {
     difference() {

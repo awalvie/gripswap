@@ -1,4 +1,4 @@
-// opengrips configurator front end. The kit is a list of items, each a housing or an insert.
+// gripswap configurator front end. The kit is a list of items, each a housing or an insert.
 // One item is selected: the 3D view shows it (alone or with a partner for a fit check),
 // the editor below changes it.
 const $ = (id) => document.getElementById(id);
@@ -8,6 +8,7 @@ const LINE = 0x1d1c1a;   // outlines on sharp edges: they make the engraved text
 
 let cat = null, framed = false, seq = 0;
 let mode = "simple";
+// the storage keys keep the old name, opengrips, so a saved mode and theme survive the rename
 try { mode = localStorage.getItem("opengrips-mode") || "simple"; } catch (e) { /* storage blocked */ }
 const kit = { items: [], sel: 0 };   // items is replaced on Undo, so nothing keeps a reference to it
 const cur = () => kit.items[kit.sel];
@@ -956,7 +957,7 @@ function buildDownloads() {
   const dl = $("downloads");
   dl.innerHTML = kit.items.length ? `<p class="warn">Not load-tested yet. Check every part before each session, and keep your feet clear of the weight.</p>
     <p class="hint">Ticked files go in the zip, the arrow saves one file. PETG, ready to slice.
-    <a href="https://github.com/awalvie/opengrips/blob/main/PRINTING.md" target="_blank" rel="noopener">Printing guide</a></p>` : "";
+    <a href="https://github.com/awalvie/gripswap/blob/main/PRINTING.md" target="_blank" rel="noopener">Printing guide</a></p>` : "";
   // the test prints come before any kit, so they show on an empty kit too
   dl.insertAdjacentHTML("beforeend", `<div class="tests"><h3>Test prints · print these first</h3><div class="tgrid">
     <button type="button" class="tcard" id="fit-dl"><span><strong>Fit test</strong><small>Does an insert slide in?</small></span>${DL_ICON}</button>
@@ -1048,7 +1049,7 @@ async function downloadKit() {
       const name = String(n + 1).padStart(2, "0") + "-" + fileOf(it, p);
       return fileData(p, it).then((data) => ({ name, data }));
     });
-    saveBlob(await makeZip(await Promise.all(files)), "opengrips-kit.zip");
+    saveBlob(await makeZip(await Promise.all(files)), "gripswap-kit.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);
@@ -1065,7 +1066,7 @@ async function downloadFitTest() {
   const no = toast("Preparing the fit test zip…", true);
   try {
     const files = cat.fit_test.map((p) => stl(p.part, {}, true).then((data) => ({ name: `fit-test-${slug(p.name)}.stl`, data: new Uint8Array(data) })));
-    saveBlob(await makeZip(await Promise.all(files)), "opengrips-fit-test.zip");
+    saveBlob(await makeZip(await Promise.all(files)), "gripswap-fit-test.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);
@@ -1092,7 +1093,7 @@ async function downloadTextureTest() {
       ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label}`, stl: mods[i], type: "modifier_part",
         settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))]);
     saveBlob(await makeZip([{ name: "texture-test.stl", data: new Uint8Array(modeled) },
-      { name: "texture-test-bambu-orca.3mf", data: threemf }]), "opengrips-texture-test.zip");
+      { name: "texture-test-bambu-orca.3mf", data: threemf }]), "gripswap-texture-test.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);

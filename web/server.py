@@ -1,4 +1,4 @@
-"""opengrips configurator for local development: serves the site the way GitHub Pages does.
+"""gripswap configurator for local development: serves the site the way GitHub Pages does.
 
 Run from the repo root:
     python3 web/server.py                 # http://localhost:8000
@@ -44,7 +44,7 @@ def main():
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8000)
     a = ap.parse_args()
-    print(f"opengrips configurator on http://{a.host}:{a.port}")
+    print(f"gripswap configurator on http://{a.host}:{a.port}")
     ThreadingHTTPServer((a.host, a.port), Handler).serve_forever()
 
 

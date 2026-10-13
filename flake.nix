@@ -1,5 +1,5 @@
 {
-  description = "opengrips: OpenSCAD and Python tools to build and check the parts";
+  description = "gripswap: OpenSCAD and Python tools to build and check the parts";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 

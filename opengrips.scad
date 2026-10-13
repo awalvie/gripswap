@@ -1,4 +1,4 @@
-// opengrips: a 3D-printable lift block (a portable hangboard) with swappable inserts.
+// gripswap: a 3D-printable lift block (a portable hangboard) with swappable inserts.
 // Render one part: openscad -D 'part="housing"' -o housing.stl opengrips.scad
 // Any parameter in src/ can be overridden the same way, for example -D slot_d=25.
 
