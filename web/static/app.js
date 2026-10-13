@@ -942,8 +942,10 @@ function buildDownloads() {
     <p class="hint">Ticked files go in the zip, the arrow saves one file. PETG, ready to slice.
     <a href="https://github.com/awalvie/opengrips/blob/main/PRINTING.md" target="_blank" rel="noopener">Printing guide</a></p>` : "";
   // the fit test comes before any kit, so it shows on an empty kit too
-  dl.insertAdjacentHTML("beforeend", `<p class="hint">New printer? Print the <button class="inline" id="fit-dl">fit test</button> first.</p>`);
+  dl.insertAdjacentHTML("beforeend", `<p class="hint">New printer? Print the <button class="inline" id="fit-dl">fit test</button> first.
+    To choose a grip pattern, print the <button class="inline" id="tex-dl">texture test</button>.</p>`);
   $("fit-dl").onclick = downloadFitTest;
+  $("tex-dl").onclick = downloadTextureTest;
   kit.items.forEach((it) => {
     const box = document.createElement("div"); box.className = "ditem";
     it.skip = it.skip || {};   // parts left out of the zip, by part name; a plain object so that Copy keeps it
@@ -1052,6 +1054,33 @@ async function downloadFitTest() {
     toast("The zip failed: " + e.message);
   } finally {
     fitting = false;
+  }
+}
+
+// the texture test: the modeled patterns in one STL, and the slicer patterns in a 3MF for Bambu
+// Studio and Orca, one modifier per tab with its own fuzzy skin, in one zip
+let texturing = false;
+async function downloadTextureTest() {
+  if (texturing) return;
+  texturing = true;
+  const no = toast("Preparing the texture test zip…", true);
+  try {
+    const t = cat.texture_test, edge = cat.inserts.find((i) => i.id === "edge").params;
+    const sliced = edge.find((p) => p.name === "texture").options.filter((o) => o.slicer);
+    const sizes = edge.find((p) => p.name === "texture_size").options;
+    const tabs = sliced.flatMap((o) => sizes.map((s) => ({ o, s })));   // row by row, as tex_i in src/texture_test.scad
+    const [modeled, smooth, ...mods] = await Promise.all([stl(t.modeled, {}, true), stl(t.smooth, {}, true),
+      ...tabs.map((_, i) => stl(t.modifier, { tex_i: i }, true))]);
+    const threemf = await make3mf("Texture test", [{ name: "Texture test", stl: smooth, type: "normal_part" },
+      ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label}`, stl: mods[i], type: "modifier_part",
+        settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))]);
+    saveBlob(await makeZip([{ name: "texture-test.stl", data: new Uint8Array(modeled) },
+      { name: "texture-test-bambu-orca.3mf", data: threemf }]), "opengrips-texture-test.zip");
+    hideToast(no);
+  } catch (e) {
+    toast("The zip failed: " + e.message);
+  } finally {
+    texturing = false;
   }
 }
 
