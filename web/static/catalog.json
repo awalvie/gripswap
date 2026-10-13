@@ -1338,5 +1338,10 @@
    "part": "fit_frame",
    "name": "Frame"
   }
- ]
+ ],
+ "texture_test": {
+  "modeled": "texture_test",
+  "smooth": "texture_test_smooth",
+  "modifier": "texture_test_mod"
+ }
 }

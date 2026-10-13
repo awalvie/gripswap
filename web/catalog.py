@@ -260,9 +260,14 @@ PRESETS = [
 # Print before the kit: the pocket gap and the lips, on your printer. Downloaded as one zip.
 FIT_TEST = [{"part": "fit_ring", "name": "Ring"}, {"part": "fit_frame", "name": "Frame"}]
 
+# Print to choose a grip texture: tabs with every pattern at every strength (src/texture_test.scad).
+# "modeled": one STL for any slicer. "smooth" and "modifier": the slicer patterns, put in one 3MF by the
+# page, one modifier per tab (tex_i 0 to 8: SLICED by row, TEXTURE_SIZE by column).
+TEXTURE_TEST = {"modeled": "texture_test", "smooth": "texture_test_smooth", "modifier": "texture_test_mod"}
+
 
 def catalog():
-    return {"housing": HOUSING, "inserts": INSERTS, "fit_test": FIT_TEST}
+    return {"housing": HOUSING, "inserts": INSERTS, "fit_test": FIT_TEST, "texture_test": TEXTURE_TEST}
 
 
 def all_params():

@@ -7,7 +7,7 @@ the configurator uses (tools/render_wasm.mjs, needs node), so it checks the file
 The default is both.
 
 Cases: the housing, every preset, the corners of the edge, pocket and flip ranges in web/catalog.py,
-and the fit test.
+the fit test and the texture test.
 Checks: one watertight body. Edges and pockets also keep their depth, a floor under the slot, a
 rail over the slot at the face, a wall under the size mark, and a wall between the slot end and
 the insert side. Each grip of a flip insert gets the edge or pocket checks and keeps room for the fingers.
@@ -63,6 +63,8 @@ def cases():
         out.append(("insert_pocket", params))
     out.append(("insert_edge", {"slot_w": spec["slot_w"]["max"]}))
     out += [(p["part"], {}) for p in catalog.FIT_TEST]
+    t = catalog.TEXTURE_TEST
+    out += [(t["modeled"], {}), (t["smooth"], {})] + [(t["modifier"], {"tex_i": i}) for i in range(9)]
     # flip: every corner of the top edge, with the bottom edge at the opposite corner
     flip = {p["name"]: p for p in catalog.FLIP["params"]}
     for values in itertools.product(*((flip[f"top_{n}"]["min"], flip[f"top_{n}"]["max"]) for n in ("d", "r", "ergo", "angle"))):

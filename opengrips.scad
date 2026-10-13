@@ -15,6 +15,7 @@ include <src/inserts/flip.scad>
 include <src/fuzzy.scad>
 include <src/refs.scad>
 include <src/fit_test.scad>
+include <src/texture_test.scad>
 
 // for_print = true turns a printed part to the orientation in its print note and puts it on z = 0.
 // The parts are modelled where they sit in the assembled block.
@@ -47,6 +48,9 @@ on_bed() {
     if (part == "axle") axle();
     if (part == "fit_ring") fit_ring();
     if (part == "fit_frame") fit_frame();
+    if (part == "texture_test") texture_test();
+    if (part == "texture_test_smooth") texture_test_smooth();
+    if (part == "texture_test_mod") texture_test_mod();
 }
 if (part == "finger") finger();
 if (part == "carabiner") carabiner(seat_z());
