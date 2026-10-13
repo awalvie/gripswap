@@ -104,7 +104,7 @@ If it sticks, follow step 3 below, then print the fit test again.
 
 ## The texture test
 
-To choose a grip pattern, print the texture test. In the configurator, click "texture test" under Download. You get one zip with two plates, already the right way up. Use the insert settings above.
+To choose a grip pattern, print the texture test. In the configurator, click "Texture test" under Test prints, or the "texture test" link under Pattern. You get one zip with two plates, already the right way up. Use the insert settings above.
 
 - `texture-test.stl` has Lines, Knurl and Dots. Any slicer prints it.
 - `texture-test-bambu-orca.3mf` has Fuzzy, Cells and Marble, with the fuzzy skin already set on each tab. Open it in Bambu Studio or Orca Slicer.

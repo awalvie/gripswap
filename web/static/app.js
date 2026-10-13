@@ -420,6 +420,10 @@ function control(p, group) {
     const reset = resetButton(p, () => pick(p.default));
     wrap.querySelector(".lrow").append(reset);
     sel.addEventListener("change", () => pick(sel.value));
+    if (p.name === "texture") {
+      wrap.insertAdjacentHTML("beforeend", `<p class="hint tex-try">Not sure? Print the <button type="button" class="inline">texture test</button> and feel each one.</p>`);
+      wrap.querySelector(".tex-try button").onclick = downloadTextureTest;
+    }
   }
   wireTip(wrap, p.name);
   return wrap;
