@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>gripswap · printing guide</title>
+<meta name="description" content="How to print a gripswap lift block: material, settings, which way up each part goes, grip textures and the test prints.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<script>try { const t = localStorage.getItem("opengrips-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) { /* storage blocked */ }</script>
+<style>
+/* the same colours as the configurator, index.html */
+:root { --bg: #f4f2ee; --panel: #ffffff; --fg: #1d1c1a; --muted: #5f5b54; --line: #dedad2; --accent: #3b3790; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #161615; --panel: #1f1e1c; --fg: #ecebe7; --muted: #a29e95; --line: #34322e; --accent: #8f8af0; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #161615; --panel: #1f1e1c; --fg: #ecebe7; --muted: #a29e95; --line: #34322e; --accent: #8f8af0; color-scheme: dark; }
+:root[data-theme="light"] { color-scheme: light; }
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { padding: 8px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--line); min-height: 61px; }
+header a { display: flex; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
+header img { display: block; border-radius: 7px; }
+header b { font-size: 18px; }
+header span { color: var(--muted); font-size: 13px; }
+main { max-width: 760px; margin: 0 auto; padding: 8px 16px 48px; }
+h1 { font-size: 28px; margin: 24px 0 8px; }
+h2 { font-size: 20px; margin: 36px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); }
+a { color: var(--accent); }
+code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 4px; }
+pre { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; overflow-x: auto; }
+pre code { border: 0; padding: 0; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; margin: 12px 0; }
+th, td { text-align: left; vertical-align: top; padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); }
+th { font-weight: 600; }
+.beds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin: 12px 0; }
+.beds figure { margin: 0; }
+.beds img { width: 100%; height: auto; display: block; border-radius: 8px; border: 1px solid var(--line); }
+.beds figcaption { font-size: 14px; color: var(--muted); margin-top: 4px; }
+li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<header><a href="./"><img src="icon.svg" width="32" height="32" alt=""><b>gripswap</b></a><span>printing guide</span></header>
+<main>
+<h1>Printing gripswap</h1>
+<p>These settings are where I'd start. They aren't load-tested yet, so read the note in the <a href="https://github.com/awalvie/gripswap#readme">README</a> first.</p>
+
+<h2 id="material">Material</h2>
+<p>Print everything in PETG. PLA gets brittle in the cold and slowly bends when it's warm, say in a car on a sunny day.</p>
+
+<h2 id="settings">Settings</h2>
+<div class="scroll"><table>
+  <tr><th>Part</th><th>Walls</th><th>Infill</th></tr>
+  <tr><td>Housing, edge, pocket and two-sided inserts, roller frame</td><td>3</td><td>15% gyroid</td></tr>
+  <tr><td>Roller</td><td>3</td><td>20%</td></tr>
+  <tr><td>Printed axle</td><td>4</td><td>100%</td></tr>
+</table></div>
+<p>Use a 0.4 mm nozzle and 0.2 mm layers. These parts take your whole pull, so don't go below these settings to save time.</p>
+<p>The anchor plate under the housing carries the whole pull through the walls around its hole. For more strength around the hole, you can give the plate 100% infill with a modifier. This doubles the housing print time, and nobody has tested yet whether it is needed.</p>
+
+<h2 id="which-way-up">Which way up</h2>
+<p>Each part has one right way up. It keeps the load running along the layers and the grip smooth. The files from the configurator already sit this way, so you only need to slice them.</p>
+<div class="scroll"><table>
+  <tr><th>Part</th><th>On the bed</th><th>Supports</th></tr>
+  <tr><td>Housing</td><td>On its front, anchor plate flat on the bed</td><td>None</td></tr>
+  <tr><td>Edge, pocket or two-sided insert</td><td>On its back, front up</td><td>None</td></tr>
+  <tr><td>Roller frame</td><td>Upright, floor down</td><td>None</td></tr>
+  <tr><td>Roller</td><td>Standing on one end</td><td>None</td></tr>
+  <tr><td>Printed axle</td><td>Lying down</td><td>None</td></tr>
+</table></div>
+<div class="beds">
+  <figure><img src="img/print-housing.png" width="640" height="480" alt="Housing on the bed"><figcaption>Housing</figcaption></figure>
+  <figure><img src="img/print-insert_edge.png" width="640" height="480" alt="Edge insert on the bed"><figcaption>Edge insert</figcaption></figure>
+  <figure><img src="img/print-insert_pocket.png" width="640" height="480" alt="Pocket insert on the bed"><figcaption>Pocket insert</figcaption></figure>
+  <figure><img src="img/print-insert_flip.png" width="640" height="480" alt="Two-sided insert on the bed"><figcaption>Two-sided insert</figcaption></figure>
+  <figure><img src="img/print-insert_roller.png" width="640" height="480" alt="Roller frame on the bed"><figcaption>Roller frame</figcaption></figure>
+  <figure><img src="img/print-roller.png" width="640" height="480" alt="Roller on the bed"><figcaption>Roller</figcaption></figure>
+  <figure><img src="img/print-axle.png" width="640" height="480" alt="Axle on the bed"><figcaption>Axle</figcaption></figure>
+</div>
+<p>If you render a part yourself, add <code>-D for_print=true</code> to get it the right way up:</p>
+<pre><code>openscad -D 'part="housing"' -D for_print=true -o housing.stl gripswap.scad</code></pre>
+
+<h2 id="grip-texture">Grip texture</h2>
+<p>Pick a pattern and a strength for the grip, the roof of the slot. The rest of the insert stays smooth.</p>
+<p>The patterns come in two groups. The feel below is from one print of the texture test, not a measurement.</p>
+<ul>
+  <li>Like a real board:
+    <ul>
+      <li>Smooth: plain plastic, no texture.</li>
+      <li>Rock: rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here, at Medium. Bambu Studio and Orca only.</li>
+      <li>Resin: a fine random grit, like a resin hangboard. Start here if you use PrusaSlicer.</li>
+    </ul></li>
+  <li>Printed shapes:
+    <ul>
+      <li>Dots: small cones. The best of the printed shapes in the first test.</li>
+      <li>Lines: ridges along the lip, across the pull.</li>
+      <li>Knurl: small pyramids. The most bite, and the hardest on skin.</li>
+      <li>Marble: rough veins that wander.</li>
+    </ul></li>
+</ul>
+<p>Fine is the gentlest strength. Coarse bites more and wears your skin faster.</p>
+<p>Dots, Lines and Knurl are part of the edge itself, so you slice the insert like any other part. Pockets and slopers don't get them.</p>
+<div class="scroll"><table>
+  <tr><th>Pattern</th><th>Fine</th><th>Medium</th><th>Coarse</th></tr>
+  <tr><td>Dots</td><td>0.4 mm high, 1.5 mm apart</td><td>0.6 mm, 2 mm</td><td>0.8 mm, 2.7 mm</td></tr>
+  <tr><td>Lines</td><td>0.4 mm high, 1 mm apart</td><td>0.6 mm, 1.5 mm</td><td>0.8 mm, 2 mm</td></tr>
+  <tr><td>Knurl</td><td>0.4 mm high, 1 mm apart</td><td>0.6 mm, 1.5 mm</td><td>0.8 mm, 2 mm</td></tr>
+</table></div>
+<p>Resin, Rock and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.</p>
+<p>In Bambu Studio or Orca Slicer, open the <code>-bambu-orca.3mf</code> file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice. The walls and infill from the Settings table are already set on the insert.</p>
+<p>PrusaSlicer can make Resin only. Use the insert STL and the <code>-fuzzy-modifier.stl</code> file:</p>
+<ol>
+  <li>Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.</li>
+  <li>Right-click the modifier part and change its type to modifier.</li>
+  <li>Add the fuzzy skin settings to the modifier and pick "All walls". The grip prints as the wall of a hole, so "Outside walls" misses it.</li>
+  <li>Set the thickness and point distance for the strength you picked.</li>
+</ol>
+<div class="scroll"><table>
+  <tr><th>Strength</th><th>Thickness</th><th>Point distance</th></tr>
+  <tr><td>Fine</td><td>0.2 mm</td><td>0.3 mm</td></tr>
+  <tr><td>Medium</td><td>0.3 mm</td><td>0.5 mm</td></tr>
+  <tr><td>Coarse</td><td>0.4 mm</td><td>0.8 mm</td></tr>
+</table></div>
+
+<h2 id="filament">How much filament</h2>
+<p>I sliced the default parts in PrusaSlicer 2.9.6 with the settings above, PETG at 1.27 g/cm³, and no supports. Nothing has been weighed after a real print yet.</p>
+<div class="scroll"><table>
+  <tr><th>Part</th><th>Filament</th></tr>
+  <tr><td>Housing</td><td>90 g</td></tr>
+  <tr><td>Edge insert, 20 mm</td><td>87 g</td></tr>
+  <tr><td>Pocket insert, three-finger</td><td>88 g</td></tr>
+  <tr><td>Two-sided insert, 20 and 10 mm edges</td><td>87 g</td></tr>
+  <tr><td>Roller frame</td><td>41 g</td></tr>
+  <tr><td>Roller, unlevel</td><td>25 g</td></tr>
+  <tr><td>Roller, straight</td><td>30 g</td></tr>
+  <tr><td>Printed axle</td><td>17 g</td></tr>
+</table></div>
+<p>A housing and one edge insert come to about 180 g, so a 1 kg spool gets you a housing and about ten inserts.</p>
+
+<h2 id="fit-test">The fit test</h2>
+<p>On a new printer, print the fit test before the kit. In the <a href="./">configurator</a>, click "Fit test" under Test prints, in the Download section. You get one zip with two small parts, already the right way up. Use the housing settings above.</p>
+<ul>
+  <li>The ring is a thin slice of the front of the housing, with the lips, and the frame is a thin slice of the front of an insert. Push the frame into the back of the ring until it stops on the lips. It must slide in without force.</li>
+</ul>
+<p>If it sticks, follow step 3 below, then print the fit test again.</p>
+
+<h2 id="texture-test">The texture test</h2>
+<p>To choose a grip pattern, print the texture test. In the <a href="./">configurator</a>, click "Texture test" under Test prints, or the "texture test" link under Pattern. You get one zip with two plates, already the right way up. Use the insert settings above.</p>
+<ul>
+  <li><code>texture-test.stl</code> has Lines, Knurl and Dots. Any slicer prints it.</li>
+  <li><code>texture-test-bambu-orca.3mf</code> has Resin, Rock and Marble, with the fuzzy skin already set on each tab, and the walls and infill from the Settings table. Open it in Bambu Studio or Orca Slicer.</li>
+</ul>
+<p>Each plate takes about 45 minutes and 13 g of PETG. That is Bambu Studio's estimate for an X1 Carbon with its 0.20 mm Standard settings.</p>
+<p>Each tab stands upright on a thin strip, like the grip of an insert on its back, so the pattern prints the same way. The front row is a smooth tab, to compare. Then each row is one pattern, Fine, Medium and Coarse from the left. The label in front of each tab says which: F, M or C.</p>
+<p>Press a finger pad on the front of each tab and drag it down, the way your fingers load the grip. Pick the one that holds best without hurting, then pick that pattern and strength for your inserts.</p>
+
+<h2 id="checking-the-fit">Checking the fit</h2>
+<ol>
+  <li>Slide the insert into the housing from the back. It should stop on the lips at the front, and click over the stop at the back.</li>
+  <li>Press the stop down and push the insert out the back. It should come out without a fight.</li>
+  <li>If it sticks, look at the face that was on the bed. A flared first layer, the "elephant's foot", is the usual cause. Trim or sand that edge, or turn on elephant-foot compensation in your slicer.</li>
+</ol>
+
+<h2 id="first-session">Before your first session</h2>
+<ul>
+  <li>Look for split layers at the anchor, at the lips, at the stop and at the grip. Don't use a cracked part.</li>
+  <li>Hang the block from the carabiner and load it slowly by hand before you pull hard.</li>
+</ul>
+</main>
+</body>
+</html>

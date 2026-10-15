@@ -4,7 +4,7 @@
   <p>A lift block for finger training that you can print yourself, with grips you swap by hand. Think of a portable hangboard.</p>
   <p>
     <a href="https://awalvie.github.io/gripswap/">Configurator</a> ·
-    <a href="PRINTING.md">Printing guide</a> ·
+    <a href="https://awalvie.github.io/gripswap/print.html">Printing guide</a> ·
     <a href="TODO.md">To do</a> ·
     <a href="https://github.com/awalvie/gripswap/issues">Issues</a>
   </p>
@@ -35,7 +35,7 @@ The anchor holds the carabiner right under the grip, so the edge should stay lev
 
 Print everything in PETG. The housing stands on its front, the inserts go on their backs, and the roller frame stands upright. The files you download already sit that way. A housing and one edge insert take about 180 g of filament.
 
-The [printing guide](PRINTING.md) has the settings, which way up each part goes, and how to check the fit.
+The [printing guide](https://awalvie.github.io/gripswap/print.html) has the settings, which way up each part goes, and how to check the fit.
 
 ## You'll also need
 
