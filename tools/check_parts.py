@@ -35,9 +35,9 @@ import catalog  # noqa: E402
 
 MIN_WALL = 1.5   # thinnest wall a check accepts: under the slot and at the slot ends
 MIN_RAIL = 3     # thinnest rail over the slot at the face: half of rail_t, as an edge's lip round climbs into it
+MIN_ROOM = 16    # least finger room in a flip insert slot: the lowest slot_h an edge insert takes
 _roll_d = next(p for i in catalog.INSERTS if i["id"] == "roller" for p in i["params"] if p["name"] == "roll_d")
 ROLL_DS = range(_roll_d["min"], _roll_d["max"] + 1, _roll_d["step"])
-MIN_ROOM = 16    # least finger room in a flip insert slot: the lowest slot_h an edge insert takes
 
 
 def cases():
@@ -47,7 +47,8 @@ def cases():
     # each housing setting at both ends
     for p in catalog.HOUSING["params"]:
         out += [("housing", {p["name"]: v}) for v in (p["min"], p["max"])]
-    # the roller, its frame and its axle at every diameter: the cheek nose meets the insert top differently at each
+    # the roller and its frame at every diameter: the cheek nose meets the insert top differently at each.
+    # The axle moves with the diameter too, for the fit check.
     out += [(part, {"roll_d": v}) for part in ("insert_roller", "roller", "axle") for v in ROLL_DS]
     for ins in catalog.INSERTS:
         for part in ins["parts"]:
@@ -298,21 +299,21 @@ def main():
     engines = ("native", "wasm") if a.engine == "both" else (a.engine,)
     todo = [(e, part, params) for e in engines for part, params in cases()]
     failed, fit = 0, {}
-    fit_parts = {(part, tuple(params.items())) for _, parts, _ in FIT for part, params in parts}
+    fit_parts = {("housing", ())} | {(part, tuple(params.items())) for _, parts, _ in FIT for part, params in parts}
     with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(a.jobs) as pool:
         meshes = pool.map(lambda c: render(c[1], c[2], tmp, c[0]), todo)
         for (engine, part, params), mesh in zip(todo, meshes):
             problems = [f"render failed: {mesh}"] if isinstance(mesh, str) else check(part, params, mesh)
             failed += bool(problems)
-            if (part, tuple(params.items())) in fit_parts or (part, params) == ("housing", {}):
+            if (part, tuple(params.items())) in fit_parts:
                 fit[engine, part, tuple(params.items())] = mesh
             label = " ".join([engine, part] + [f"{k}={v}" for k, v in params.items()])
             print(f"{'FAIL' if problems else 'ok  '} {label}" + (f": {'; '.join(problems)}" if problems else ""))
     for engine in engines:
         for name, parts, turned in FIT:
-            meshes = [fit[engine, "housing", ()]] + [fit[engine, part, tuple(params.items())] for part, params in parts]
-            problems = (["render failed"] if any(isinstance(m, str) for m in meshes)
-                        else check_fit(meshes[0], trimesh.util.concatenate(meshes[1:]), turned))
+            together = [fit[engine, "housing", ()]] + [fit[engine, part, tuple(params.items())] for part, params in parts]
+            problems = (["render failed"] if any(isinstance(m, str) for m in together)
+                        else check_fit(together[0], trimesh.util.concatenate(together[1:]), turned))
             failed += bool(problems)
             label = f"{engine} fit {name}"
             print(f"{'FAIL' if problems else 'ok  '} {label}" + (f": {'; '.join(problems)}" if problems else ""))
