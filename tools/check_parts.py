@@ -11,6 +11,9 @@ the fit test and the texture test.
 Checks: one watertight body. Edges and pockets also keep their depth, a floor under the slot, a
 rail over the slot at the face, a wall under the size mark, and a wall between the slot end and
 the insert side. Each grip of a flip insert gets the edge or pocket checks and keeps room for the fingers.
+Fit: the edge insert, and the flip insert both ways up, in the housing. In place, nothing overlaps.
+Pulled forward, both lips stop the insert. Pushed back, or slid in from the back, it meets only the
+stop, the stop finds a solid face across its full width, and the stop has room to bend down.
 Exits 1 if any check fails.
 """
 import argparse
@@ -217,6 +220,48 @@ def check_flip(mesh, params):
     return problems
 
 
+FIT = [("insert_edge", False), ("insert_flip", False), ("insert_flip", True)]   # (part, turned over)
+FIT_MOVE = 0.5   # how far the fit check moves the insert forward and back, more than the 0.3 mm gap
+
+
+def overlap(a, b):
+    """The solid that meshes a and b share, or None if they do not overlap."""
+    m = trimesh.boolean.intersection([a, b], engine="manifold")
+    return m if m.volume > 1e-3 else None
+
+
+def check_fit(housing, insert, turned):
+    """Problems with an insert in the housing, from the front at y = 0 to its back face."""
+    if turned:
+        insert = insert.copy()
+        insert.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [0, 1, 0], [0, 0, insert.bounds[:, 2].mean()]))
+    (_, _, bottom), (_, back, top) = insert.bounds
+    moved = lambda dy: insert.copy().apply_translation([0, dy, 0])
+    # the stop: low on the floor, behind the insert
+    at_stop = lambda m: m.bounds[0][1] >= back - 0.01 and m.bounds[1][2] <= bottom + 1.5
+    problems = []
+    if overlap(housing, insert):
+        problems.append("overlaps the housing in place")
+    lips = overlap(housing, moved(-FIT_MOVE))   # the lower half of the front, where the lips are
+    if (not lips or len(lips.split(only_watertight=False)) != 2
+            or lips.bounds[1][1] > back / 2 or lips.bounds[1][2] > (bottom + top) / 2 + 0.01):
+        problems.append("the lips do not stop it at the front")
+    # slid in from the back: every place the insert passes, from 1 mm behind the lips out past the housing
+    start = moved((lips.bounds[1][1] if lips else 0) + 1)
+    sweep = trimesh.convex.convex_hull(np.vstack([start.vertices, start.vertices + [0, 2 * housing.bounds[1][1], 0]]))
+    entry, stopped = overlap(housing, sweep), overlap(housing, moved(FIT_MOVE))
+    if entry and not at_stop(entry):
+        problems.append("does not slide in from the back")
+    elif not entry or not stopped or not at_stop(stopped) or np.ptp(stopped.bounds[:, 0]) < np.ptp(entry.bounds[:, 0]) - 0.1:
+        problems.append("the stop does not hold it")
+    else:
+        # the stop is a tongue: under the bump, a gap lets it bend down
+        zs = [z for z in down(housing, *stopped.bounds[:, :2].mean(axis=0)) if z < bottom + 1.5]
+        if len(zs) < 3 or zs[1] - zs[2] < 0.5:
+            problems.append("the stop cannot bend down")
+    return problems
+
+
 def check(part, params, mesh):
     problems = []
     bodies = mesh.split(only_watertight=False)
@@ -245,15 +290,25 @@ def main():
             sys.exit(f"{d.get('id', 'housing')}: every setting must be in exactly one card in web/catalog.py")
     engines = ("native", "wasm") if a.engine == "both" else (a.engine,)
     todo = [(e, part, params) for e in engines for part, params in cases()]
-    failed = 0
+    failed, fit = 0, {}
     with tempfile.TemporaryDirectory() as tmp, ThreadPoolExecutor(a.jobs) as pool:
         meshes = pool.map(lambda c: render(c[1], c[2], tmp, c[0]), todo)
         for (engine, part, params), mesh in zip(todo, meshes):
             problems = [f"render failed: {mesh}"] if isinstance(mesh, str) else check(part, params, mesh)
             failed += bool(problems)
+            if not params and part in ("housing", "insert_edge", "insert_flip"):
+                fit[engine, part] = mesh
             label = " ".join([engine, part] + [f"{k}={v}" for k, v in params.items()])
             print(f"{'FAIL' if problems else 'ok  '} {label}" + (f": {'; '.join(problems)}" if problems else ""))
-    print(f"{len(todo) - failed} of {len(todo)} passed")
+    for engine in engines:
+        for part, turned in FIT:
+            housing, insert = fit[engine, "housing"], fit[engine, part]
+            problems = ["render failed"] if isinstance(housing, str) or isinstance(insert, str) else check_fit(housing, insert, turned)
+            failed += bool(problems)
+            label = f"{engine} fit {part}" + (" turned over" if turned else "")
+            print(f"{'FAIL' if problems else 'ok  '} {label}" + (f": {'; '.join(problems)}" if problems else ""))
+    total = len(todo) + len(engines) * len(FIT)
+    print(f"{total - failed} of {total} passed")
     sys.exit(1 if failed else 0)
 
 
