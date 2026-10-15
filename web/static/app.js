@@ -1034,8 +1034,8 @@ async function downloadPart(p, it, b) {
 function buildNeed() {
   const housings = kit.items.filter((x) => x.type === "housing"), inserts = kit.items.filter((x) => x.type === "insert");
   const roller = inserts.some((x) => x.insertId === "roller"), flip = inserts.some((x) => x.insertId === "flip");
-  const need = ["A steel screwgate carabiner and a loading pin or sling for the weights."];
-  if (roller) need.push("For the roller: a 12 mm steel rod or dowel works as the axle, or print it.");
+  const need = ["A steel screwgate carabiner and a loading pin or sling for the weights. The carabiner bar must be thinner than the hole (Hole size, on the housing)."];
+  if (roller) need.push("For the roller: a 12 mm steel rod or dowel, cut to 100 mm, works as the axle, or print it.");
   const steps = [];
   if (roller) steps.push("Roller: drop the roller between the cheeks, push the axle through both cheeks and the roller.");
   if (inserts.length) steps.push("Slide the insert into the housing from the back until it clicks over the stop in the floor.",

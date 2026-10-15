@@ -49,8 +49,8 @@ The [printing guide](https://awalvie.github.io/gripswap/print.html) has the sett
 
 ## You'll also need
 
-- A steel screwgate carabiner, and a loading pin or sling for the weights.
-- For the roller, a 12 mm steel rod or dowel as the axle, or you can print one.
+- A steel screwgate carabiner, and a loading pin or sling for the weights. The bar of the carabiner must be thinner than the hole in the anchor plate, which is 16 mm at its narrowest. If yours is thicker, change Hole size in the configurator, anywhere from 13 to 20 mm.
+- For the roller, a 12 mm steel rod or dowel, cut to 100 mm, as the axle. Or you can print one.
 
 ## Putting it together
 
