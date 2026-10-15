@@ -44,8 +44,9 @@ module anchor_keel() difference() {
     keel_seat();
 }
 
-// height of the carabiner rod centreline where it sits on the crown of the hole
-function seat_z() = keel_hz - keel_hole/2 + 5;
+// height of the carabiner rod centreline where the pull holds it up against the crown of the hole
+// (5: the rod radius in refs.scad)
+function seat_z() = keel_hz + keel_hole/2 - 5;
 
 // the body, rounded on every edge but the front ones, so the whole front face sits on the print bed
 module housing_shell() intersection() {
