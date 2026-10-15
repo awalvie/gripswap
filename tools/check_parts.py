@@ -245,6 +245,7 @@ def check_fit(housing, parts, turned):
                 if overlap(parts[i], parts[j])]
     insert = trimesh.util.concatenate(parts)
     if turned:
+        insert = insert.copy()
         insert.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [0, 1, 0], [0, 0, insert.bounds[:, 2].mean()]))
     (_, front, bottom), (_, back, top) = insert.bounds
     moved = lambda dy: insert.copy().apply_translation([0, dy, 0])
