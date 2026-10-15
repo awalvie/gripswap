@@ -158,6 +158,11 @@
       "insert_edge",
       "fuzzy_edge"
      ],
+     "print": {
+      "wall_loops": 3,
+      "sparse_infill_density": "15%",
+      "sparse_infill_pattern": "gyroid"
+     },
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
      "when": {
@@ -414,6 +419,11 @@
       "insert_flip",
       "fuzzy_flip"
      ],
+     "print": {
+      "wall_loops": 3,
+      "sparse_infill_density": "15%",
+      "sparse_infill_pattern": "gyroid"
+     },
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
      "when": {
@@ -1044,6 +1054,11 @@
       "insert_pocket",
       "fuzzy_pocket"
      ],
+     "print": {
+      "wall_loops": 3,
+      "sparse_infill_density": "15%",
+      "sparse_infill_pattern": "gyroid"
+     },
      "settings": "insert and texture in one file",
      "supports": "Bambu Studio and Orca Slicer",
      "when": {
@@ -1384,6 +1399,11 @@
  "texture_test": {
   "modeled": "texture_test",
   "smooth": "texture_test_smooth",
-  "modifier": "texture_test_mod"
+  "modifier": "texture_test_mod",
+  "print": {
+   "wall_loops": 3,
+   "sparse_infill_density": "15%",
+   "sparse_infill_pattern": "gyroid"
+  }
  }
 }

@@ -43,7 +43,10 @@ POCKET_SHAPE = [num("slot_d", "Pocket depth", 6, 25, 1, 20, help="From the lip t
 # 2 * (pk_w/2 - clear - lip_in - skin) = 90
 MAX_W = 90
 
-SOLID = "3 walls · 15% gyroid"
+# Walls and infill for the parts that take the pull. "print" puts them into a 3MF for Bambu Studio
+# and Orca, with their own setting names; the note on the page is made from the same values.
+SOLID_PRINT = {"wall_loops": 3, "sparse_infill_density": "15%", "sparse_infill_pattern": "gyroid"}
+SOLID = f"{SOLID_PRINT['wall_loops']} walls · {SOLID_PRINT['sparse_infill_density']} {SOLID_PRINT['sparse_infill_pattern']}"
 
 # Grip texture: a pattern and a strength. Lines, Knurl and Dots are modeled on the ceiling of an
 # edge (src/inserts/edge.scad sets their sizes); Resin, Rock and Marble are the slicer's fuzzy skin
@@ -95,10 +98,10 @@ TEXTURE_SHOW = {"texture_size": ["texture", [o["value"] for o in MODELED + SLICE
 def fuzzy_parts(insert, modifier):
     # in the download only with a slicer pattern ("when"). PrusaSlicer gets the modifier as an STL for
     # Fuzzy, and its note says what to set. Bambu Studio and Orca get a 3MF of the insert and the
-    # modifier with the texture already set ("threemf": the parts in it).
+    # modifier with the texture and the walls and infill already set ("threemf": the parts in it).
     return [{"part": modifier, "name": "Fuzzy modifier", "supports": "PrusaSlicer: load it with the insert as one object",
              "when": {"texture": ["fuzzy"]}, "modifier": True},
-            {"part": modifier + "_3mf", "name": "Bambu Orca", "threemf": [insert, modifier],
+            {"part": modifier + "_3mf", "name": "Bambu Orca", "threemf": [insert, modifier], "print": SOLID_PRINT,
              "settings": "insert and texture in one file", "supports": "Bambu Studio and Orca Slicer",
              "when": {"texture": [o["value"] for o in SLICED]}}]
 
@@ -279,7 +282,7 @@ FIT_TEST = [{"part": "fit_ring", "name": "Ring"}, {"part": "fit_frame", "name": 
 # Print to choose a grip texture: tabs with every pattern at every strength (src/texture_test.scad).
 # "modeled": one STL for any slicer. "smooth" and "modifier": the slicer patterns, put in one 3MF by the
 # page, one modifier per tab (tex_i 0 to 8: SLICED by row, TEXTURE_SIZE by column).
-TEXTURE_TEST = {"modeled": "texture_test", "smooth": "texture_test_smooth", "modifier": "texture_test_mod"}
+TEXTURE_TEST = {"modeled": "texture_test", "smooth": "texture_test_smooth", "modifier": "texture_test_mod", "print": SOLID_PRINT}
 
 
 def catalog():

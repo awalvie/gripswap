@@ -1011,7 +1011,7 @@ async function fileData(p, it) {
   return make3mf(nameOf(it), [
     { name: nameOf(it), stl: ins, type: "normal_part" },
     { name: "Fuzzy texture", stl: mod, type: "modifier_part",
-      settings: { fuzzy_skin: "all", fuzzy_skin_thickness: t, fuzzy_skin_point_distance: pd, fuzzy_skin_noise_type: noise } }]);
+      settings: { fuzzy_skin: "all", fuzzy_skin_thickness: t, fuzzy_skin_point_distance: pd, fuzzy_skin_noise_type: noise } }], p.print);
 }
 
 // the button spins and ignores more taps until the file is saved
@@ -1097,7 +1097,7 @@ async function downloadTextureTest() {
       ...tabs.map((_, i) => stl(t.modifier, { tex_i: i }, true))]);
     const threemf = await make3mf("Texture test", [{ name: "Texture test", stl: smooth, type: "normal_part" },
       ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label.replace(/\s*\(.*\)$/, "")}`, stl: mods[i], type: "modifier_part",
-        settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))]);
+        settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))], t.print);
     saveBlob(await makeZip([{ name: "texture-test.stl", data: new Uint8Array(modeled) },
       { name: "texture-test-bambu-orca.3mf", data: threemf }]), "gripswap-texture-test.zip");
     hideToast(no);

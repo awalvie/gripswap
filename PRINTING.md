@@ -76,7 +76,7 @@ Dots, Lines and Knurl are part of the edge itself, so you slice the insert like 
 
 Resin, Rock and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
 
-In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice.
+In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice. The walls and infill from the Settings table are already set on the insert.
 
 PrusaSlicer can make Resin only. Use the insert STL and the `-fuzzy-modifier.stl` file:
 
@@ -121,7 +121,7 @@ If it sticks, follow step 3 below, then print the fit test again.
 To choose a grip pattern, print the texture test. In the configurator, click "Texture test" under Test prints, or the "texture test" link under Pattern. You get one zip with two plates, already the right way up. Use the insert settings above.
 
 - `texture-test.stl` has Lines, Knurl and Dots. Any slicer prints it.
-- `texture-test-bambu-orca.3mf` has Resin, Rock and Marble, with the fuzzy skin already set on each tab. Open it in Bambu Studio or Orca Slicer.
+- `texture-test-bambu-orca.3mf` has Resin, Rock and Marble, with the fuzzy skin already set on each tab, and the walls and infill from the Settings table. Open it in Bambu Studio or Orca Slicer.
 
 Each plate takes about 45 minutes and 13 g of PETG. That is Bambu Studio's estimate for an X1 Carbon with its 0.20 mm Standard settings.
 

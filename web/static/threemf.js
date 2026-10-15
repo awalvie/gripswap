@@ -40,8 +40,9 @@ const MODEL = 'xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"
 const REL = "http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel";
 
 // name: the object name. parts: [{name, stl: ArrayBuffer, type: "normal_part" | "modifier_part", settings: {key: value}}].
+// print: settings for the whole object, such as walls and infill, with Bambu's setting names.
 // Returns the bytes of the .3mf.
-async function make3mf(name, parts) {
+async function make3mf(name, parts, print = {}) {
   const id = parts.length + 1;   // parts are objects 1..n, the object of components comes after them
   const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
   const meshes = parts.map((p, i) => {
@@ -66,7 +67,7 @@ ${parts.map((p, i) => `<component p:path="/3D/Objects/object_1.model" objectid="
 </components></object></resources>
 <build><item objectid="${id}" transform="1 0 0 0 1 0 0 0 1 ${at}" printable="1"/></build></model>`;
   const meta = (k, v) => `<metadata key="${esc(k)}" value="${esc(v)}"/>`;
-  const config = `<?xml version="1.0" encoding="UTF-8"?>\n<config><object id="${id}">${meta("name", name)}
+  const config = `<?xml version="1.0" encoding="UTF-8"?>\n<config><object id="${id}">${meta("name", name)}${Object.entries(print).map(([k, v]) => meta(k, v)).join("")}
 ${parts.map((p, i) => `<part id="${i + 1}" subtype="${p.type}">${meta("name", p.name)}${Object.entries(p.settings || {}).map(([k, v]) => meta(k, v)).join("")}</part>`).join("\n")}
 </object>
 <plate>${meta("plater_id", 1)}<model_instance>${meta("object_id", id)}${meta("instance_id", 0)}</model_instance></plate></config>`;
