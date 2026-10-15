@@ -16,7 +16,17 @@ You can build your own at [awalvie.github.io/gripswap](https://awalvie.github.io
 
 ![The configurator with a 20 mm edge in the housing](docs/img/configurator-edge.png)
 
-This is a prototype, and I haven't load-tested it yet. Print and use it at your own risk, check it before every session, and stop using any part that cracks.
+This is a prototype. Print and use it at your own risk, check it before every session, and stop using any part that cracks. Keep your feet clear of the weight.
+
+What is tested so far:
+
+- A script renders every part at the ends of each setting, and checks that each part is solid and that the edge, two-sided and roller inserts fit the housing.
+- The texture test plate is printed once, to compare the grip patterns.
+
+What is not tested yet:
+
+- A full printed kit.
+- Any load. There is no load rating, so start light and add weight slowly.
 
 ## What you can make
 
