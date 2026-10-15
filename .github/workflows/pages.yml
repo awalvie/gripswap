@@ -8,8 +8,6 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # one deploy at a time; a newer push waits instead of cancelling a deploy half way. Each pull
 # request runs in its own group, so it never waits on a deploy.
@@ -37,6 +35,11 @@ jobs:
     needs: check
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
+    # only the deploy can write to Pages; the check installs packages from pip
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
