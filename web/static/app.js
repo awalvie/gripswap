@@ -973,11 +973,13 @@ function buildDownloads() {
   kit.items.forEach((it) => {
     const box = document.createElement("div"); box.className = "ditem";
     it.skip = it.skip || {};   // parts left out of the zip, by part name; a plain object so that Copy keeps it
-    partsOf(it).forEach((p) => {
+    partsOf(it).forEach((p, i) => {
       const row = document.createElement("div"); row.className = "dfile";
-      row.innerHTML = `<label><input type="checkbox"${it.skip[p.part] ? "" : " checked"}>
-        <span><strong>${fileOf(it, p)}</strong><small>${noteOf(it, p)} · ${p.supports}</small></span></label>
-        <button type="button" title="Download only ${fileOf(it, p)}">${DL_ICON}</button>`;
+      const file = fileOf(it, p), detail = detailOf(it);
+      row.innerHTML = `<label title="${file}"><input type="checkbox"${it.skip[p.part] ? "" : " checked"}>
+        <span><strong>${titleOf(it)}${i ? ` · ${p.name}` : ""}</strong>${detail ? `<small>${detail}</small>` : ""}
+        <small>${p.threemf ? "3MF" : "STL"} · ${noteOf(it, p)} · ${p.supports}</small></span></label>
+        <button type="button" title="Download only ${file}" aria-label="Download only ${file}">${DL_ICON}</button>`;
       row.querySelector("input").onchange = (e) => { it.skip[p.part] = !e.target.checked; kitButton(); };
       row.querySelector("button").onclick = (e) => downloadPart(p, it, e.currentTarget);
       box.append(row);
