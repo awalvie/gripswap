@@ -33,6 +33,7 @@ header b { font-size: 18px; }
 header span { color: var(--muted); font-size: 13px; }
 main { max-width: 760px; margin: 0 auto; padding: 8px 16px 48px; }
 h1 { font-size: 28px; margin: 24px 0 8px; }
+h3 { font-size: 17px; margin: 20px 0 6px; }
 h2 { font-size: 20px; margin: 36px 0 8px; padding-top: 12px; border-top: 1px solid var(--line); }
 a { color: var(--accent); }
 code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 4px; }
@@ -53,77 +54,63 @@ li { margin: 4px 0; }
 <header><a href="./"><img src="icon.svg" width="32" height="32" alt=""><b>gripswap</b></a><span>printing guide</span></header>
 <main>
 <h1>Printing gripswap</h1>
-<p>These settings are where I'd start. They aren't load-tested yet, so read the note in the <a href="https://github.com/awalvie/gripswap#readme">README</a> first.</p>
-
-<h2 id="material">Material</h2>
-<p>Print everything in PETG. PLA gets brittle in the cold and slowly bends when it's warm, say in a car on a sunny day.</p>
+<p>Nobody has load-tested these parts yet. Read the safety note in the <a href="https://github.com/awalvie/gripswap#readme">README</a> before you print.</p>
 
 <h2 id="settings">Settings</h2>
+<p>Print every part in PETG. PLA turns brittle in the cold and bends in the heat.</p>
 <div class="scroll"><table>
   <tr><th>Part</th><th>Walls</th><th>Infill</th></tr>
-  <tr><td>Housing, edge, pocket and two-sided inserts, roller frame</td><td>3</td><td>15% gyroid</td></tr>
+  <tr><td>Housing, inserts, roller frame</td><td>3</td><td>15% gyroid</td></tr>
   <tr><td>Roller</td><td>3</td><td>20%</td></tr>
   <tr><td>Printed axle</td><td>4</td><td>100%</td></tr>
 </table></div>
-<p>Use a 0.4 mm nozzle and 0.2 mm layers. These parts take your whole pull, so don't go below these settings to save time.</p>
-<p>The anchor plate under the housing carries the whole pull through the walls around its hole. For more strength around the hole, you can give the plate 100% infill with a modifier. This doubles the housing print time, and nobody has tested yet whether it is needed.</p>
+<p>Use a 0.4 mm nozzle and 0.2 mm layers. These parts carry your whole pull, so do not print them weaker.</p>
+<p>For a stronger anchor plate, give it 100% infill with a modifier. This doubles the housing print time. Nobody knows yet if the plate needs it.</p>
 
 <h2 id="which-way-up">Which way up</h2>
-<p>Each part has one right way up. It keeps the load running along the layers and the grip smooth. The files from the configurator already sit this way, so you only need to slice them.</p>
-<div class="scroll"><table>
-  <tr><th>Part</th><th>On the bed</th><th>Supports</th></tr>
-  <tr><td>Housing</td><td>On its front, anchor plate flat on the bed</td><td>None</td></tr>
-  <tr><td>Edge, pocket or two-sided insert</td><td>On its back, front up</td><td>None</td></tr>
-  <tr><td>Roller frame</td><td>Upright, floor down</td><td>None</td></tr>
-  <tr><td>Roller</td><td>Standing on one end</td><td>None</td></tr>
-  <tr><td>Printed axle</td><td>Lying down</td><td>None</td></tr>
-</table></div>
+<p>The files from the configurator already lie the right way up, so slice them as they are. No part needs supports.</p>
 <div class="beds">
-  <figure><img src="img/print-housing.png" width="640" height="480" alt="Housing on the bed"><figcaption>Housing</figcaption></figure>
-  <figure><img src="img/print-insert_edge.png" width="640" height="480" alt="Edge insert on the bed"><figcaption>Edge insert</figcaption></figure>
-  <figure><img src="img/print-insert_pocket.png" width="640" height="480" alt="Pocket insert on the bed"><figcaption>Pocket insert</figcaption></figure>
-  <figure><img src="img/print-insert_flip.png" width="640" height="480" alt="Two-sided insert on the bed"><figcaption>Two-sided insert</figcaption></figure>
-  <figure><img src="img/print-insert_roller.png" width="640" height="480" alt="Roller frame on the bed"><figcaption>Roller frame</figcaption></figure>
-  <figure><img src="img/print-roller.png" width="640" height="480" alt="Roller on the bed"><figcaption>Roller</figcaption></figure>
-  <figure><img src="img/print-axle.png" width="640" height="480" alt="Axle on the bed"><figcaption>Axle</figcaption></figure>
+  <figure><img src="img/print-housing.png" width="640" height="480" alt="Housing on the bed"><figcaption>Housing: on its front, anchor plate flat</figcaption></figure>
+  <figure><img src="img/print-insert_edge.png" width="640" height="480" alt="Edge insert on the bed"><figcaption>Edge insert: on its back</figcaption></figure>
+  <figure><img src="img/print-insert_pocket.png" width="640" height="480" alt="Pocket insert on the bed"><figcaption>Pocket insert: on its back</figcaption></figure>
+  <figure><img src="img/print-insert_flip.png" width="640" height="480" alt="Two-sided insert on the bed"><figcaption>Two-sided insert: on its back</figcaption></figure>
+  <figure><img src="img/print-insert_roller.png" width="640" height="480" alt="Roller frame on the bed"><figcaption>Roller frame: floor down</figcaption></figure>
+  <figure><img src="img/print-roller.png" width="640" height="480" alt="Roller on the bed"><figcaption>Roller: on one end</figcaption></figure>
+  <figure><img src="img/print-axle.png" width="640" height="480" alt="Axle on the bed"><figcaption>Axle: lying down</figcaption></figure>
 </div>
-<p>If you render a part yourself, add <code>-D for_print=true</code> to get it the right way up:</p>
+<p>If you render a part in OpenSCAD yourself, add <code>-D for_print=true</code>:</p>
 <pre><code>openscad -D 'part="housing"' -D for_print=true -o housing.stl gripswap.scad</code></pre>
 
 <h2 id="grip-texture">Grip texture</h2>
-<p>Pick a pattern and a strength for the grip, the roof of the slot. The rest of the insert stays smooth.</p>
-<p>The patterns come in two groups. The feel below is from one print of the texture test, not a measurement.</p>
+<p>You can give the grip a texture. The rest of the insert stays smooth. Each texture comes in three strengths: Fine is gentlest, and Coarse bites more but wears your skin faster. The notes below come from one print of the texture test.</p>
+<p>Your slicer makes these three, with its fuzzy skin:</p>
 <ul>
-  <li>Like a real board:
-    <ul>
-      <li>Smooth: plain plastic, no texture.</li>
-      <li>Rock: rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here, at Medium. Bambu Studio and Orca only.</li>
-      <li>Resin: a fine random grit, like a resin hangboard. Start here if you use PrusaSlicer.</li>
-    </ul></li>
-  <li>Printed shapes:
-    <ul>
-      <li>Dots: small cones. The best of the printed shapes in the first test.</li>
-      <li>Lines: ridges along the lip, across the pull.</li>
-      <li>Knurl: small pyramids. The most bite, and the hardest on skin.</li>
-      <li>Marble: rough veins that wander.</li>
-    </ul></li>
+  <li>Rock: rough cells, like sandstone. The favorite so far. Start here, at Medium. Bambu Studio and Orca only.</li>
+  <li>Resin: a fine grit, like a resin hangboard. The one to pick in PrusaSlicer.</li>
+  <li>Marble: rough veins. Bambu Studio and Orca only.</li>
 </ul>
-<p>Fine is the gentlest strength. Coarse bites more and wears your skin faster.</p>
-<p>Dots, Lines and Knurl are part of the edge itself, so you slice the insert like any other part. Pockets and steep slopers can't have them. A steep sloper has no flat ceiling for the pattern to sit on.</p>
+<p>These three are part of the model, so any slicer prints them:</p>
+<ul>
+  <li>Dots: small cones. The best of these three.</li>
+  <li>Lines: ridges across the pull.</li>
+  <li>Knurl: small pyramids. The most bite, and the hardest on skin.</li>
+</ul>
 <div class="scroll"><table>
-  <tr><th>Pattern</th><th>Fine</th><th>Medium</th><th>Coarse</th></tr>
+  <tr><th>Model texture</th><th>Fine</th><th>Medium</th><th>Coarse</th></tr>
   <tr><td>Dots</td><td>0.4 mm high, 1.5 mm apart</td><td>0.6 mm, 2 mm</td><td>0.8 mm, 2.7 mm</td></tr>
-  <tr><td>Lines</td><td>0.4 mm high, 1 mm apart</td><td>0.6 mm, 1.5 mm</td><td>0.8 mm, 2 mm</td></tr>
-  <tr><td>Knurl</td><td>0.4 mm high, 1 mm apart</td><td>0.6 mm, 1.5 mm</td><td>0.8 mm, 2 mm</td></tr>
+  <tr><td>Lines, Knurl</td><td>0.4 mm high, 1 mm apart</td><td>0.6 mm, 1.5 mm</td><td>0.8 mm, 2 mm</td></tr>
 </table></div>
-<p>Resin, Rock and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.</p>
-<p>In Bambu Studio or Orca Slicer, open the <code>-bambu-orca.3mf</code> file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice. The walls and infill from the Settings table are already set on the insert.</p>
-<p>PrusaSlicer can make Resin only. Use the insert STL and the <code>-fuzzy-modifier.stl</code> file:</p>
+<p>Pockets and steep slopers cannot have Dots, Lines or Knurl.</p>
+
+<h3>Rock, Resin or Marble in Bambu Studio or Orca Slicer</h3>
+<p>Open the <code>-bambu-orca.3mf</code> file, not the insert STL. The texture, walls and infill are already set. The file opens for a Bambu Lab X1 Carbon with Bambu PETG Basic, so pick your own printer and filament, then slice.</p>
+
+<h3>Resin in PrusaSlicer</h3>
 <ol>
-  <li>Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.</li>
+  <li>Load the insert STL and the <code>-fuzzy-modifier.stl</code> file together, as one object with two parts. They already line up.</li>
   <li>Right-click the modifier part and change its type to modifier.</li>
-  <li>Add the fuzzy skin settings to the modifier and pick "All walls". The grip prints as the wall of a hole, so "Outside walls" misses it.</li>
-  <li>Set the thickness and point distance for the strength you picked.</li>
+  <li>Give the modifier fuzzy skin, set to "All walls". "Outside walls" misses the grip.</li>
+  <li>Set the thickness and point distance from this table:</li>
 </ol>
 <div class="scroll"><table>
   <tr><th>Strength</th><th>Thickness</th><th>Point distance</th></tr>
@@ -133,47 +120,38 @@ li { margin: 4px 0; }
 </table></div>
 
 <h2 id="filament">How much filament</h2>
-<p>I sliced the default parts in Bambu Studio 2.8 for an X1 Carbon with Bambu PETG Basic, its 0.20 mm Standard settings, and the walls and infill above. Nothing has been weighed after a real print yet.</p>
+<p>These are Bambu Studio 2.8 estimates for an X1 Carbon with Bambu PETG Basic and the settings above. Nobody has weighed a printed kit yet.</p>
 <div class="scroll"><table>
-  <tr><th>Part</th><th>Filament</th><th>Print time</th></tr>
+  <tr><th>Part</th><th>Filament</th><th>Time</th></tr>
   <tr><td>Housing</td><td>63 g</td><td>1 h 33 min</td></tr>
   <tr><td>Edge insert, 20 mm</td><td>60 g</td><td>1 h 31 min</td></tr>
   <tr><td>Pocket insert, three-finger</td><td>61 g</td><td>1 h 38 min</td></tr>
-  <tr><td>Two-sided insert, 20 and 10 mm edges</td><td>59 g</td><td>1 h 30 min</td></tr>
+  <tr><td>Two-sided insert, 20 and 10 mm</td><td>59 g</td><td>1 h 30 min</td></tr>
   <tr><td>Roller frame</td><td>30 g</td><td>1 h 19 min</td></tr>
   <tr><td>Roller, unlevel</td><td>20 g</td><td>1 h 31 min</td></tr>
   <tr><td>Roller, straight</td><td>24 g</td><td>1 h 32 min</td></tr>
   <tr><td>Printed axle</td><td>14 g</td><td>22 min</td></tr>
 </table></div>
-<p>A housing and one edge insert come to about 120 g and three hours, so a 1 kg spool gets you a housing and about 15 inserts.</p>
+<p>A housing and one edge insert take about 120 g and three hours. A 1 kg spool makes a housing and about 15 inserts.</p>
 
-<h2 id="fit-test">The fit test</h2>
-<p>On a new printer, print the fit test before the kit. In the <a href="./">configurator</a>, click "Fit test" under Test prints, in the Download section. You get one zip with two small parts, already the right way up. Use the housing settings above.</p>
-<ul>
-  <li>The ring is a thin slice of the front of the housing, with the lips, and the frame is a thin slice of the front of an insert. Push the frame into the back of the ring until it stops on the lips. It must slide in without force.</li>
-</ul>
-<p>If it sticks, follow step 3 below, then print the fit test again.</p>
-
-<h2 id="texture-test">The texture test</h2>
-<p>To choose a grip pattern, print the texture test. In the <a href="./">configurator</a>, click "Texture test" under Test prints, or the "texture test" link under Pattern. You get one zip with two plates, already the right way up. Use the insert settings above.</p>
-<ul>
-  <li><code>texture-test.stl</code> has Lines, Knurl and Dots. Any slicer prints it.</li>
-  <li><code>texture-test-bambu-orca.3mf</code> has Resin, Rock and Marble, with the fuzzy skin already set on each tab, and the walls and infill from the Settings table. Open it in Bambu Studio or Orca Slicer.</li>
-</ul>
-<p>Each plate takes about 50 minutes and 17 g of PETG. That is Bambu Studio's estimate for an X1 Carbon with Bambu PETG Basic and the insert settings above.</p>
-<p>Each tab stands upright on a thin strip, like the grip of an insert on its back, so the pattern prints the same way. The front row is a smooth tab, to compare. Then each row is one pattern, Fine, Medium and Coarse from the left. The label in front of each tab says which: F, M or C.</p>
-<p>Press a finger pad on the front of each tab and drag it down, the way your fingers load the grip. Pick the one that holds best without hurting, then pick that pattern and strength for your inserts.</p>
+<h2 id="test-prints">Test prints</h2>
+<p>Find both under Test prints, in the Download section of the <a href="./">configurator</a>.</p>
+<h3 id="fit-test">Fit test</h3>
+<p>Print this first on a new printer. It is a thin slice of the housing front (the ring) and of an insert front (the frame). Push the frame into the back of the ring until it stops on the lips. It must slide in without force. If it sticks, see <a href="#checking-the-fit">Checking the fit</a>.</p>
+<h3 id="texture-test">Texture test</h3>
+<p>This shows every texture before you choose one. You get two plates. <code>texture-test.stl</code> has Dots, Lines and Knurl. <code>texture-test-bambu-orca.3mf</code> has Rock, Resin and Marble, for Bambu Studio or Orca Slicer. Each plate takes about 50 minutes and 17 g.</p>
+<p>The front tab is smooth, to compare. Each row behind it is one texture, with Fine, Medium and Coarse from left to right, labeled F, M and C. Press a finger pad on each tab and drag it down, the way you pull on a grip. Pick the one that holds best without hurting.</p>
 
 <h2 id="checking-the-fit">Checking the fit</h2>
 <ol>
-  <li>Slide the insert into the housing from the back. It should stop on the lips at the front, and click over the stop at the back.</li>
-  <li>Press the stop down and push the insert out the back. It should come out without a fight.</li>
-  <li>If it sticks, look at the face that was on the bed. A flared first layer, the "elephant's foot", is the usual cause. Trim or sand that edge, or turn on elephant-foot compensation in your slicer.</li>
+  <li>Slide the insert into the housing from the back. It stops on the lips at the front, and clicks over the stop at the back.</li>
+  <li>To take it out, press the stop down and push the insert out the back.</li>
+  <li>If it sticks, look at the face that was on the bed. A flared first layer ("elephant's foot") is the usual cause. Sand that edge, or turn on elephant-foot compensation in your slicer.</li>
 </ol>
 
 <h2 id="first-session">Before your first session</h2>
 <ul>
-  <li>Look for split layers at the anchor plate, at the lips, at the stop and at the grip. Don't use a cracked part.</li>
+  <li>Look for split layers at the anchor plate, the lips, the stop and the grip. Do not use a cracked part.</li>
   <li>Hang the block from the carabiner and load it slowly by hand before you pull hard.</li>
 </ul>
 </main>
