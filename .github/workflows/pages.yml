@@ -3,6 +3,7 @@ name: Pages
 on:
   push:
     branches: [main]
+  pull_request:   # checks only; a pull request never deploys
   workflow_dispatch:
 
 permissions:
@@ -10,9 +11,10 @@ permissions:
   pages: write
   id-token: write
 
-# one deploy at a time; a newer push waits instead of cancelling a deploy half way
+# one deploy at a time; a newer push waits instead of cancelling a deploy half way. Each pull
+# request runs in its own group, so it never waits on a deploy.
 concurrency:
-  group: pages
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -33,6 +35,7 @@ jobs:
 
   deploy:
     needs: check
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
