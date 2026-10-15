@@ -1135,7 +1135,9 @@ function saveKit() {
     try { history.replaceState(null, "", "#k=" + encodeURIComponent(JSON.stringify({ s: kit.sel, items }))); } catch (e) { /* the link is a convenience */ }
   }, 300);
 }
-// a link that does not parse or has a bad value gives the default kit
+// a link that does not parse gives the default kit. A value outside today's range (from an older
+// link) moves to the nearest end, a choice the page no longer has goes back to its default, and an
+// insert the page no longer has is dropped; the rest of the kit stays.
 function loadKit() {
   try {
     const m = location.hash.match(/^#k=(.+)$/);
@@ -1143,8 +1145,16 @@ function loadKit() {
     const k = JSON.parse(decodeURIComponent(m[1]));
     if (!k.items.length || k.items.length > 30) return false;
     // each item takes only its own settings, each inside its range
-    const items = k.items.map((x) => {
-      const it = x.h ? newHousing() : newInsert(x.i), own = defOf(it).params.map((p) => p.name);
+    let fixed = false;
+    const fit = (p, v) => {
+      const out = p.type === "number" ? (Number.isFinite(v) ? Math.min(p.max, Math.max(p.min, v)) : p.default)
+        : p.options.some((o) => o.value === v) ? v : p.default;
+      fixed ||= out !== v;
+      return out;
+    };
+    const kept = k.items.filter((x) => x.h || insertDef(x.i));
+    const items = kept.map((x) => {
+      const it = x.h ? newHousing() : newInsert(x.i), def = defOf(it), own = def.params.map((p) => p.name);
       // older flip links name one pocket by its fingers
       if (x.i === "flip") ["top", "bot"].forEach((s) => {
         const w = { mono: 22, two: 40, three: 58 }[x.v?.[s + "_kind"]];
@@ -1153,12 +1163,20 @@ function loadKit() {
       // older links have one fuzzy setting: its value is the strength
       if (x.v?.fuzzy && x.v.fuzzy !== "none") { x.v.texture = "fuzzy"; x.v.texture_size = x.v.fuzzy; }
       // a setting the page no longer has (from an older link) is dropped, the rest of the kit stays
-      Object.entries(x.h || x.v || {}).forEach(([n, v]) => { if (own.includes(n)) it.values[n] = v; });
-      cleanParams(it.values, defOf(it));
+      Object.entries(x.h || x.v || {}).forEach(([n, v]) => { if (own.includes(n)) it.values[n] = fit(specIn(def, n), v); });
+      const before = JSON.stringify(it.values);
+      (def.spans || []).forEach((s) => fitSpan(s, it.values, def));
+      cleanParams(it.values, def);
       if (noEdge(it) && optOf(it, "texture")?.modeled) it.values.texture = "none";   // a modeled pattern needs an edge
+      fixed ||= JSON.stringify(it.values) !== before;
       return it;
     });
-    kit.items.push(...items); kit.sel = Math.min(Math.max(0, k.s | 0), items.length - 1);
+    if (!items.length) return false;
+    kit.items.push(...items); kit.sel = Math.max(0, kept.indexOf(k.items[k.s | 0]));
+    if (fixed || items.length < k.items.length) {   // longer than a usual toast: the page is still loading
+      const no = toast("This link is from an older version. Some settings changed to fit, so check the kit.", true);
+      setTimeout(() => hideToast(no), 10000);
+    }
     return true;
   } catch (e) { return false; }
 }
