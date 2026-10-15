@@ -63,16 +63,16 @@ MODELED = [{"value": "dots", "label": "Dots", "modeled": True, "group": SHAPES,
            {"value": "knurl", "label": "Knurl", "modeled": True, "group": SHAPES,
             "about": "small pyramids, part of the edge. The most bite, and the hardest on skin."}]
 SLICED = [{"value": "fuzzy", "label": "Resin", "slicer": True, "noise": "classic", "group": BOARD,
-           "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here."},
+           "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here if you use PrusaSlicer."},
           {"value": "cells", "label": "Rock", "slicer": True, "noise": "voronoi", "group": BOARD,
-           "about": "rough patches in a cell pattern, like sandstone. Bambu Studio and Orca only."},
+           "about": "rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here. Bambu Studio and Orca only."},
           {"value": "marble", "label": "Marble", "slicer": True, "noise": "ridgedmulti", "group": SHAPES,
            "about": "rough veins that wander. Bambu Studio and Orca only."}]
 SMOOTH = {"value": "none", "label": "Smooth", "group": BOARD, "about": "plain plastic, no texture."}
 
 
 def texture(modeled=True):
-    board = [SMOOTH] + [o for o in SLICED if o["group"] == BOARD]
+    board = [SMOOTH] + sorted((o for o in SLICED if o["group"] == BOARD), key=lambda o: o["value"] != "cells")   # Rock first
     shapes = (MODELED if modeled else []) + [o for o in SLICED if o["group"] == SHAPES]
     return choice("texture", "Pattern", board + shapes, "none",
                   help="Resin, Rock and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to "
@@ -282,7 +282,8 @@ FIT_TEST = [{"part": "fit_ring", "name": "Ring"}, {"part": "fit_frame", "name": 
 # Print to choose a grip texture: tabs with every pattern at every strength (src/texture_test.scad).
 # "modeled": one STL for any slicer. "smooth" and "modifier": the slicer patterns, put in one 3MF by the
 # page, one modifier per tab (tex_i 0 to 8: SLICED by row, TEXTURE_SIZE by column).
-TEXTURE_TEST = {"modeled": "texture_test", "smooth": "texture_test_smooth", "modifier": "texture_test_mod", "print": SOLID_PRINT}
+TEXTURE_TEST = {"modeled": "texture_test", "smooth": "texture_test_smooth", "modifier": "texture_test_mod", "print": SOLID_PRINT,
+                "sliced": [o["value"] for o in SLICED]}   # the slicer rows in order; the menu order may differ
 
 
 def catalog():

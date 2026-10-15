@@ -1090,7 +1090,7 @@ async function downloadTextureTest() {
   const no = toast("Preparing the texture test zip…", true);
   try {
     const t = cat.texture_test, edge = cat.inserts.find((i) => i.id === "edge").params;
-    const sliced = edge.find((p) => p.name === "texture").options.filter((o) => o.slicer);
+    const sliced = t.sliced.map((v) => edge.find((p) => p.name === "texture").options.find((o) => o.value === v));
     const sizes = edge.find((p) => p.name === "texture_size").options;
     const tabs = sliced.flatMap((o) => sizes.map((s) => ({ o, s })));   // row by row, as tex_i in src/texture_test.scad
     const [modeled, smooth, ...mods] = await Promise.all([stl(t.modeled, {}, true), stl(t.smooth, {}, true),

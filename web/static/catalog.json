@@ -259,20 +259,20 @@
        "about": "plain plastic, no texture."
       },
       {
-       "value": "fuzzy",
-       "label": "Resin",
-       "slicer": true,
-       "noise": "classic",
-       "group": "Like a real board",
-       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here."
-      },
-      {
        "value": "cells",
        "label": "Rock",
        "slicer": true,
        "noise": "voronoi",
        "group": "Like a real board",
-       "about": "rough patches in a cell pattern, like sandstone. Bambu Studio and Orca only."
+       "about": "rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here. Bambu Studio and Orca only."
+      },
+      {
+       "value": "fuzzy",
+       "label": "Resin",
+       "slicer": true,
+       "noise": "classic",
+       "group": "Like a real board",
+       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here if you use PrusaSlicer."
       },
       {
        "value": "dots",
@@ -700,20 +700,20 @@
        "about": "plain plastic, no texture."
       },
       {
-       "value": "fuzzy",
-       "label": "Resin",
-       "slicer": true,
-       "noise": "classic",
-       "group": "Like a real board",
-       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here."
-      },
-      {
        "value": "cells",
        "label": "Rock",
        "slicer": true,
        "noise": "voronoi",
        "group": "Like a real board",
-       "about": "rough patches in a cell pattern, like sandstone. Bambu Studio and Orca only."
+       "about": "rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here. Bambu Studio and Orca only."
+      },
+      {
+       "value": "fuzzy",
+       "label": "Resin",
+       "slicer": true,
+       "noise": "classic",
+       "group": "Like a real board",
+       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here if you use PrusaSlicer."
       },
       {
        "value": "dots",
@@ -1179,20 +1179,20 @@
        "about": "plain plastic, no texture."
       },
       {
-       "value": "fuzzy",
-       "label": "Resin",
-       "slicer": true,
-       "noise": "classic",
-       "group": "Like a real board",
-       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here."
-      },
-      {
        "value": "cells",
        "label": "Rock",
        "slicer": true,
        "noise": "voronoi",
        "group": "Like a real board",
-       "about": "rough patches in a cell pattern, like sandstone. Bambu Studio and Orca only."
+       "about": "rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here. Bambu Studio and Orca only."
+      },
+      {
+       "value": "fuzzy",
+       "label": "Resin",
+       "slicer": true,
+       "noise": "classic",
+       "group": "Like a real board",
+       "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here if you use PrusaSlicer."
       },
       {
        "value": "marble",
@@ -1404,6 +1404,11 @@
    "wall_loops": 3,
    "sparse_infill_density": "15%",
    "sparse_infill_pattern": "gyroid"
-  }
+  },
+  "sliced": [
+   "fuzzy",
+   "cells",
+   "marble"
+  ]
  }
 }

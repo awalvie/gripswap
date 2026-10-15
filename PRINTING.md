@@ -56,8 +56,8 @@ The patterns come in two groups. The feel below is from one print of the texture
 
 - Like a real board:
   - Smooth: plain plastic, no texture.
-  - Resin: a fine random grit, like a resin hangboard. Start here, at Medium.
-  - Rock: rough patches in a cell pattern, like sandstone.
+  - Rock: rough patches in a cell pattern, like sandstone. The favorite in the first test. Start here, at Medium. Bambu Studio and Orca only.
+  - Resin: a fine random grit, like a resin hangboard. Start here if you use PrusaSlicer.
 - Printed shapes:
   - Dots: small cones. The best of the printed shapes in the first test.
   - Lines: ridges along the lip, across the pull.
