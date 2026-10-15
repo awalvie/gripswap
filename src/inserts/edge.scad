@@ -68,8 +68,8 @@ function back_fillet(B, a, r, n = 6) = let(u = [-cos(a), -sin(a)], phi = 90 - a)
 // pattern keeps its size where an ergo edge is longer. Heights and pitches: Lines and Knurl
 // teeth stand at about 39 degrees from upright when the insert prints on its back.
 function tex_spec(kind, size) = let(i = size == "fine" ? 0 : size == "coarse" ? 2 : 1)
-    kind == "lines" || kind == "knurl" ? [kind, [0.3, 0.4, 0.6][i], [0.8, 1, 1.5][i]]
-  : kind == "dots" ? [kind, [0.3, 0.4, 0.6][i], [1, 1.5, 2][i]]
+    kind == "lines" || kind == "knurl" ? [kind, [0.4, 0.6, 0.8][i], [1, 1.5, 2][i]]
+  : kind == "dots" ? [kind, [0.4, 0.6, 0.8][i], [1.5, 2, 2.7][i]]
   : ["none", 0, 1];
 tex_edge = 0.5;                              // smooth band before the lip round and the back corner
 function tri(s) = 1 - abs(2 * (s - floor(s)) - 1);   // 0 at whole numbers, 1 half way

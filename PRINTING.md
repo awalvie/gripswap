@@ -56,9 +56,9 @@ Lines, Knurl and Dots are part of the edge itself, so you slice the insert like 
 
 | Pattern | Fine | Medium | Coarse |
 | --- | --- | --- | --- |
-| Lines: ridges along the lip | 0.3 mm high, 0.8 mm apart | 0.4 mm, 1 mm | 0.6 mm, 1.5 mm |
-| Knurl: small pyramids | 0.3 mm high, 0.8 mm apart | 0.4 mm, 1 mm | 0.6 mm, 1.5 mm |
-| Dots: small cones | 0.3 mm high, 1 mm apart | 0.4 mm, 1.5 mm | 0.6 mm, 2 mm |
+| Lines: ridges along the lip | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
+| Knurl: small pyramids | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
+| Dots: small cones | 0.4 mm high, 1.5 mm apart | 0.6 mm, 2 mm | 0.8 mm, 2.7 mm |
 
 Fuzzy, Cells and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
 
