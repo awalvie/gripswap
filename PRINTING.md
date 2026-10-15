@@ -16,7 +16,7 @@ Print everything in PETG. PLA gets brittle in the cold and slowly bends when it'
 
 Use a 0.4 mm nozzle and 0.2 mm layers. These parts take your whole pull, so don't go below these settings to save time.
 
-The anchor plate under the housing carries the whole pull through the walls around its hole. In your slicer, put a modifier on the plate and give it 100% infill.
+The anchor plate under the housing carries the whole pull through the walls around its hole. For more strength around the hole, you can give the plate 100% infill with a modifier. This doubles the housing print time, and nobody has tested yet whether it is needed.
 
 ## Which way up
 

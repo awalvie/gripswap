@@ -7,7 +7,7 @@
     "part": "housing",
     "name": "Housing",
     "supports": "no supports",
-    "settings": "3 walls · 15% gyroid · plate 100%"
+    "settings": "3 walls · 15% gyroid"
    }
   ],
   "params": [

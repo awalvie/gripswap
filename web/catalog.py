@@ -110,7 +110,7 @@ HOUSING = {
     "id": "housing",
     "name": "Housing",
     "parts": [{"part": "housing", "name": "Housing",
-               "supports": "no supports", "settings": SOLID + " · plate 100%"}],
+               "supports": "no supports", "settings": SOLID}],
     "params": [
         num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
         num("top_t", "Top wall", 8, 12, 0.5, 10, help="The insert presses up on it. Thicker is stiffer and heavier."),
