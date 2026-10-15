@@ -1,5 +1,5 @@
 // gripswap: a 3D-printable lift block (a portable hangboard) with swappable inserts.
-// Render one part: openscad -D 'part="housing"' -o housing.stl gripswap.scad
+// Render one part, the right way up to print: openscad -D 'part="housing"' -D for_print=true -o housing.stl gripswap.scad
 // Any parameter in src/ can be overridden the same way, for example -D slot_d=25.
 
 part = "housing";

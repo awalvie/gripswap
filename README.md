@@ -61,10 +61,10 @@ The [printing guide](https://awalvie.github.io/gripswap/print.html) has the sett
 
 ## Working on it
 
-The model is plain OpenSCAD, in `gripswap.scad` and `src/`. You can set any parameter from the command line:
+The model is plain OpenSCAD, in `gripswap.scad` and `src/`. You can set any parameter from the command line. `for_print=true` turns the part the right way up for the print bed:
 
 ```sh
-openscad -D 'part="insert_edge"' -D slot_d=15 -o edge.stl gripswap.scad
+openscad -D 'part="insert_edge"' -D slot_d=15 -D for_print=true -o edge.stl gripswap.scad
 ```
 
 To run the configurator locally, start `python3 web/server.py` and open http://localhost:8000. `web/catalog.py` lists what it offers.
