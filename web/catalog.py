@@ -112,9 +112,9 @@ HOUSING = {
     "parts": [{"part": "housing", "name": "Housing",
                "supports": "no supports", "settings": SOLID}],
     "params": [
-        num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.", simple=True),
+        num("keel_hole", "Hole size", 13, 20, 0.5, 16, help="Carabiner hole diameter in the anchor plate, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. That is not measured yet.", simple=True),
         num("top_t", "Top wall", 8, 12, 0.5, 10, help="The insert presses up on it. Thicker is stiffer and heavier."),
-        num("floor_t", "Floor", 8, 12, 0.5, 8, help="Ties the anchor to the walls."),
+        num("floor_t", "Floor", 8, 12, 0.5, 8, help="Ties the anchor plate to the walls."),
         num("corner", "Corner radius", 3, 12, 0.5, 6, help="Rounding of the housing corners, seen from the front."),
     ],
     "cards": [card("Hanging", ["keel_hole"], "how the housing holds the carabiner"),

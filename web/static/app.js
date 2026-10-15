@@ -1041,7 +1041,7 @@ function buildNeed() {
   if (inserts.length) steps.push("Slide the insert into the housing from the back until it clicks over the stop in the floor.",
                                  "To swap: press the stop down at the back, push the insert out the back with your fingers in the slot, slide the next one in.");
   if (flip) steps.push("Two-sided insert: to use the other grip, take it out, turn it over and slide it back in.");
-  if (housings.length) steps.push("Clip the carabiner to the anchor under the housing. Check it before every session.");
+  if (housings.length) steps.push("Clip the carabiner to the anchor plate under the housing. Check it before every session.");
   const list = (xs) => `<ul>${xs.map((x) => `<li>${x}</li>`).join("")}</ul>`;
   $("need").innerHTML = `<details><summary>Hardware and assembly</summary><strong>You also need</strong>${list(need)}`
     + (steps.length ? `<strong>Put it together</strong>${list(steps)}` : "") + `</details>`;

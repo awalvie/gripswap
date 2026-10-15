@@ -37,7 +37,7 @@ What is not tested yet:
 - A grip texture: resin or rock, made by your slicer to feel like a real board, marble from your slicer, or dots, lines and knurl in the edge itself, each fine, medium or coarse. A small test print has all of them, so you can feel them first.
 - An anchor plate under the front of the housing, with a hole for the carabiner.
 
-The anchor holds the carabiner right under the grip, so the edge should stay level when you pull. I haven't measured that yet.
+The anchor plate holds the carabiner right under the grip, so the edge should stay level when you pull. I haven't measured that yet.
 
 ![A 25 mm two-finger pocket in the housing](docs/img/configurator-pocket.png)
 
@@ -57,7 +57,7 @@ The [printing guide](https://awalvie.github.io/gripswap/print.html) has the sett
 1. For the roller, drop it between the cheeks and push the axle through.
 2. Slide the insert into the housing from the back until it clicks over the stop in the floor. When you pull, two lips at the front hold it.
 3. To swap it, press the stop at the back of the floor down and push the insert out the back, with your fingers in the slot. To use the other grip of a two-sided insert, turn it over and slide it back in.
-4. Clip the carabiner to the anchor under the housing.
+4. Clip the carabiner to the anchor plate under the housing.
 
 ## Working on it
 

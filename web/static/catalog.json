@@ -20,7 +20,7 @@
     "step": 0.5,
     "default": 16,
     "unit": "mm",
-    "help": "Carabiner hole diameter in the keel, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. Not measured yet.",
+    "help": "Carabiner hole diameter in the anchor plate, at its narrowest. It holds the carabiner right under the grip, so the edge should stay level. That is not measured yet.",
     "simple": true
    },
    {
@@ -44,7 +44,7 @@
     "step": 0.5,
     "default": 8,
     "unit": "mm",
-    "help": "Ties the anchor to the walls.",
+    "help": "Ties the anchor plate to the walls.",
     "simple": false
    },
    {
