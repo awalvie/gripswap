@@ -1047,6 +1047,20 @@ function buildNeed() {
     + (steps.length ? `<strong>Put it together</strong>${list(steps)}` : "") + `</details>`;
 }
 
+// the printing guide and the files it shows, for each zip, so the guide opens offline. Its links
+// back to the configurator point to the site. A guide that does not load leaves the zip without it.
+async function guideFiles() {
+  try {
+    const get = async (f) => { const r = await fetch(f); if (!r.ok) throw new Error(f); return r; };
+    const html = (await (await get("print.html")).text()).replaceAll('href="./"', 'href="https://awalvie.github.io/gripswap/"');
+    const assets = ["icon.svg", ...new Set([...html.matchAll(/src="(img\/[^"]+)"/g)].map((m) => m[1]))];
+    const data = await Promise.all(assets.map(async (f) => new Uint8Array(await (await get(f)).arrayBuffer())));
+    return [{ name: "printing-guide.html", data: new TextEncoder().encode(html) }, ...assets.map((name, i) => ({ name, data: data[i] }))];
+  } catch (e) {
+    return [];
+  }
+}
+
 // NN-file.stl: the item number keeps equal parts of two items apart
 async function downloadKit() {
   const b = $("b-kit");
@@ -1057,7 +1071,7 @@ async function downloadKit() {
       const name = String(n + 1).padStart(2, "0") + "-" + fileOf(it, p);
       return fileData(p, it).then((data) => ({ name, data }));
     });
-    saveBlob(await makeZip(await Promise.all(files)), "gripswap-kit.zip");
+    saveBlob(await makeZip([...await Promise.all(files), ...await guideFiles()]), "gripswap-kit.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);
@@ -1074,7 +1088,7 @@ async function downloadFitTest() {
   const no = toast("Preparing the fit test zip…", true);
   try {
     const files = cat.fit_test.map((p) => stl(p.part, {}, true).then((data) => ({ name: `fit-test-${slug(p.name)}.stl`, data: new Uint8Array(data) })));
-    saveBlob(await makeZip(await Promise.all(files)), "gripswap-fit-test.zip");
+    saveBlob(await makeZip([...await Promise.all(files), ...await guideFiles()]), "gripswap-fit-test.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);
@@ -1101,7 +1115,7 @@ async function downloadTextureTest() {
       ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label.replace(/\s*\(.*\)$/, "")}`, stl: mods[i], type: "modifier_part",
         settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))], t.print);
     saveBlob(await makeZip([{ name: "texture-test.stl", data: new Uint8Array(modeled) },
-      { name: "texture-test-bambu-orca.3mf", data: threemf }]), "gripswap-texture-test.zip");
+      { name: "texture-test-bambu-orca.3mf", data: threemf }, ...await guideFiles()]), "gripswap-texture-test.zip");
     hideToast(no);
   } catch (e) {
     toast("The zip failed: " + e.message);
