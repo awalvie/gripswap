@@ -12,7 +12,8 @@ Checks: one watertight body. Edges and pockets also keep their depth, a floor un
 rail over the slot at the face, a wall under the size mark, and a wall between the slot end and
 the insert side. Each grip of a flip insert gets the edge or pocket checks and keeps room for the fingers.
 Fit: the edge insert, the flip insert both ways up, and the roller frame with its roller and axle at
-every diameter, in the housing. In place, nothing overlaps.
+every diameter, in the housing. In place, nothing overlaps: not the housing, and not the parts of
+one insert each other.
 Pulled forward, both lips stop the insert. Pushed back, or slid in from the back, it meets only the
 stop, the stop finds a solid face across its full width, and the stop has room to bend down.
 Exits 1 if any check fails.
@@ -237,17 +238,18 @@ def overlap(a, b):
     return m if m.volume > 1e-3 else None
 
 
-def check_fit(housing, insert, turned):
+def check_fit(housing, parts, turned):
     """Problems with an insert in the housing, from its front (at y = 0, or past it for the roller
-    frame) to its back face."""
+    frame) to its back face. parts: the insert, with its roller and axle if it has them."""
+    problems = [f"part {i + 1} overlaps part {j + 1}" for i, j in itertools.combinations(range(len(parts)), 2)
+                if overlap(parts[i], parts[j])]
+    insert = trimesh.util.concatenate(parts)
     if turned:
-        insert = insert.copy()
         insert.apply_transform(trimesh.transformations.rotation_matrix(np.pi, [0, 1, 0], [0, 0, insert.bounds[:, 2].mean()]))
     (_, front, bottom), (_, back, top) = insert.bounds
     moved = lambda dy: insert.copy().apply_translation([0, dy, 0])
     # the stop: low on the floor, behind the insert
     at_stop = lambda m: m.bounds[0][1] >= back - 0.01 and m.bounds[1][2] <= bottom + 1.5
-    problems = []
     if overlap(housing, insert):
         problems.append("overlaps the housing in place")
     lips = overlap(housing, moved(-FIT_MOVE))   # the lower half of the front, where the lips are
@@ -313,7 +315,7 @@ def main():
         for name, parts, turned in FIT:
             together = [fit[engine, "housing", ()]] + [fit[engine, part, tuple(params.items())] for part, params in parts]
             problems = (["render failed"] if any(isinstance(m, str) for m in together)
-                        else check_fit(together[0], trimesh.util.concatenate(together[1:]), turned))
+                        else check_fit(together[0], together[1:], turned))
             failed += bool(problems)
             label = f"{engine} fit {name}"
             print(f"{'FAIL' if problems else 'ok  '} {label}" + (f": {'; '.join(problems)}" if problems else ""))
