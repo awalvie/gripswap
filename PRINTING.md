@@ -52,19 +52,33 @@ openscad -D 'part="housing"' -D for_print=true -o housing.stl gripswap.scad
 
 Pick a pattern and a strength for the grip, the roof of the slot. The rest of the insert stays smooth.
 
-Lines, Knurl and Dots are part of the edge itself, so you slice the insert like any other part. Pockets and slopers don't get them.
+The patterns come in two groups. The feel below is from one print of the texture test, not a measurement.
+
+- Like a real board:
+  - Smooth: plain plastic, no texture.
+  - Resin: a fine random grit, like a resin hangboard. Start here, at Medium.
+  - Rock: rough patches in a cell pattern, like sandstone.
+- Printed shapes:
+  - Dots: small cones. The best of the printed shapes in the first test.
+  - Lines: ridges along the lip, across the pull.
+  - Knurl: small pyramids. The most bite, and the hardest on skin.
+  - Marble: rough veins that wander.
+
+Fine is the gentlest strength. Coarse bites more and wears your skin faster.
+
+Dots, Lines and Knurl are part of the edge itself, so you slice the insert like any other part. Pockets and slopers don't get them.
 
 | Pattern | Fine | Medium | Coarse |
 | --- | --- | --- | --- |
-| Lines: ridges along the lip | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
-| Knurl: small pyramids | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
-| Dots: small cones | 0.4 mm high, 1.5 mm apart | 0.6 mm, 2 mm | 0.8 mm, 2.7 mm |
+| Dots | 0.4 mm high, 1.5 mm apart | 0.6 mm, 2 mm | 0.8 mm, 2.7 mm |
+| Lines | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
+| Knurl | 0.4 mm high, 1 mm apart | 0.6 mm, 1.5 mm | 0.8 mm, 2 mm |
 
-Fuzzy, Cells and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
+Resin, Rock and Marble are your slicer's fuzzy skin, inside a modifier over the grip. The download has extra files for them.
 
 In Bambu Studio or Orca Slicer, open the `-bambu-orca.3mf` file instead of the insert STL. It holds the insert and the modifier, with the texture already set. In Bambu Studio it opens set up for a Bambu Lab X1 Carbon with Bambu PETG Basic. Pick your own printer and filament, then slice.
 
-PrusaSlicer has Fuzzy only. Use the insert STL and the `-fuzzy-modifier.stl` file:
+PrusaSlicer can make Resin only. Use the insert STL and the `-fuzzy-modifier.stl` file:
 
 1. Load the insert and its fuzzy modifier together, as one object with two parts. Both files already sit in the same place.
 2. Right-click the modifier part and change its type to modifier.
@@ -107,7 +121,7 @@ If it sticks, follow step 3 below, then print the fit test again.
 To choose a grip pattern, print the texture test. In the configurator, click "Texture test" under Test prints, or the "texture test" link under Pattern. You get one zip with two plates, already the right way up. Use the insert settings above.
 
 - `texture-test.stl` has Lines, Knurl and Dots. Any slicer prints it.
-- `texture-test-bambu-orca.3mf` has Fuzzy, Cells and Marble, with the fuzzy skin already set on each tab. Open it in Bambu Studio or Orca Slicer.
+- `texture-test-bambu-orca.3mf` has Resin, Rock and Marble, with the fuzzy skin already set on each tab. Open it in Bambu Studio or Orca Slicer.
 
 Each plate takes about 45 minutes and 13 g of PETG. That is Bambu Studio's estimate for an X1 Carbon with its 0.20 mm Standard settings.
 

@@ -413,11 +413,17 @@ function control(p, group) {
     less.onclick = () => set(Number(input.value) - p.step);
     more.onclick = () => set(Number(input.value) + p.step);
   } else {
+    // options with a "group" sit under its heading; an option with "about" gets a line under the menu
+    const opts = p.options.filter((o) => !(o.modeled && noEdge(cur()))), item = (o) => `<option value="${o.value}">${o.label}</option>`;
+    const groups = [...new Set(opts.map((o) => o.group))];
     wrap.innerHTML = `<div class="lrow"><label for="${id}">${p.label}</label>${tipHtml(p.label, p.help)}</div>${helpHtml(p.help)}<select id="${id}">` +
-      p.options.filter((o) => !(o.modeled && noEdge(cur()))).map((o) => `<option value="${o.value}">${o.label}</option>`).join("") + "</select>";
-    const sel = wrap.querySelector("select");
-    sel.value = vals[p.name];
-    const pick = (v) => { vals[p.name] = sel.value = v; gripFocus ||= p.focus === "grip"; reset.hidden = v === p.default; refreshVisibility(); edited(); };
+      (opts.every((o) => o.group) ? groups.map((g) => `<optgroup label="${g}">${opts.filter((o) => o.group === g).map(item).join("")}</optgroup>`).join("") : opts.map(item).join("")) +
+      "</select>" + (opts.some((o) => o.about) ? `<p class="note" id="about-${p.name}"></p>` : "");
+    const sel = wrap.querySelector("select"), about = wrap.querySelector(".note");
+    if (about) sel.setAttribute("aria-describedby", about.id);
+    const describe = () => { const o = opts.find((q) => q.value === sel.value); if (about) about.innerHTML = o?.about ? `<b>${o.label}:</b> ${o.about}` : ""; };
+    sel.value = vals[p.name]; describe();
+    const pick = (v) => { vals[p.name] = sel.value = v; describe(); gripFocus ||= p.focus === "grip"; reset.hidden = v === p.default; refreshVisibility(); edited(); };
     const reset = resetButton(p, () => pick(p.default));
     wrap.querySelector(".lrow").append(reset);
     sel.addEventListener("change", () => pick(sel.value));
@@ -1090,7 +1096,7 @@ async function downloadTextureTest() {
     const [modeled, smooth, ...mods] = await Promise.all([stl(t.modeled, {}, true), stl(t.smooth, {}, true),
       ...tabs.map((_, i) => stl(t.modifier, { tex_i: i }, true))]);
     const threemf = await make3mf("Texture test", [{ name: "Texture test", stl: smooth, type: "normal_part" },
-      ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label}`, stl: mods[i], type: "modifier_part",
+      ...tabs.map(({ o, s }, i) => ({ name: `${o.label} ${s.label.replace(/\s*\(.*\)$/, "")}`, stl: mods[i], type: "modifier_part",
         settings: { fuzzy_skin: "all", fuzzy_skin_thickness: s.skin[0], fuzzy_skin_point_distance: s.skin[1], fuzzy_skin_noise_type: o.noise } }))]);
     saveBlob(await makeZip([{ name: "texture-test.stl", data: new Uint8Array(modeled) },
       { name: "texture-test-bambu-orca.3mf", data: threemf }]), "gripswap-texture-test.zip");

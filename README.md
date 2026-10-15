@@ -24,7 +24,7 @@ This is a prototype, and I haven't load-tested it yet. Print and use it at your 
 - Two-sided inserts: any edge or pocket insert can get a second grip on its underside. Each grip is a flat, ergo or incut edge (up to 10°) or a row of pockets, 6 to 25 mm deep. Turn the insert over to switch.
 - Pockets: mono, two-finger, three-finger, or up to three side by side.
 - Rollers: unlevel or straight.
-- A grip texture: lines, knurl or dots in the edge itself, or fuzzy, cells or marble from your slicer, each fine, medium or coarse. A small test print has all of them, so you can feel them first.
+- A grip texture: resin or rock, made by your slicer to feel like a real board, marble from your slicer, or dots, lines and knurl in the edge itself, each fine, medium or coarse. A small test print has all of them, so you can feel them first.
 - An anchor plate under the front of the housing, with a hole for the carabiner.
 
 The anchor holds the carabiner right under the grip, so the edge should stay level when you pull. I haven't measured that yet.

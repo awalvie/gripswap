@@ -61,7 +61,7 @@ module tt_plate(kinds, labels) {
 
 module texture_test() tt_plate(tt_modeled, ["LINES", "KNURL", "DOTS"]);
 // the rows in the order of SLICED in web/catalog.py: the page sets each tab's skin in that order
-module texture_test_smooth() tt_plate(["none", "none", "none"], ["FUZZY", "CELLS", "MARBLE"]);
+module texture_test_smooth() tt_plate(["none", "none", "none"], ["RESIN", "ROCK", "MARBLE"]);
 // the modifier for slicer tab tex_i: a box around the tab above the strip, so only the tab walls get the skin
 module texture_test_mod() let(row = 1 + floor(tex_i / 3), col = tex_i % 3)
     translate([tt_x(col) - tt_w/2 - 1, tt_y(row) - 1.5, tt_base + 0.2]) cube([tt_w + 2, tt_t + 3, tt_h + 1]);

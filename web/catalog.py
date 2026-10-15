@@ -46,22 +46,36 @@ MAX_W = 90
 SOLID = "3 walls · 15% gyroid"
 
 # Grip texture: a pattern and a strength. Lines, Knurl and Dots are modeled on the ceiling of an
-# edge (src/inserts/edge.scad sets their sizes); Fuzzy, Cells and Marble are the slicer's fuzzy skin
+# edge (src/inserts/edge.scad sets their sizes); Resin, Rock and Marble are the slicer's fuzzy skin
 # in a modifier band over the grip ("slicer": OpenSCAD never gets them, "noise": the fuzzy skin noise
-# type in Bambu Studio and Orca).
+# type in Bambu Studio and Orca). Resin and Rock are named after the board surface they feel closest
+# to; the values stay fuzzy and cells, so old links and files keep working. "group": the heading the
+# pattern sits under in the menu. "about": the line under the menu. The feel is from one print test.
+BOARD, SHAPES = "Like a real board", "Printed shapes"
 # "modeled": the page hides it on a two-sided insert with no edge.
-MODELED = [{"value": "lines", "label": "Lines", "modeled": True}, {"value": "knurl", "label": "Knurl", "modeled": True},
-           {"value": "dots", "label": "Dots", "modeled": True}]
-SLICED = [{"value": "fuzzy", "label": "Fuzzy", "slicer": True, "noise": "classic"},
-          {"value": "cells", "label": "Cells", "slicer": True, "noise": "voronoi"},
-          {"value": "marble", "label": "Marble", "slicer": True, "noise": "ridgedmulti"}]
+MODELED = [{"value": "dots", "label": "Dots", "modeled": True, "group": SHAPES,
+            "about": "small cones, part of the edge. The best of the printed shapes in the first test."},
+           {"value": "lines", "label": "Lines", "modeled": True, "group": SHAPES,
+            "about": "ridges along the lip, across the pull, part of the edge."},
+           {"value": "knurl", "label": "Knurl", "modeled": True, "group": SHAPES,
+            "about": "small pyramids, part of the edge. The most bite, and the hardest on skin."}]
+SLICED = [{"value": "fuzzy", "label": "Resin", "slicer": True, "noise": "classic", "group": BOARD,
+           "about": "a fine random grit, like a resin hangboard. Bambu Studio, Orca or PrusaSlicer make it. Start here."},
+          {"value": "cells", "label": "Rock", "slicer": True, "noise": "voronoi", "group": BOARD,
+           "about": "rough patches in a cell pattern, like sandstone. Bambu Studio and Orca only."},
+          {"value": "marble", "label": "Marble", "slicer": True, "noise": "ridgedmulti", "group": SHAPES,
+           "about": "rough veins that wander. Bambu Studio and Orca only."}]
+SMOOTH = {"value": "none", "label": "Smooth", "group": BOARD, "about": "plain plastic, no texture."}
 
 
 def texture(modeled=True):
-    return choice("texture", "Pattern", [{"value": "none", "label": "Smooth"}] + (MODELED if modeled else []) + SLICED, "none",
-                  help=("Lines, Knurl and Dots are part of the edge itself; pockets and steep slopers stay smooth. " if modeled else "") +
-                  "Fuzzy, Cells and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to the "
-                  "download, and Fuzzy a modifier file for PrusaSlicer. Cells and Marble need Bambu Studio or Orca.",
+    board = [SMOOTH] + [o for o in SLICED if o["group"] == BOARD]
+    shapes = (MODELED if modeled else []) + [o for o in SLICED if o["group"] == SHAPES]
+    return choice("texture", "Pattern", board + shapes, "none",
+                  help="Resin, Rock and Marble are made by your slicer: they add a 3MF for Bambu Studio and Orca to "
+                  "the download, and Resin a modifier file for PrusaSlicer. " +
+                  ("Dots, Lines and Knurl are part of the edge itself; pockets and steep slopers stay smooth. " if modeled else "") +
+                  "The feel described here is from one test print so far. Print the texture test to feel them all.",
                   simple=True) | {"focus": "grip"}
 
 
@@ -69,9 +83,9 @@ def texture(modeled=True):
 # "skin": fuzzy skin thickness and point distance in mm, for the slicer patterns. "scad_with": sent to
 # OpenSCAD only together with the pattern, so a slicer pattern gives the same STL at every strength.
 TEXTURE_SIZE = choice("texture_size", "Strength", [
-    {"value": "fine", "label": "Fine", "skin": [0.2, 0.3]},
-    {"value": "medium", "label": "Medium", "skin": [0.3, 0.5]},
-    {"value": "coarse", "label": "Coarse", "skin": [0.4, 0.8]},
+    {"value": "fine", "label": "Fine (gentlest on skin)", "skin": [0.2, 0.3]},
+    {"value": "medium", "label": "Medium (a good start)", "skin": [0.3, 0.5]},
+    {"value": "coarse", "label": "Coarse (bites more, wears skin faster)", "skin": [0.4, 0.8]},
 ], "medium", simple=True)
 TEXTURE_SIZE["scad_with"] = "texture"
 TEXTURE_SIZE["focus"] = "grip"
